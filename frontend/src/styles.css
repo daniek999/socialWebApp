@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    font-family: "Exo 2", sans-serif;
+}
+.bg-custom {
+    background: linear-gradient(135deg, #1B1833, #441752, #AB4459, #F29F58);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+    -webkit-text-fill-color: #000000 !important;
+    font-family: "Exo 2", sans-serif !important;
+}
+
+/* === [ Groups ] === */
+.cst-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* === [ Controls ] === */
+.cst-fg-control {
+    padding: 0.4em 0.8em;
+    outline: 0;
+    border: 0;
+    border-bottom: 2px solid #e5e5e5;
+    transition: border-color 0.3s ease, color 0.3s ease;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* === [ Texts ] === */
+.cst-fg-label {
+    font-size: small;
+    color: #000;
+    transition: color 0.3s ease;
+}
+.cst-error-label {
+    width: 100%;
+    text-align: center;
+    margin: 1em 0em;
+    font-size: small;
+    color: #ff0000;
+}
+
+/* === [ Animations ] === */
+.cst-form-group:focus-within .cst-fg-label {
+    color: #007bff;
+}
+.cst-form-group:focus-within .cst-fg-control {
+    border-color: #007bff;
+}

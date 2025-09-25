@@ -1,0 +1,55 @@
+<body class="bg-custom">
+    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+
+        <!-- [ Seccion #1 ] -->
+        <div class="card rounded-0 p-4 shadow w-50 mb-3" style="max-width: 400px;">
+            <!-- #1. Titulo -->
+            <h2 class="text-start mb-4">Registate</h2>
+            <!-- #2. Formulario -->
+            <form [formGroup]="form" (ngSubmit)="submit()">
+                <!-- @name -->
+                <div class="cst-form-group mb-3">
+                    <label for="username" class="cst-fg-label">Usuario</label>
+                    <input type="text" class="cst-fg-control rounded-0 cst-input-border" formControlName="username"
+                        placeholder="Super Usuario" id="username" />
+                </div>
+                <!-- @email -->
+                <div class="cst-form-group mb-3">
+                    <label for="email" class="cst-fg-label">Email</label>
+                    <input type="email" class="cst-fg-control rounded-0 cst-input-border" formControlName="email"
+                        placeholder="supercorreo@gmail.com" id="email" />
+                </div>
+                <div class="row g-3">
+                    <!-- @password -->
+                    <div class="cst-form-group mb-3 col-md-6">
+                        <label for="password" class="cst-fg-label">Clave</label>
+                        <input type="password" class="cst-fg-control rounded-0 cst-input-border"
+                            formControlName="password" placeholder="admin123" id="password" />
+                    </div>
+
+                    <!-- @confirmPassword -->
+                    <div class="cst-form-group mb-3 col-md-6">
+                        <label for="confirmPassword" class="cst-fg-label">Confirmar Clave</label>
+                        <input type="password" class="cst-fg-control rounded-0 cst-input-border"
+                            formControlName="confirmPassword" placeholder="admin123" id="confirmPassword" />
+                    </div>
+                </div>
+                <!-- [ Confirm Button ] -->
+                <button class="btn btn-primary w-100 rounded-0 fw-bold">CREAR</button>
+
+                <!-- [ Login Section ] -->
+            </form>
+        </div>
+
+        <!-- [ Seccion #2 ] -->
+        <div class="card rounded-0 px-0 py-3 shadow w-50" style="max-width: 400px;">
+            <div class="text-center">
+                <p class="mb-1 cst-fg-label">
+                    ¿Ya tienes cuenta?
+                    <a class="link-offset-2 link-underline link-underline-opacity-0 
+                    link-underline-opacity-75-hover" href="../login">Inicia Sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
