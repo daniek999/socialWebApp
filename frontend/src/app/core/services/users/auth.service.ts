@@ -10,7 +10,7 @@ export class AuthService {
 
     constructor(private http : HttpClient) { }
 
-    private base = 'http://localhost:4000/api/auth';
+    private base = 'http://localhost:4000/api/users';
 
 
     register(data: any): Observable<any> {

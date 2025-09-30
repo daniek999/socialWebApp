@@ -3,7 +3,6 @@
         <div class="card p-4 shadow text-center" style="max-width: 600px; width: 100%;">
             <div></div>
             <h2 class="mb-2">Bienvenido</h2>
-            <h5>👋 Hola, {{ username }}!</h5>
             <p class="text-muted">Has iniciado sesión correctamente.</p>
             <button class="btn btn-danger w-100 mt-4 fw-bold" (click)="logout()">
                 Cerrar Sesión
@@ -14,6 +13,15 @@
             <button class="btn btn-success w-100 mt-4 fw-bold">
                 Buscar / Ver Perfiles 'no funciona aun'
             </button>
+            
+            <!--  -->
+            <div class="post-card" *ngFor="let post of posts" >
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <small>Autor: {{ post.idUser.username }}</small>
+            <br>
+            <small>Fecha: {{ post.createdAt | date:'short' }}</small>
+            </div>
         </div>
     </div>
 </body>
