@@ -10,15 +10,15 @@ export class AuthService {
 
     constructor(private http : HttpClient) { }
 
-    private base = 'http://localhost:4000/api/users';
+    private user_url_base = 'http://localhost:4000/api/users';
 
 
     register(data: any): Observable<any> {
-        return this.http.post(`${this.base}/register`, data);
+        return this.http.post(`${this.user_url_base}/register`, data);
     }
 
     login(data: any): Observable<any> {
-        return this.http.post(`${this.base}/login`, data);
+        return this.http.post(`${this.user_url_base}/login`, data);
     }
 
     setToken(token: string) {
@@ -37,7 +37,6 @@ export class AuthService {
         return !!this.getToken();
     }
 
-    // 👉 NUEVO: obtener datos del usuario desde el token
     getUserData(): any | null {
         const token = this.getToken();
         if (!token) return null;
@@ -50,7 +49,6 @@ export class AuthService {
         }
     }
 
-    // 👉 NUEVO: obtener solo el username
     getUsername(): string | null {
         const data = this.getUserData();
         return data?.username || null; // depende de cómo tu backend lo mande

@@ -9,17 +9,17 @@ const profileSchema = new Schema({
     },
     name: {
         type: String,
-        required: true,
-        trim: true
+        default: true,
+        trim: true,
     },
     surname: {
         type: String,
-        required: true,
+        default: true,
         trim: true
     },
     profession: {
         type: String,
-        required: true,
+        default: true,
         trim: true
     },
     interests: [
@@ -31,7 +31,7 @@ const profileSchema = new Schema({
     visible: {
         type: Boolean,
         required: true,
-        default: true
+        default: false
     }
 }, {timestamps: true});
 

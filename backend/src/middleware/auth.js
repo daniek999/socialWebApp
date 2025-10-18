@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
+// Verify JWT
 export const verifyToken = async (req, res, next) => {
     try {
         // 1) Read Token
@@ -28,3 +29,11 @@ export const verifyToken = async (req, res, next) => {
         return res.status(401).json({ message: 'El Token es invalido o ha expirado.' });
     }
 };
+
+// Verify user role
+export const verifyAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Acceso Denegado' })
+    }
+    next();
+}

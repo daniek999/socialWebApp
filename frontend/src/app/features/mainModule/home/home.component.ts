@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/users/auth.service';
 import { Router } from '@angular/router';
-import { Post, PostsService } from '../../../core/services/posts/posts.service';
+import { PostsService } from '../../../core/services/posts/posts.service';
 import { DatePipe, NgFor } from '@angular/common';
+import { Post } from '../../../models/post.model';
 
 @Component({
   selector: 'app-home',

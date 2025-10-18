@@ -1,0 +1,10 @@
+.card-hover {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card-hover:hover {
+    border: 1px solid #0d6efd;
+    /* azul bootstrap */
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+}
