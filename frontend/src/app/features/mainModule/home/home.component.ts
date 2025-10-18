@@ -3,7 +3,7 @@ import { AuthService } from '../../../core/services/users/auth.service';
 import { Router } from '@angular/router';
 import { PostsService } from '../../../core/services/posts/posts.service';
 import { DatePipe, NgFor } from '@angular/common';
-import { Post } from '../../../models/post.model';
+import { Post } from '../../../models/postModel/post';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
         private postService: PostsService
     ) {}
     
+    // Load Main Data
     ngOnInit() {
         this.postService.getPosts()
             .subscribe(
@@ -31,9 +32,14 @@ export class HomeComponent implements OnInit {
             }
         );
     }
+    // User Actions
     logout() {
         this.auth.logout();
         this.router.navigate(['/login']);
     }
+    viewProfile() {
+        this.router.navigate(['/profile']);
+    }
+
 
 }

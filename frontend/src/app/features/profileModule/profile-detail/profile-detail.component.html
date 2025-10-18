@@ -1,0 +1,41 @@
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-sidebar">
+            <div class="avatar-wrapper">
+                <img [src]="userImage || 'https://via.placeholder.com/150'" alt="Avatar" class="avatar" />
+            </div>
+
+            <label class="change-photo">
+                Cambiar imagen
+                <input type="file" (change)="onImageChange($event)" hidden />
+            </label>
+
+            <p class="username">{{ '@' + (userHandle || 'usuario') }}</p>
+            <p class="description">{{ userDescription || 'Agrega una descripción' }}</p>
+
+        </div>
+
+        <form class="profile-form" (ngSubmit)="onSubmit()">
+            <h2>Editar Perfil</h2>
+
+            <div class="form-group">
+                <label>Nombre de Usuario</label>
+                <input type="text" [(ngModel)]="userHandle" name="handle" placeholder="Ej: gianiyc" required />
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea [(ngModel)]="userDescription" name="description" placeholder="¿Quién eres? ¿Qué haces?"
+                    required></textarea>
+            </div>
+
+            <button type="submit" class="save-btn">
+                <span class="icon">✔</span> Guardar Cambios
+            </button>
+
+            <button type="button" (click)="toHome()">
+                Regresar
+            </button>
+        </form>
+    </div>
+</div>

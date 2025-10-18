@@ -28,13 +28,13 @@ export class Post {
         this.__v = __v;
     }
 
-    
+    // Elipsis
     get shortContent(): string {
         return this.content.length > 100
         ? this.content.substring(0, 100) + '...'
         : this.content;
     }
-
+    // BetterDate
     get formattedDate(): string {
         return this.createdAt
         ? new Date(this.createdAt).toLocaleDateString('es-ES')
