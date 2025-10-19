@@ -51,7 +51,7 @@ export class AuthService {
 
     getUsername(): string | null {
         const data = this.getUserData();
-        return data?.username || null; // depende de cómo tu backend lo mande
+        return data?.username || null;
     }
 
 }

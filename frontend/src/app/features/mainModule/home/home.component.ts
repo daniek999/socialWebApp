@@ -6,40 +6,51 @@ import { DatePipe, NgFor } from '@angular/common';
 import { Post } from '../../../models/postModel/post';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [DatePipe, NgFor],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+    selector: 'app-home',
+    standalone: true,
+    imports: [DatePipe, NgFor],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-    
+
     posts: Post[] = [];
+    username: string = '';
+    errorMessage: string | null = null;
 
     constructor(
         private auth: AuthService,
         private router: Router,
-        private postService: PostsService
-    ) {}
-    
-    // Load Main Data
+        private postService: PostsService,
+    ) { }
+
+    // MARK: Main Funs()
     ngOnInit() {
-        this.postService.getPosts()
-            .subscribe(
-            {
-                next: (data) => this.posts = data,
-                error: (err) => console.error(err)
-            }
-        );
+        this.loadPosts()
     }
-    // User Actions
+    loadPosts() {
+        this.postService.getPosts().subscribe({
+            next: (data) => {
+                this.posts = data;
+            },
+            error: (err) => {
+                this.setError(err.error?.message);
+            }
+        });
+    }
     logout() {
         this.auth.logout();
         this.router.navigate(['/login']);
     }
-    viewProfile() {
+
+    // MARK: Nav Funs()
+    goToProfile() {
         this.router.navigate(['/profile']);
     }
 
+    // MARK: Extra Funs()
+    private setError(message: string) {
+        this.errorMessage = message; 
+    }
 
 }

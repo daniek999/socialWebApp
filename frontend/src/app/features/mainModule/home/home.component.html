@@ -6,10 +6,10 @@
             <p class="text-muted">Has iniciado sesión correctamente.</p>
             <div class="d-flex flex-row justify-content-start align-items-center mb-3">
                 <button class="btn btn-danger fw-bold me-2" (click)="logout()">
-                    Cerrar Sesión
+                    LogOut
                 </button>
-                <button class="btn btn-primary fw-bold me-2" (click)="viewProfile()">
-                    Ver Perfiles
+                <button class="btn btn-primary fw-bold me-2" (click)="goToProfile()">
+                    Perfil
                 </button>
                 <button class="btn btn-primary fw-bold me-2">
                     Modificar Perfil (No funciona)
@@ -25,28 +25,22 @@
                     <div class="card rounded-0 card-hover h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
-                                <p class="card-title mb-0 fw-bold">
-                                    {{ post.title }}
-                                </p>
+                                <p class="card-title mb-0 fw-bold">{{ post.title }}</p>
                                 <p class="text-secondary mb-0 fw-light fs-10">
                                     <small>{{ post.createdAt | date:'medium' }}</small>
                                 </p>
                             </div>
                             <p class="card-text text-muted my-3 text-start">
-                                <span class="text-primary">{{ post.idUser.username }}:</span> {{ post.content }}
+                                <span class="text-primary">{{ post.idUser.username }}:</span>
+                                {{ post.content }}
                             </p>
-                            <div class="d-flex justify-content-start align-items-center">
-                                <p class="btn btn-sm btn-outline-dark my-0 me-2 rounded-3">Tag</p>
-                                <p class="btn btn-sm btn-outline-dark my-0 me-2 rounded-3">Creatividad</p>
-                                <p class="btn btn-sm btn-outline-dark my-0 me-2 rounded-3">Trabajo</p>
-                            </div>
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
 
 
-            
+
         </div>
     </div>
 </body>

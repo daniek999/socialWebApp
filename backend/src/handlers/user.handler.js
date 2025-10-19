@@ -2,26 +2,24 @@ import 'dotenv/config';
 import { genSalt, hash, compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from "../models/user.js";
+import Profile from '../models/profile.js';
 
-// 1.
+// MARK: [POST] registerUser
 export const registerUser = async (req, res) => {
-    // Defyning
-    const { 
-        username,  
-        email, 
-        password 
-    } = req.body;
-    // Testing
-    try {
-        // 1. Verificar si existe el correo
-        const exists = await User.findOne({ email });
-        if (exists) return res.status(400).json({ message: 'Correo ya existente' });
+    const { username, email, password } = req.body;
 
-        // 2. Encriptar contraseña
+    try {
+        // 1. Verify if the mail already exists
+        const exists = await User.findOne({ email });
+        if (exists) {
+            return res.status(400).json({ message: 'Correo ya existente' });
+        }
+
+        // 2. Encrypting the password
         const salt = await genSalt(10);
         const hashedPass = await hash(password, salt);
 
-        // 3. Crear usuario
+        // 3. Creating the new user
         const newUser = new User({
             username,
             email,
@@ -29,14 +27,31 @@ export const registerUser = async (req, res) => {
         });
         await newUser.save();
 
-        return res.status(201).json({ message: 'Usuario creado' });
+        // 4. Creating the new profile which belongs to the new user created.
+        const newProfile = new Profile({
+            idUser: newUser._id,
+            name: '',
+            surname: '',
+            profession: '',
+            interests: [],
+            hobbies: [],
+            visible: true
+        });
+        await newProfile.save();
+
+        // 5. Response
+        return res.status(201).json({
+            message: 'Cuenta creada correctamente con perfil por defecto.',
+            user: newUser,
+            profile: newProfile
+        });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Error del servidor: ' + error });
+        return res.status(500).json({ message: 'Error del servidor -> ' + error });
     }
 }
 
-// 2.
+// MARK: [POST] loginUser
 export const loginUser = async (req, res) => {
     // Defyning
     const { 

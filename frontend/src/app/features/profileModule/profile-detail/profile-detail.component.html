@@ -1,41 +1,26 @@
-<div class="profile-container">
+<div class="profile-container" *ngIf="profile">
     <div class="profile-card">
+
+        <!-- User data -->
         <div class="profile-sidebar">
-            <div class="avatar-wrapper">
-                <img [src]="userImage || 'https://via.placeholder.com/150'" alt="Avatar" class="avatar" />
-            </div>
-
-            <label class="change-photo">
-                Cambiar imagen
-                <input type="file" (change)="onImageChange($event)" hidden />
-            </label>
-
-            <p class="username">{{ '@' + (userHandle || 'usuario') }}</p>
-            <p class="description">{{ userDescription || 'Agrega una descripción' }}</p>
-
+            <div class="username">{{ username }}</div>
+            <div class="description">Tu perfil personal</div>
         </div>
 
-        <form class="profile-form" (ngSubmit)="onSubmit()">
-            <h2>Editar Perfil</h2>
+        <!-- Profile data -->
+        <div class="profile-info">
+            <h2>Perfil</h2>
+            <p>Nombre: {{ profile.name }}</p>
+            <p>Apellido:{{ profile.surname }}</p>
+            <p>Profesión: {{ profile.profession }}</p>
+            <p>Intereses: {{ profile.interests.join(', ') || 'No definido' }}</p>
+            <p>Hobbies: {{ profile.hobbies.join(', ') || 'No definido' }}</p>
+            <p>Visible al público: {{ profile.visible ? 'Sí' : 'No' }}</p>
+        </div>
 
-            <div class="form-group">
-                <label>Nombre de Usuario</label>
-                <input type="text" [(ngModel)]="userHandle" name="handle" placeholder="Ej: gianiyc" required />
-            </div>
-
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea [(ngModel)]="userDescription" name="description" placeholder="¿Quién eres? ¿Qué haces?"
-                    required></textarea>
-            </div>
-
-            <button type="submit" class="save-btn">
-                <span class="icon">✔</span> Guardar Cambios
-            </button>
-
-            <button type="button" (click)="toHome()">
-                Regresar
-            </button>
-        </form>
+        <button class="btn btn-primary fw-bold me-2" (click)="goToHome()">Regresar</button>
     </div>
 </div>
+
+<!-- Error messages from backend -->
+<p *ngIf="errorMessage" class="cst-error-label">{{ errorMessage }}</p>

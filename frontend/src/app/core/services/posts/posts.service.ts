@@ -15,11 +15,13 @@ export class PostsService {
 
     // 
     getPosts(): Observable<Post[]> {
-        return this.http.get<Post[]>(`${this.post_url_base}/publications`);
+        const url = `${this.post_url_base}/publications`;
+        return this.http.get<Post[]>(url);
     }
 
     // 
     createPost(post: any): Observable<any> {
-        return this.http.post(`${this.post_url_base}/create`, post);
+        const url = `${this.post_url_base}/create`
+        return this.http.post(url, post);
     }
 }

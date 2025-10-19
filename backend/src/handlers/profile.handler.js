@@ -1,35 +1,5 @@
 import Profile from '../models/profile.js';
 
-// MARK: [POST] createProfile
-export const createProfile = async (req, res) => {
-    // Testing
-    try {
-        // Search and verify that exists.
-        const exists = await Profile
-            .findOne({idUser: req.user.id})
-        if (exists) {
-            return res.status(400).json({ message: "El perfil ya existe" });
-        }
-
-        // If not, create a default profile.
-        const newProfile = new Profile({
-            idUser: req.user.id,
-            name: "",
-            surname: "",
-            profession: "",
-            interests: [],
-            hobbies: [],
-            visible: true
-        });
-
-        // Save profile.
-        await newProfile.save();
-        res.status(201).json(newProfile);
-    } catch (error) {
-        res.status(500).json({ message: "Error al Crear Perfil -> " + error })
-    }
-};
-
 // MARK: [PUT] editProfile
 export const editProfile = async (req, res) => {
     // Testing
