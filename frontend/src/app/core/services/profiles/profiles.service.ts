@@ -27,7 +27,7 @@ export class ProfilesService {
     // MARK: Fun. Backend
     // 1. Obtener perfil de usuario autenticado
     getUserProfile(): Observable<Profile> {
-        const url = `${this.profile_url_base}/myprofile`;
+        const url = `${this.profile_url_base}/profile-detail`;
 
         return this.http.get<Profile>(url, this.getAuthHeaders());
     }
@@ -39,14 +39,7 @@ export class ProfilesService {
         return this.http.get<Profile[]>(url, this.getAuthHeaders());
     }
 
-    // 3. Crear perfil de usuario (Ocurre 1 vez)
-    createProfile(): Observable<Profile> {
-        const url = `${this.profile_url_base}/create`;
-
-        return this.http.post<Profile>(url, {}, this.getAuthHeaders());
-    }
-
-    // 4. Actualizar perfil de usuario
+    // 3. Actualizar perfil de usuario
 
     
 }

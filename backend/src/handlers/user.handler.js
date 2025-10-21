@@ -1,93 +1,65 @@
-import 'dotenv/config';
-import { genSalt, hash, compare } from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import User from "../models/user.js";
-import Profile from '../models/profile.js';
+import Post from '../models/Post.js';
+import Profile from '../models/Profile.js';
 
-// MARK: [POST] registerUser
-export const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
 
+// MARK: [GET] getAllUsers
+export const getUsers = async (req, res) => {
     try {
-        // 1. Verify if the mail already exists
-        const exists = await User.findOne({ email });
-        if (exists) {
-            return res.status(400).json({ message: 'Correo ya existente' });
+        const users = await User.find();
+        
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({ message: 'Error: ' + error})
+    }
+}
+
+// MARK: [GET] getUserById
+export const getUserById = async (req, res) => {
+    try {
+        // Param
+        const idUser = req.params._id;
+
+        // Function
+        const userData = await User.findById( idUser );
+
+        if (!userData) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // 2. Encrypting the password
-        const salt = await genSalt(10);
-        const hashedPass = await hash(password, salt);
-
-        // 3. Creating the new user
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPass,
-        });
-        await newUser.save();
-
-        // 4. Creating the new profile which belongs to the new user created.
-        const newProfile = new Profile({
-            idUser: newUser._id,
-            name: '',
-            surname: '',
-            profession: '',
-            interests: [],
-            hobbies: [],
-            visible: true
-        });
-        await newProfile.save();
-
-        // 5. Response
-        return res.status(201).json({
-            message: 'Cuenta creada correctamente con perfil por defecto.',
-            user: newUser,
-            profile: newProfile
-        });
+        // Response
+        res.status(200).json( userData )
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error del servidor -> ' + error });
+        res.status(400).json({ message: 'Error: ' + error})
     }
 }
 
-// MARK: [POST] loginUser
-export const loginUser = async (req, res) => {
-    // Defyning
-    const { 
-        email, 
-        password 
-    } = req.body;
-    // Testing
+// MARK: [DELETE] deleteUser
+export const deleteUser = async (req, res) => {
     try {
-        // 1. Verify Data
-        if (!email || !password) 
-            return res.status(400).json({ message: 'Debe ingresar correo y clave' });
+        // Param
+        const idUser = req.params._id
 
-        const user = await User.findOne({ email });
-        if (!user) 
-            return res.status(400).json({ message: 'Correo no registrado' });
+        // Verifications
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
 
-        const isMatch = await compare(password, user.password);
-        if (!isMatch) 
-            return res.status(400).json({ message: 'Clave incorrecta' });
+        // Function
+        await Promise.all([
+            Post.deleteMany({ idUser }),
+            Profile.deleteOne({ idUser }),
+        ]);
 
-        // 2. Generate JWT
-        const payload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-        };
-        const token = jwt.sign(payload, 'un_secreto_muy_forte', { expiresIn: '1h' });
+        await User.findByIdAndDelete(idUser);
 
-        // 3. Response
-        return res.json({
-            token,
-            user: { id: user._id, username: user.username, email: user.email },
-        });
-
+        // Response
+        res.json({ message: "Usuario y datos relacionados eliminados correctamente" });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: `Error: ${ error }` });
+        res.status(500).json({ message: 'Error del servidor -> ' + error.message });
     }
 }
+
+// MARK: [PUT] updateUser *stand by*
+

@@ -4,14 +4,14 @@ import { createPost, deletePost, getPosts } from '../handlers/post.handler.js';
 
 const postRouter = Router();
 
-// Create Post
-// ===========
-postRouter.post('/create', verifyToken, createPost);
-// Get All Posts
-// =========
-postRouter.get('/publications', getPosts);
-// Delete Post
-// =========
-postRouter.delete('/:id', verifyToken, deletePost);
+// Read 
+// NOTA: Averiguar porque no carga con verifyToken
+postRouter.get('/publications', verifyToken, getPosts);
+
+// Create
+postRouter.post('/create-post', verifyToken, createPost);
+
+// Delete
+postRouter.delete('/delete-post/:_id', verifyToken, deletePost);
 
 export default postRouter;

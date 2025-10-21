@@ -10,15 +10,15 @@ export class AuthService {
 
     constructor(private http : HttpClient) { }
 
-    private user_url_base = 'http://localhost:4000/api/users';
+    private user_url_base = 'http://localhost:4000/api';
 
 
     register(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/register`, data);
+        return this.http.post(`${this.user_url_base}/auth/register`, data);
     }
 
     login(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/login`, data);
+        return this.http.post(`${this.user_url_base}/auth/login`, data);
     }
 
     setToken(token: string) {

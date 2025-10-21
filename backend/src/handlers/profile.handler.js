@@ -1,66 +1,79 @@
 import Profile from '../models/profile.js';
 
-// MARK: [PUT] editProfile
-export const editProfile = async (req, res) => {
-    // Testing
+// MARK: [GET] getAllProfiles
+export const getAllProfiles = async (req, res) => {
     try {
-        const { 
-            name, 
-            surname, 
-            profession,
-            interests, 
-            hobbies, 
-            visible 
-        } = req.body;
+        // Process
+        const profiles = await Profile.find();
 
-        const updatedProfile = await Profile.findOneAndUpdate(
-            { idUser: req.user.id },
-            { name, surname, profession, interests, hobbies, visible },
-            { new: true, runValidators: true }
-        );
+        // Result
+        res.status(200).json(profiles);
+    } catch (error) {
+        res.status(400).json({ message: 'Error: ' + error})
+    }
+}
 
-        if (!updatedProfile) {
-            return res.status(404).json({ message: "Perfil no encontrado" });
-        }
+// MARK: [GET] getAllProfiles
+export const getVisibleProfiles = async (req, res) => {
+    try {
+        // Process
+        const visibleUserProfiles = await Profile
+            .find({visible: true})
+            .populate("idUser", "username")
 
-        res.status(200).json(updatedProfile);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Error al editar el perfil" });
+        // Result
+        res.status(200).json(visibleUserProfiles);
+    } catch (error) {
+        res.status(500).json({ message: "Error al Obtener Perfiles Publicos -> " + error  })
     }
 };
 
 // MARK: [GET] getProfileByIdUser
 export const getProfileByIdUser = async (req, res) => {
-    // Defyning
-    const idUser = req.user.id
-    const username = req.user.username
-    // Testing
     try {
+        // Params
+        const idUser = req.user.id
+        const username = req.user.username
+        
+        // Process 
         const userProfile = await Profile
             .findOne({ idUser })
             .populate("idUser", "username");
 
+        // Verifications 
         if (!userProfile) {
             return res.status(404).json({ message: "El Usuario '" + username + "' no posee un perfil." });
         }
 
+        // Result
         res.status(200).json(userProfile);
     } catch (error) {
         res.status(500).json({ message: "Error al Obtener Perfil del Usuario: " + error });
     }
 };
 
-// MARK: [GET] getAllProfiles
-export const getAllProfiles = async (req, res) => {
-    // Testing
+// MARK: [PUT] editProfile
+export const editProfile = async (req, res) => {
     try {
-        const visibleUserProfiles = await Profile
-            .find({visible: true})
-            .populate("idUser", "username")
+        // Params
+        const { name, surname, profession, interests, hobbies, visible } = req.body;
 
-        res.status(200).json(visibleUserProfiles);
-    } catch (error) {
-        res.status(500).json({ message: "Error al Obtener Perfiles Publicos -> " + error  })
+        // Process
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { idUser: req.user.id },
+            { name, surname, profession, interests, hobbies, visible },
+            { new: true, runValidators: true }
+        );
+
+        // Verifications
+        if (!updatedProfile) {
+            return res.status(404).json({ message: "Perfil no encontrado" });
+        }
+
+        // Result
+        res.status(200).json(updatedProfile);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error al editar el perfil" });
     }
 };
