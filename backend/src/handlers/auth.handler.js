@@ -3,13 +3,14 @@ import User from "../models/user.js";
 import Profile from '../models/profile.js';
 import jwt from 'jsonwebtoken';
 import { genSalt, hash, compare } from 'bcryptjs';
+import { sendVerificationMail } from '../utils/mailer.js';
 
 
 // MARK: Register
 export const register = async (req, res) => {
     try {
         // 1. params
-        const { email, username, password } = req.body;
+        const { email, username, password, role } = req.body;
 
         // 2. verifications
         if (!email || !username || !password) {
@@ -32,6 +33,7 @@ export const register = async (req, res) => {
             username,
             email,
             password: hashedPass,
+            role,
         });
         await newUser.save();
 
@@ -47,6 +49,12 @@ export const register = async (req, res) => {
         await newProfile.save();
 
         // 4. result
+        const temporalMailToken = jwt.sign(
+            { id: newUser._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+        await sendVerificationMail(email, temporalMailToken);
         return res.status(201).json({
             message: 'Cuenta creada correctamente.',
             user: newUser,
@@ -65,28 +73,32 @@ export const login = async (req, res) => {
 
         // 2. verifications
         if (!email || !password)
-            return res.status(400).json({ message: 'Debe ingresar correo y clave' });
+            return res.status(400).json({ message: 'Debe ingresar correo y clave.' });
 
         const user = await User.findOne({ email });
         if (!user)
-            return res.status(400).json({ message: 'Correo no registrado' });
+            return res.status(400).json({ message: 'Correo no registrado.' });
+        if (!user.isVerified)
+            return res.status(401).json({ message: 'Debes verificar tu cuenta antes de iniciar sesión.' });
 
         const passwordMatch = await compare(password, user.password);
         if (!passwordMatch)
-            return res.status(400).json({ message: 'Clave incorrecta' });
+            return res.status(400).json({ message: 'Clave incorrecta.' });
 
         // 3. process
-        const payload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const payload = { id: user._id, username: user.username, email: user.email, role: user.role };
+        const key = process.env.JWT_SECRET;
+        // Create a digital signature [payload, key, options]
+        const token = jwt.sign(
+            payload,
+            key,
+            { expiresIn: '1h' },
+        );
 
         // 4. result
         return res.json({
             token,
-            user: { _id: user._id, username: user.username, email: user.email },
+            payload,
         });
 
     } catch (error) {
@@ -94,18 +106,25 @@ export const login = async (req, res) => {
     }
 };
 
-// MARK: Logout *standby*
-export const logout = async (req, res) => {
+// MARK: Mail Verificator
+export const verifyEmail = async (req, res) => {
     try {
-        // 1. params
+        const { token } = req.params;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // 2. verifications
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-        // 3. process
+        if (user.verified) {
+            return res.status(200).json({ message: 'Tu cuenta ya está verificada.' });
+        }
 
-        // 4. result
+        user.isVerified = true;
+        await user.save();
 
-    } catch (error) {
-        return res.status(500).json({ message: 'Error del servidor: ' + error });
+        res.status(200).json({ message: 'Cuenta verificada correctamente.' });
+    } catch (err) {
+        console.error('Error en verificación:', err.message);
+        return res.status(400).json({ message: 'Token inválido o expirado.' });
     }
 };

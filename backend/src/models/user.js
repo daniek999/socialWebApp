@@ -17,6 +17,16 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+    isVerified: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
 }, { timestamps: true });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
