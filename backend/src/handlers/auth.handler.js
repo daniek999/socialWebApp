@@ -122,7 +122,10 @@ export const verifyEmail = async (req, res) => {
         user.isVerified = true;
         await user.save();
 
-        res.status(200).json({ message: 'Cuenta verificada correctamente.' });
+        // 1. JSON Response
+        //res.status(200).json({ message: 'Cuenta verificada correctamente.' });
+        // 2. Redirect Response
+        res.status(200).redirect('http://localhost:4200/login?verified=true');
     } catch (err) {
         console.error('Error en verificación:', err.message);
         return res.status(400).json({ message: 'Token inválido o expirado.' });

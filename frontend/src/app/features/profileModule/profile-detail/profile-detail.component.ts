@@ -1,15 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Profile } from '../../../models/profileModel/profile';
 import { ProfilesService } from '../../../core/services/profiles/profiles.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/users/auth.service';
 
 @Component({
     selector: 'app-profile-detail',
     standalone: true,
-    imports: [FormsModule, HttpClientModule, NgIf],
+    imports: [FormsModule, HttpClientModule, NgIf, NgClass],
     templateUrl: './profile-detail.component.html',
     styleUrl: './profile-detail.component.css'
 })
@@ -17,10 +18,12 @@ export class ProfileDetailComponent implements OnInit {
 
     profile: Profile | null = null;
     username: string = '';
+    mail: string = ''; // Agregar dps desde el back
     errorMessage: string | null = null;
 
     constructor(
         private router: Router,
+        private authService: AuthService,
         private profileService: ProfilesService
     ) {}
 
@@ -40,6 +43,10 @@ export class ProfileDetailComponent implements OnInit {
     }
     goToHome() {
         this.router.navigate(['/home']);
+    }
+    logout() {
+        this.authService.logout();
+        this.router.navigate(['/login']);
     }
 
 

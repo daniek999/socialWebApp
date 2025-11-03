@@ -12,9 +12,9 @@ export const sendVerificationMail = async (email, token) => {
     const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify/${token}`;
 
     const verificationMail = {
-        from: `"Soporte" <${process.env.EMAIL_USER}>`,
+        from: `"SWA." <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: 'Verifica tu cuenta en SWA',
+        subject: 'Termina de crear tu cuenta en SWA',
         html: `
             <h3>Verifica tu correo electrónico</h2>
             <p>Haz clic en el siguiente enlace para activar tu cuenta:</p>

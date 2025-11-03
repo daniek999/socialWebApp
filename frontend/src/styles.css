@@ -5,6 +5,10 @@ body {
 .bg-custom {
     background: linear-gradient(135deg, #1B1833, #441752, #AB4459, #F29F58);
 }
+.bg-custom-2 {
+    background: #060606;
+}
+::-webkit-scrollbar { display: none; }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
@@ -44,6 +48,13 @@ input:-webkit-autofill:active {
     margin: 1em 0em;
     font-size: small;
     color: #ff0000;
+}
+.cst-success-label {
+    width: 100%;
+    text-align: center;
+    margin: 1em 0em;
+    font-size: small;
+    color: #295afd;
 }
 
 /* === [ Animations ] === */

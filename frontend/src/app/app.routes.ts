@@ -7,7 +7,6 @@ import { PostCreateComponent } from './features/postModule/post-create/post-crea
 import { PostUpdateComponent } from './features/postModule/post-update/post-update.component';
 import { ProfileDetailComponent } from './features/profileModule/profile-detail/profile-detail.component';
 import { ProfileEditComponent } from './features/profileModule/profile-edit/profile-edit.component';
-import { ProfileCreateComponent } from './features/profileModule/profile-create/profile-create.component';
 import { ProfileListComponent } from './features/profileModule/profile-list/profile-list.component';
 
 export const routes: Routes = [
@@ -21,7 +20,6 @@ export const routes: Routes = [
     // Profiles
     { path: 'profile', component: ProfileDetailComponent, canActivate: [authGuard] },
     { path: 'edit-profile', component: ProfileEditComponent, canActivate: [authGuard] },
-    { path: 'create-profile', component: ProfileCreateComponent, canActivate: [authGuard] },
     { path: 'list-profile', component: ProfileListComponent, canActivate: [authGuard] },
     // list-profile (Para Panel Administrador o Publico ['en revision'])
 

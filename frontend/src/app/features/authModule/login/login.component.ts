@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/users/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,30 +11,37 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
         private auth: AuthService,
         private router: Router,
+        private actRoute: ActivatedRoute
     ) { }
 
-    // 1. Vars
-    errorMessage: string | null = null;
-    
-    // 2. Def. login form with its validations
+    // 1. Params
+    errorMsg: string | null = null;
+    successMsg: string | null = null;
     loginForm = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required]
     });
 
-    // 3. Comp. Functions
+    // 2. Functions
+    ngOnInit() {
+        this.actRoute.queryParams.subscribe(params => {
+            if (params['verified'] === 'true') {
+                this.successMsg = 'Cuenta verificada. Ya puedes iniciar sesión.';
+            }
+        });
+    }
     onSubmit() {
         if (this.loginForm.invalid) {
             this.loginForm.markAllAsTouched();
             return;
         }
-        this.errorMessage = null;
+        this.errorMsg = null;
         this.auth.login(this.loginForm.value).subscribe({
             next: (res) => 
                 {
@@ -45,11 +52,11 @@ export class LoginComponent {
                 this.onError(err.error?.message || 'Error')
         });
     }
-
     onError(message: string) {
-        this.errorMessage = message
+        this.errorMsg = message
     }
 
+    // 3. Extra
     toRegister() {
         this.router.navigate(['/register'])
     }

@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/users/auth.service';
 import { Router } from '@angular/router';
 import { PostsService } from '../../../core/services/posts/posts.service';
-import { DatePipe, NgFor } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { Post } from '../../../models/postModel/post';
 
 @Component({
     selector: 'app-home',
     standalone: true,
-    imports: [DatePipe, NgFor],
+    imports: [DatePipe, NgFor, NgIf],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
@@ -46,6 +46,9 @@ export class HomeComponent implements OnInit {
     // MARK: Nav Funs()
     goToProfile() {
         this.router.navigate(['/profile']);
+    }
+    goToHome() {
+        this.router.navigate(['/home']);
     }
 
     // MARK: Extra Funs()

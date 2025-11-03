@@ -1,10 +1,24 @@
-.card-hover {
-    transition: all 0.3s ease;
-    cursor: pointer;
+/* Masonry layout moderno */
+.masonry-grid {
+    column-count: 2;
+    column-gap: 1.5rem;
 }
 
-.card-hover:hover {
-    border: 1px solid #0d6efd;
-    /* azul bootstrap */
-    box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+.masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    border: 2px solid transparent;
+}
+.masonry-item:hover {
+    border: 2px solid #0d6efd;
+}
+
+
+/* Suaviza botones */
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: scale(1.03);
 }
