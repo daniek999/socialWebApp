@@ -9,17 +9,14 @@ const profileSchema = new Schema({
     },
     name: {
         type: String,
-        default: true,
         trim: true,
     },
     surname: {
         type: String,
-        default: true,
         trim: true
     },
     profession: {
         type: String,
-        default: true,
         trim: true
     },
     interests: [
@@ -32,6 +29,14 @@ const profileSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    photo: {
+        type: String,
+        default: ""
+    },
+    curriculumvitae: {
+        type: String,
+        default: ""
     }
 }, {timestamps: true});
 

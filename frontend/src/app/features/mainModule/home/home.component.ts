@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
         private postService: PostsService,
     ) { }
 
-    // MARK: Main Funs()
+    // Added Functions
     ngOnInit() {
         this.loadPosts()
     }
@@ -43,15 +43,20 @@ export class HomeComponent implements OnInit {
         this.router.navigate(['/login']);
     }
 
-    // MARK: Nav Funs()
+    // Navigation Functions
     goToProfile() {
         this.router.navigate(['/profile']);
     }
     goToHome() {
         this.router.navigate(['/home']);
     }
+    goToCommunity() {
+        this.router.navigate(['/list-profile'])
+    }
 
-    // MARK: Extra Funs()
+    // CUANDO DE A AGREGAR COMENTARIO, TIENE QUE RECARGAR LA PAGINA.
+
+    // Set Visual Functions
     private setError(message: string) {
         this.errorMessage = message; 
     }

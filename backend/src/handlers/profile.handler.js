@@ -1,6 +1,6 @@
 import Profile from '../models/profile.js';
 
-// MARK: [GET] getAllProfiles
+// MARK: [GET] get All Profiles
 export const getAllProfiles = async (req, res) => {
     try {
         // Process
@@ -13,7 +13,7 @@ export const getAllProfiles = async (req, res) => {
     }
 }
 
-// MARK: [GET] getAllProfiles
+// MARK: [GET] get All Profiles
 export const getVisibleProfiles = async (req, res) => {
     try {
         // Process
@@ -28,8 +28,8 @@ export const getVisibleProfiles = async (req, res) => {
     }
 };
 
-// MARK: [GET] getProfileByIdUser
-export const getProfileByIdUser = async (req, res) => {
+// MARK: [GET] get Self Profile
+export const getSelfProfile = async (req, res) => {
     try {
         // Params
         const idUser = req.user.id
@@ -52,16 +52,16 @@ export const getProfileByIdUser = async (req, res) => {
     }
 };
 
-// MARK: [PUT] editProfile
+// MARK: [PUT] edit Profile
 export const editProfile = async (req, res) => {
     try {
         // Params
-        const { name, surname, profession, interests, hobbies, visible } = req.body;
+        const { name, surname, profession, interests, hobbies, visible, photo, curriculumvitae } = req.body;
 
         // Process
         const updatedProfile = await Profile.findOneAndUpdate(
             { idUser: req.user.id },
-            { name, surname, profession, interests, hobbies, visible },
+            { name, surname, profession, interests, hobbies, visible, photo, curriculumvitae },
             { new: true, runValidators: true }
         );
 
@@ -77,3 +77,30 @@ export const editProfile = async (req, res) => {
         res.status(500).json({ message: "Error al editar el perfil" });
     }
 };
+
+// MARK: [GET] get Profile by Id
+export const getProfileById = async (req, res) => {
+    try {
+        // Params
+        const { idUser } = req.params;
+
+        // Process
+        const userProfile = await Profile
+            .findOne({ idUser })
+            .populate("idUser", "username");
+
+        // Verifications
+        if (!userProfile) {
+            return res.status(404).json({ message: "Perfil no encontrado." });
+        }
+        if (!userProfile.visible && req.user.id !== idUser) {
+            return res.status(403).json({ message: "Este perfil es privado." });
+        }
+
+        // Result
+        res.status(200).json(userProfile);
+    } catch (error) {
+        console.error(err);
+        res.status(500).json({ message: "Error al obtener perfil ajeno -> " + error });
+    }
+}

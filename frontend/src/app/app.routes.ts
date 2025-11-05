@@ -19,6 +19,7 @@ export const routes: Routes = [
 
     // Profiles
     { path: 'profile', component: ProfileDetailComponent, canActivate: [authGuard] },
+    { path: 'profile/:id', component: ProfileDetailComponent, canActivate: [authGuard] },
     { path: 'edit-profile', component: ProfileEditComponent, canActivate: [authGuard] },
     { path: 'list-profile', component: ProfileListComponent, canActivate: [authGuard] },
     // list-profile (Para Panel Administrador o Publico ['en revision'])

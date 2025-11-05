@@ -44,7 +44,9 @@ export const register = async (req, res) => {
             profession: 'Tu Profesion',
             interests: ['Interés número uno', 'Interés número dos'],
             hobbies: ['Hobbie número uno', 'Hobbie número dos'],
-            visible: false
+            visible: false,
+            photo: "",
+            curriculumvitae: ""
         });
         await newProfile.save();
 

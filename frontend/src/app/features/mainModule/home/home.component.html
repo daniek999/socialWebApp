@@ -10,22 +10,22 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav d-flex align-items-center gap-2">
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3" (click)="goToHome()">
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToHome()">
                             <i class="bi bi-house-door-fill"></i> Home
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3" (click)="goToProfile()">
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToProfile()">
                             <i class="bi bi-person-fill"></i> Perfil
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3">
-                            <i class="bi bi-people-fill"></i> Amigos
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToCommunity()">
+                            <i class="bi bi-people-fill"></i> Comunidad
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-danger rounded-0 border-0 px-3" (click)="logout()">
+                        <button class="btn btn-outline-danger rounded-0 border-0" (click)="logout()">
                             <i class="bi bi-box-arrow-right me-2"></i> LogOut
                         </button>
                     </li>
@@ -45,26 +45,26 @@
                         <i class="bi bi-pencil-square fs-4 text-dark me-2"></i>
                         <h5 class="mb-0 fw-bold text-dark">Crear Nuevo Post</h5>
                     </div>
-                    <!-- Content Secion -->
+                    <!-- Content Section -->
                     <div class="card border-0 rounded-0">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <form class="flex-grow-1 d-flex flex-column">
                                 <!-- @title -->
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Título</label>
-                                    <input type="text" class="form-control rounded-0 border-dark" name="title"
+                                    <input type="text" class="form-control rounded-0" name="title"
                                         placeholder="Ej. Mi nuevo proyecto" required />
                                 </div>
 
                                 <!-- @content -->
                                 <div class="mb-3 flex-grow-1">
                                     <label class="form-label fw-semibold">Contenido</label>
-                                    <textarea class="form-control rounded-0 h-100 border-dark" rows="5" name="content"
+                                    <textarea class="form-control rounded-0 h-100" rows="5" name="content"
                                         placeholder="¿Qué estás pensando?" required></textarea>
                                 </div>
 
                                 <!-- [Action] -->
-                                <button type="submit" class="btn bg-dark rounded-0 w-100 fw-bold text-light">
+                                <button type="submit" class="btn btn-outline-dark rounded-0 w-100 fw-bold">
                                     <i class="bi bi-send-fill me-1"></i> Publicar
                                 </button>
                             </form>

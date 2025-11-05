@@ -9,27 +9,23 @@
             <!-- Links -->
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav d-flex align-items-center gap-2">
-                    <!-- Home -->
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3" (click)="goToHome()">
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToHome()">
                             <i class="bi bi-house-door-fill"></i> Home
                         </button>
                     </li>
-                    <!-- Perfil -->
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3">
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToProfile()">
                             <i class="bi bi-person-fill"></i> Perfil
                         </button>
                     </li>
-                    <!-- Amigos -->
                     <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0 px-3">
-                            <i class="bi bi-people-fill"></i> Amigos
+                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToCommunity()">
+                            <i class="bi bi-people-fill"></i> Comunidad
                         </button>
                     </li>
-                    <!-- Cerrar Sesion -->
                     <li class="nav-item">
-                        <button class="btn btn-danger rounded-0 border-0 px-3" (click)="logout()">
+                        <button class="btn btn-outline-danger rounded-0 border-0" (click)="logout()">
                             <i class="bi bi-box-arrow-right me-2"></i> LogOut
                         </button>
                     </li>
@@ -47,44 +43,51 @@
                         <!-- Profile Content -->
                         <div class="row g-0">   
                             <!-- Left Sidebar -->
-                            <div class="col-md-4 border-0 bg-dark text-light d-flex flex-column align-items-center justify-content-between py-4">
+                            <div class="col-md-3 border-0 bg-dark text-light d-flex flex-column align-items-center justify-content-center py-4">
                                 <div class="d-flex flex-column align-items-center">
+                                    <!-- Data Global -->
                                     <img src="assets/img/default_user_photo.png" alt="Avatar" class="rounded-circle mb-3"
                                         width="100" height="100" />
                                     <h3 class="h5 fw-bold">{{ username }}</h3>
-                                    <div class="mt-3">
-                                        <button class="btn btn-outline-light rounded-0 btn-sm fw-bold">
+                                    <div class="mt-3" *ngIf="!isOwnProfile">
+                                        <button class="btn btn-outline-light rounded-0 btn-sm fw-bold" (click)="goToCommunity()">
+                                            <i class="bi bi-arrow-left"></i> Regresar
+                                        </button>
+                                    </div>
+
+                                    <!-- Data Personal -->
+                                    <div class="mt-3" *ngIf="isOwnProfile">
+                                        <button class="btn btn-outline-light rounded-0 btn-sm fw-bold" (click)="goToEditProfile()">
                                             <i class="bi bi-pencil-square"></i> Editar Perfil
                                         </button>
                                     </div>
                                 </div>
-
-                                <!-- Estado de visibilidad -->
-                                <div class="mt-4 text-center">
-                                    <p class="mb-0 text-secondary small">Visibilidad:</p>
-                                    <span [ngClass]="profile.visible ? 'text-success fw-bold' : 'text-danger fw-bold'">
-                                        {{ profile.visible ? 'Pública' : 'Privada' }}
-                                    </span>
-                                </div>
                             </div>
                             <!-- Right Sidebar -->
-                            <div class="col-md-8 border-0 p-4">
-                                <!-- Titulo -->
-                                <h2 class="fw-bold border-bottom pb-2 mb-3">
-                                    <i class="bi bi-file-earmark-person me-2"></i> Perfil Profesional
-                                </h2>
+                            <div class="col-md-9 border-0 p-4">
+                                <!-- Título -->
+                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                    <h2 class="fw-bold mb-0"><i class="bi bi-file-earmark-person me-2"></i>Perfil</h2>
+                                    <!-- Estado de visibilidad -->
+                                    <div *ngIf="isOwnProfile">
+                                        <span class="badge rounded-0 px-3 py-2 fw-semibold"
+                                        [ngClass]="profile.visible ? 'bg-success text-white' : 'bg-danger text-white'">
+                                        {{ profile.visible ? 'Pública' : 'Privada' }}
+                                        </span>
+                                    </div>
+                                </div>
                                 <!-- Fila 1 -->
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-secondary" style="font-size: 12px;">Nombre</p>
+                                    <div class="col">
+                                        <p class="m-0 text-secondary" style="font-size: 12px;">Nombre</p>
                                         <p>{{ profile.name }}</p>
                                     </div>
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-secondary" style="font-size: 12px;">Apellido</p>
+                                    <div class="col">
+                                        <p class="m-0 text-secondary" style="font-size: 12px;">Apellido</p>
                                         <p c>{{ profile.surname }}</p>
                                     </div>
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-secondary" style="font-size: 12px;">Profesión</p>
+                                    <div class="col">
+                                        <p class="m-0 text-secondary" style="font-size: 12px;">Profesión</p>
                                         <p>{{ profile.profession }}</p>
                                     </div>
                                 </div>
@@ -98,10 +101,10 @@
                                     <p class="mb-0 text-secondary" style="font-size: 12px;">Hobbies</p>
                                     <p>{{ profile.hobbies.join(', ') || 'No definido' }}</p>
                                 </div>
-                                <!-- Fila 4: Botón -->
-                                <div class="mt-4">
+                                <!-- Fila 4 -->
+                                <div class="m-0">
                                     <button class="btn btn-primary rounded-0 w-100 fw-bold">
-                                        <i class="bi bi-download me-2"></i> Descargar CV
+                                        <i class="bi bi-download"></i> Descargar CV
                                     </button>
                                 </div>
                             </div>
