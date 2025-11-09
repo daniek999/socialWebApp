@@ -2,42 +2,40 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import { User } from '../../../models/userModel/user';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    constructor(private http : HttpClient) { }
+    private user_url_base = 'http://localhost:4000/api/auth';
 
-    private user_url_base = 'http://localhost:4000/api';
+    constructor(private http: HttpClient) { }
 
-
+    /* ============================
+    // MARK: [Functions]
+    ============================ */
     register(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/auth/register`, data);
+        return this.http.post(`${this.user_url_base}/register`, data);
     }
-
     login(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/auth/login`, data);
+        return this.http.post(`${this.user_url_base}/login`, data);
     }
-
-    setToken(token: string) {
-        localStorage.setItem('token', token);
-    }
-
-    getToken() {
-        return localStorage.getItem('token');
-    }
-
     logout() {
         localStorage.removeItem('token');
     }
-
+    /* ============================
+    // MARK: [Extras]
+    ============================ */
+    setToken(token: string) {
+        localStorage.setItem('token', token);
+    }
+    getToken() {
+        return localStorage.getItem('token');
+    }
     isLogged() {
         return !!this.getToken();
     }
-
     getUserData(): any | null {
         const token = this.getToken();
         if (!token) return null;
@@ -49,10 +47,8 @@ export class AuthService {
             return null;
         }
     }
-
     getUsername(): string | null {
         const data = this.getUserData();
         return data?.username || null;
     }
-
 }

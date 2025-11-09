@@ -3,7 +3,9 @@ export class Profile {
     idUser: {
         _id: string;
         username: string;
-        email?: string;
+        email: string;
+        role: string;
+        isVerified: boolean;
     };
     name: string;
     surname: string;
@@ -11,18 +13,22 @@ export class Profile {
     interests: string[];
     hobbies: string[];
     visible: boolean;
+    photo: string;
+    curriculumvitae: string;
     createdAt?: string;
     updatedAt?: string;
     __v?: number;
 
     constructor(
-        idUser: { _id: string; username: string; email?: string },
+        idUser: { _id: string; username: string; email: string; role: string; isVerified: boolean },
         name: string,
         surname: string,
         profession: string,
         interests: string[] = [],
         hobbies: string[] = [],
         visible: boolean = false,
+        photo: string,
+        curriculumvitae: string,
         _id?: string,
         createdAt?: string,
         updatedAt?: string,
@@ -36,6 +42,8 @@ export class Profile {
         this.interests = interests;
         this.hobbies = hobbies;
         this.visible = visible;
+        this.photo = photo;
+        this.curriculumvitae = curriculumvitae;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.__v = __v;

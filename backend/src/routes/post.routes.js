@@ -4,14 +4,19 @@ import { createPost, deletePost, getPosts } from '../handlers/post.handler.js';
 
 const postRouter = Router();
 
-// Read 
-// NOTA: Averiguar porque no carga con verifyToken
+/* --------------------------------------------------------------------------
+ POST ROUTES
+-----------------------------------------------------------------------------
+ - GET      /posts                  -> Listar todas las publicaciones
+ - POST     /posts                  -> Crear nueva publicación
+ - DELETE   /posts/:id              -> Eliminar una publicación por ID
+-------------------------------------------------------------------------- */
+
+// [USER] Obtener todas las publicaciones 
 postRouter.get('/publications', verifyToken, getPosts);
-
-// Create
+// [USER] Crear nueva publicación
 postRouter.post('/create-post', verifyToken, createPost);
-
-// Delete
+// [USER] Eliminar publicación por ID
 postRouter.delete('/delete-post/:_id', verifyToken, deletePost);
 
 export default postRouter;

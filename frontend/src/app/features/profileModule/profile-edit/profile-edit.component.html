@@ -3,115 +3,111 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 
     <!-- TopAppBar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container py-2">
-            <!-- Brand -->
-            <a class="navbar-brand fw-bold text-uppercase">Red Social</a>
-        </div>
-    </nav>
+    <topAppBar />
 
     <!-- Page Content -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center py-5 bg-light">
         <div class="container">
-            <!-- Title Section -->
-            <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2">
-                <i class="bi bi-pencil-square fs-4 text-dark me-2"></i>
-                <h5 class="mb-0 fw-bold text-dark">Editar Perfil</h5>
+            <!-- Card Wrapper -->
+            <div class="card border-0 shadow-lg rounded-0">
+                <!-- Header -->
+                <div class="card-header bg-dark text-white rounded-0 py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i> Editar Perfil
+                    </h5>
+                </div>
+                <!-- Body -->
+                <div class="card-body bg-white p-3">
+                    <form (ngSubmit)="onUpdateProfile()" autocomplete="on">
+
+                        <!-- @name, @surname, @profession -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="name" class="bodyMedium">Nombre</label>
+                                <input id="name" name="name" type="text" [(ngModel)]="profile.name"
+                                    class="form-control rounded-0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="surname" class="bodyMedium">Apellidos</label>
+                                <input id="surname" name="surname" type="text" [(ngModel)]="profile.surname"
+                                    class="form-control rounded-0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="profession" class="bodyMedium">Profesión</label>
+                                <input id="profession" name="profession" type="text" [(ngModel)]="profile.profession"
+                                    class="form-control rounded-0">
+                            </div>
+                        </div>
+
+                        <!-- @interests, @hobbies -> @about -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="interests" class="bodyMedium">Intereses</label>
+                                <input id="interests" name="interests" type="text"
+                                    [ngModel]="profile.interests.join(', ')" (ngModelChange)="updateInterests($event)"
+                                    class="form-control rounded-0">
+                                <small class="text-muted bodySmall">Separa tus intereses por comas (,).</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hobbies" class="bodyMedium">Hobbies</label>
+                                <input id="hobbies" name="hobbies" type="text" [ngModel]="profile.hobbies.join(', ')"
+                                    (ngModelChange)="updateHobbies($event)" class="form-control rounded-0">
+                                <small class="text-muted bodySmall">Separa tus hobbies por comas (,).</small>
+                            </div>
+                        </div>
+
+                        <!-- @photo, @curriculumvitae -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="photo" class="bodyMedium">Foto de Perfil</label>
+                                <input id="photo" type="file" accept="image/*" class="form-control rounded-0"
+                                    (change)="onPhotoSelected($event)">
+                                <small class="text-muted bodySmall">Formatos: JPG, PNG, GIF (máx. 2MB)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="curriculumvitae" class="bodyMedium">Currículum Vitae</label>
+                                <input id="curriculumvitae" type="file" accept="application/pdf"
+                                    class="form-control rounded-0" (change)="onCVSelected($event)">
+                                <div>
+                                    <small class="text-muted me-2 bodySmall">Solo archivos PDF (máx. 2MB)</small>
+                                    <small class="text-primary bodySmall"
+                                        *ngIf="profile.curriculumvitae && !selectedCV">Ya tienes
+                                        un CV cargado</small>
+                                    <small class="text-success bodySmall" *ngIf="selectedCV">Nuevo CV cargado</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- @visible -->
+                        <div class="form-check form-switch mb-4">
+                            <input id="visibleSwitch" name="visible" class="form-check-input" type="checkbox"
+                                [(ngModel)]="profile.visible">
+                            <label for="visibleSwitch" class="form-check-label ms-2 bodyMedium">
+                                Mostrar mi perfil públicamente
+                            </label>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-dark rounded-0 px-4" (click)="goToProfile()">
+                                <i class="bi bi-arrow-left me-2"></i> Regresar
+                            </button>
+                            <button type="submit" class="btn btn-primary rounded-0 px-4 fw-semibold"
+                                [disabled]="loading || errorMessage">
+                                <i class="bi bi-save me-2"></i>
+                                {{ loading ? 'Guardando...' : 'Guardar' }}
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
-            <!-- Form Section -->
-            <form class="bg-white p-3" (ngSubmit)="onUpdateProfile()" *ngIf="!loading">
-                <!-- @name, @surname, @profession -->
-                <div class="row mb-3">
-                    <div class="form-group col">
-                        <label for="name" class="form-label">Nombre</label>
-                        <input type="text" [(ngModel)]="profile.name" name="name" class="form-control rounded-0"
-                            id="name">
-                    </div>
-
-                    <div class="form-group col">
-                        <label for="surname" class="form-label">Apellidos</label>
-                        <input type="text" [(ngModel)]="profile.surname" name="surname" class="form-control rounded-0"
-                            id="surname">
-                    </div>
-
-                    <div class="form-group col">
-                        <label for="profession" class="form-label">Profesión</label>
-                        <input type="text" [(ngModel)]="profile.profession" name="profession"
-                            class="form-control rounded-0" id="profession">
-                    </div>
-                </div>
-                <!-- @interests, @hobbies -->
-                <div class="row mb-3">
-                    <div class="form-group col">
-                        <label for="interests" class="form-label">Intereses</label>
-                        <input type="text" [ngModel]="profile.interests.join(', ')"
-                            (ngModelChange)="updateInterests($event)" name="interests" class="form-control rounded-0"
-                            id="interests">
-                        <small class="form-text text-muted">Separa tus Intereses entre 'comas'.</small>
-                    </div>
-                    <div class="form-group col">
-                        <label for="hobbies" class="form-label">Hobbies</label>
-                        <input type="text" [ngModel]="profile.hobbies.join(', ')"
-                            (ngModelChange)="updateHobbies($event)" name="hobbies" class="form-control rounded-0"
-                            id="hobbies">
-                        <small class="form-text text-muted">Separa tus Hobbies entre 'comas'.</small>
-                    </div>
-                </div>
-                <!-- @isVisible -->
-                <div class="row mb-3">
-                    <div class="form-group col d-flex align-items-center">
-                    <div class="form-check form-switch">
-                        <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="visibleSwitch"
-                        [(ngModel)]="profile.visible"
-                        name="visible"
-                        />
-                        <label class="form-check-label ms-2" for="visibleSwitch">
-                        Mostrar mi perfil públicamente
-                        </label>
-                    </div>
-                    </div>
-                </div>
-                <!-- [ACTIONS] -->
-                <div class="row">
-                    <div class="col text-start">
-                        <button type="button" class="btn btn-dark rounded-0" (click)="goToProfile()">
-                            <i class="bi bi-arrow-left me-2"></i> Regresar
-                        </button>
-                    </div>
-                    <div class="col text-end">
-                        <button type="submit" class="btn btn-primary rounded-0">
-                            <i class="bi bi-save me-2"></i> Actualizar Perfil
-                        </button>
-                    </div>
-                </div>
-            </form>
         </div>
     </main>
 
-
     <!-- BottomAppBar -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <div class="container">
-            <p class="m-0 small">&copy; Red Social 2025 — Todos los derechos reservados</p>
-        </div>
-    </footer>
-
+    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>
-
-
-<!-- <div class="row mb-3">
-    @foto
-    <div class="form-group col">
-        <label for="foto" class="form-label">Foto de Perfil</label>
-        <input class="form-control rounded-0" type="file" id="foto">
-    </div>
-    @curriculumvitae
-    <div class="form-group col">
-        <label for="curriculumvitae" class="form-label">Curriculum Vitae</label>
-        <input class="form-control rounded-0" type="file" id="curriculumvitae">
-    </div>
-</div> -->

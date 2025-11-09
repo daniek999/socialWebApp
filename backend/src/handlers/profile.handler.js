@@ -1,20 +1,15 @@
 import Profile from '../models/profile.js';
+import path from 'path';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
 
-// MARK: [GET] get All Profiles
-export const getAllProfiles = async (req, res) => {
-    try {
-        // Process
-        const profiles = await Profile.find();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-        // Result
-        res.status(200).json(profiles);
-    } catch (error) {
-        res.status(400).json({ message: 'Error: ' + error})
-    }
-}
+/* ----- [ PROFILE HANDLER] ----- */
 
-// MARK: [GET] get All Profiles
-export const getVisibleProfiles = async (req, res) => {
+// [GET] - 'profiles/'
+export const getCustomProfiles = async (req, res) => {
     try {
         // Process
         const visibleUserProfiles = await Profile
@@ -28,7 +23,20 @@ export const getVisibleProfiles = async (req, res) => {
     }
 };
 
-// MARK: [GET] get Self Profile
+// [GET] - 'profiles/all'
+export const getAllProfiles = async (req, res) => {
+    try {
+        // Process
+        const profiles = await Profile.find();
+
+        // Result
+        res.status(200).json(profiles);
+    } catch (error) {
+        res.status(400).json({ message: 'Error: ' + error})
+    }
+}
+
+// [GET] - 'profiles/self'
 export const getSelfProfile = async (req, res) => {
     try {
         // Params
@@ -38,7 +46,7 @@ export const getSelfProfile = async (req, res) => {
         // Process 
         const userProfile = await Profile
             .findOne({ idUser })
-            .populate("idUser", "username");
+            .populate("idUser", "username email role isVerified");
 
         // Verifications 
         if (!userProfile) {
@@ -52,34 +60,8 @@ export const getSelfProfile = async (req, res) => {
     }
 };
 
-// MARK: [PUT] edit Profile
-export const editProfile = async (req, res) => {
-    try {
-        // Params
-        const { name, surname, profession, interests, hobbies, visible, photo, curriculumvitae } = req.body;
-
-        // Process
-        const updatedProfile = await Profile.findOneAndUpdate(
-            { idUser: req.user.id },
-            { name, surname, profession, interests, hobbies, visible, photo, curriculumvitae },
-            { new: true, runValidators: true }
-        );
-
-        // Verifications
-        if (!updatedProfile) {
-            return res.status(404).json({ message: "Perfil no encontrado" });
-        }
-
-        // Result
-        res.status(200).json(updatedProfile);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Error al editar el perfil" });
-    }
-};
-
-// MARK: [GET] get Profile by Id
-export const getProfileById = async (req, res) => {
+// [GET] - 'profiles/:idUser'
+export const getOtherProfiles = async (req, res) => {
     try {
         // Params
         const { idUser } = req.params;
@@ -87,7 +69,7 @@ export const getProfileById = async (req, res) => {
         // Process
         const userProfile = await Profile
             .findOne({ idUser })
-            .populate("idUser", "username");
+            .populate("idUser", "username email role isVerified");
 
         // Verifications
         if (!userProfile) {
@@ -100,7 +82,84 @@ export const getProfileById = async (req, res) => {
         // Result
         res.status(200).json(userProfile);
     } catch (error) {
-        console.error(err);
+        console.error(error);
         res.status(500).json({ message: "Error al obtener perfil ajeno -> " + error });
     }
 }
+
+// [Put] - 'profiles/self-update'
+export const updateProfile = async (req, res) => {
+    try {
+        // [Params]
+        const idUser = req.user.id;                                                             // [Key]
+        const { name, surname, profession, interests, hobbies, visible } = req.body;            // [Req Data]
+        const updateProfileData = { name, surname, profession, interests, hobbies, visible };   // [new Data]
+
+        // [Process] 
+        const existingProfile = await Profile.findOne({ idUser });
+        // Manage uploaded files
+        if (req.files) {
+            // Photo
+            if (req.files.photo && req.files.photo[0]) {
+                // Eliminar foto antigua si existe
+                if (existingProfile?.photo) {
+                    await deleteOldFile(existingProfile.photo);
+                }
+                // Asignar nueva foto
+                updateProfileData.photo = `/uploads/photos/${req.files.photo[0].filename}`;
+            }
+            
+            // Curriculum Vitae
+            if (req.files.curriculumvitae && req.files.curriculumvitae[0]) {
+                // Eliminar CV antiguo si existe
+                if (existingProfile?.curriculumvitae) {
+                    await deleteOldFile(existingProfile.curriculumvitae);
+                }
+                // Asignar nuevo CV
+                updateProfileData.curriculumvitae = `/uploads/cvs/${req.files.curriculumvitae[0].filename}`;
+            }
+        }
+        // Update the profile
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { idUser }, updateProfileData, { new: true, runValidators: true }
+        );
+
+        // [Verifications]
+        if (!updatedProfile) {
+            // Si hay error y se subieron archivos, eliminarlos
+            if (req.files?.photo?.[0]) {
+                await deleteOldFile(`/uploads/photos/${req.files.photo[0].filename}`);
+            }
+            if (req.files?.curriculumvitae?.[0]) {
+                await deleteOldFile(`/uploads/cvs/${req.files.curriculumvitae[0].filename}`);
+            }
+            return res.status(404).json({ message: "Perfil no encontrado" });
+        }
+
+        // [Result]
+        res.status(200).json(updatedProfile);
+    } catch (error) {
+        if (req.files?.photo?.[0]) {
+            await deleteOldFile(`/uploads/photos/${req.files.photo[0].filename}`);
+        }
+        if (req.files?.curriculumvitae?.[0]) {
+            await deleteOldFile(`/uploads/cvs/${req.files.curriculumvitae[0].filename}`);
+        }
+        console.error(error);
+        res.status(500).json({ message: "Error al editar el perfil -> " + error });
+    }
+};
+
+
+// MARK: Auxiliar Functions.
+const deleteOldFile = async (filePath) => {
+    if (filePath) {
+        try {
+            const fullPath = path.join(__dirname, '../../uploads', filePath.replace('/uploads/', ''));
+            await fs.unlink(fullPath);
+            console.log('Archivo antiguo eliminado:', filePath);
+        } catch (error) {
+            console.log('Error eliminando archivo antiguo:', error.message);
+        }
+    }
+};

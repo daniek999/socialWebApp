@@ -1,0 +1,29 @@
+<footer class="text-white text-center mt-auto">
+    <ng-container [ngSwitch]="type">
+
+        <!-- onSuccess -->
+        <div *ngSwitchCase="'success'" class="d-flex align-items-center justify-content-center gap-2 bg-success py-3">
+            <i class="bi bi-check-circle-fill"></i>
+            <p class="m-0 bodySmall fw-bold">{{ message }}</p>
+        </div>
+
+        <!-- onError -->
+        <div *ngSwitchCase="'error'" class="d-flex align-items-center justify-content-center gap-2 bg-danger py-3">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <p class="m-0 bodySmall fw-bold">{{ message }}</p>
+        </div>
+
+        <!-- onWarning -->
+        <div *ngSwitchCase="'warning'" class="d-flex align-items-center justify-content-center gap-2 bg-warning text-dark py-3">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+            <p class="m-0 bodySmall fw-bold">{{ message }}</p>
+        </div>
+
+        <!-- onDefault -->
+        <div *ngSwitchDefault class="d-flex align-items-center justify-content-center gap-2 bg-dark py-3">
+            <i class="bi bi-c-circle"></i>
+            <p class="m-0 bodySmall fw-bold">Red Social 2025 — Todos los derechos reservados.</p>
+        </div>
+
+    </ng-container>
+</footer>

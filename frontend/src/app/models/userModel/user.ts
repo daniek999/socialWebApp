@@ -1,5 +1,5 @@
 export class User {
-    _id?: string;
+    _id: string;
     username: string;
     email: string;
     password?: string; // opcional -> Verificar su estancia en el front!!!
@@ -8,10 +8,10 @@ export class User {
     __v?: number;
 
     constructor(
+        _id: string,
         username: string,
         email: string,
         password?: string,
-        _id?: string,
         createdAt?: string,
         updatedAt?: string,
         __v?: number

@@ -14,5 +14,5 @@ import { PostUpdateComponent } from './features/postModule/post-update/post-upda
     styleUrl: './app.component.css'
 })
 export class AppComponent {
-    title = 'frontend';
+    title = 'Red Social';
 }

@@ -19,6 +19,37 @@ input:-webkit-autofill:active {
     font-family: "Exo 2", sans-serif !important;
 }
 
+/* MARK: Matherials */
+
+:root {
+    /* Colors */
+    --background: #131313;
+    --surface: #242325;
+    --onSurface: #F4EAEA;
+    --onSurfaceVariant: #B1B1B1;
+    --primary: #ffcc66;
+    --secondary: #99cc99;
+    --tertiary: #f2777a;
+    --action: #3DA5D9;
+    /* Typography */
+    --bodyLarge: normal normal bold 20px "Exo 2", sans-serif;
+    --bodyMedium: normal normal normal 16px "Exo 2", sans-serif;
+    --bodySmall: italic normal normal 13px "Exo 2", sans-serif;
+    /* Icons */
+    --iconDefault: 24px;
+}
+
+.bodySmall {
+    font: var(--bodySmall);
+}
+.bodyMedium {
+    font: var(--bodyMedium);
+}
+.bodyLarge {
+    font: var(--bodyLarge);
+}
+
+
 /* === [ Groups ] === */
 .cst-form-group {
     display: flex;

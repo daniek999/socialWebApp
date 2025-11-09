@@ -1,65 +1,126 @@
 import User from "../models/user.js";
 import Post from '../models/post.js';
-import Profile from '../models/profile.js';
+import Profile from "../models/profile.js";
 
+/* ----- [ USER HANDLER] ----- */
 
-// MARK: [GET] getAllUsers
+// [GET] Obtener todos los usuarios (Admin)
 export const getUsers = async (req, res) => {
     try {
+        // Process
         const users = await User.find();
-        
-        res.status(200).json(users);
+
+        // Result
+        return res.status(200).json({
+            success: true,
+            message: 'Usuarios obtenidos correctamente.',
+            data: users,
+        });
     } catch (error) {
-        res.status(400).json({ message: 'Error: ' + error})
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener los usuarios.',
+            error: error.message,
+        });
     }
-}
+};
 
-// MARK: [GET] getUserById
-export const getUserById = async (req, res) => {
+// [GET] Obtener usuario propio (Admin)
+export const getSelfUser = async (req, res) => {
     try {
-        // Param
-        const idUser = req.params._id;
+        // Params from Payload
+        const idUser = req.user.id;
 
-        // Function
-        const userData = await User.findById( idUser );
-
-        if (!userData) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        // Response
-        res.status(200).json( userData )
-    } catch (error) {
-        res.status(400).json({ message: 'Error: ' + error})
-    }
-}
-
-// MARK: [DELETE] deleteUser
-export const deleteUser = async (req, res) => {
-    try {
-        // Param
-        const idUser = req.params._id
+        // Process
+        const userData = await User.findById(idUser);
 
         // Verifications
-        const user = await User.findById(idUser);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        if (!userData) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado.',
+            });
         }
 
-        // Function
-        await Promise.all([
-            Post.deleteMany({ idUser }),
-            Profile.deleteOne({ idUser }),
-        ]);
+        // Result
+        res.status(200).json({
+            success: true,
+            message: 'Usuario obtenido correctamente.',
+            data: userData,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener el usuario autenticado.',
+            error: error.message,
+        });
+    }
+};
 
+// [GET] Obtener usuario diferente (Admin)
+export const getOtherUsers = async (req, res) => {
+    try {
+        // Params
+        const { idUser } = req.params;
+
+        // Process
+        const userData = await User.findById(idUser);
+
+        // Verifications
+        if (!userData) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado.',
+            });
+        }
+
+        // Result
+        res.status(200).json({
+            success: true,
+            message: 'Usuario obtenido correctamente.',
+            data: userData,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener el usuario.',
+            error: error.message,
+        });
+    }
+};
+
+// [DELETE] Eliminar usuario por ID (Admin)
+export const deleteUser = async (req, res) => {
+    try {
+        // Params
+        const { idUser } = req.params;
+
+        // Process
+        const userToDelete = await User.findById(idUser);
+        
+        // Verifications
+        if (!userToDelete) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado.',
+            });
+        }
+        await Promise.all([
+            Post.deleteMany({ idUser: idUser }),
+            Profile.deleteOne({ idUser: idUser }),
+        ]);
         await User.findByIdAndDelete(idUser);
 
-        // Response
-        res.json({ message: "Usuario y datos relacionados eliminados correctamente" });
+        // Result
+        res.status(200).json({
+            success: true,
+            message: `El usuario "${userToDelete.username}" y sus datos relacionados fueron eliminados correctamente.`,
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Error del servidor -> ' + error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar el usuario.',
+            error: error.message,
+        });
     }
-}
-
-// MARK: [PUT] updateUser *stand by*
-
+};

@@ -1,6 +1,8 @@
 import Post from '../models/post.js';
 
-// MARK: [POST] createPost
+/* ----- [ POST HANDLER] ----- */
+
+// [POST] - 'posts/publications'
 export const createPost = async(req, res) => {
     try {
         // Params
@@ -21,7 +23,7 @@ export const createPost = async(req, res) => {
     }
 };
 
-// MARK: [GET] getPosts
+// [GET] - 'auth/create-post'
 export const getPosts = async(req, res) => {
     try {
         // Process
@@ -36,7 +38,7 @@ export const getPosts = async(req, res) => {
     }
 };
 
-// MARK: [DELETE] deletePost
+// [DELETE] - 'auth/delete-post/:_id'
 export const deletePost = async (req, res) => {
     try {
         // Params

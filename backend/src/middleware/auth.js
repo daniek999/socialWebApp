@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
-// Verify JWT
+// Verify Token (JWT)
 export const verifyToken = async (req, res, next) => {
     try {
         // 1) Read the Token and mix with the Bearer
@@ -23,8 +23,9 @@ export const verifyToken = async (req, res, next) => {
         req.user = { 
             id: user._id.toString(), 
             username: user.username, 
-            email: user.email ,
-            role: user.role
+            email: user.email,
+            role: user.role,
+            isVerified: user.isVerified
         };
 
         next();
@@ -34,7 +35,7 @@ export const verifyToken = async (req, res, next) => {
     }
 };
 
-// Verify Role
+// Verify Admin Role
 export const verifyAdmin = (req, res, next) => {
 
     if (req.user.role !== 'admin') {

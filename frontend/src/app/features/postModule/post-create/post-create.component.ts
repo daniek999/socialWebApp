@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PostsService } from '../../../core/services/posts/posts.service';
+import { PostService } from '../../../core/services/post.service';
 
 @Component({
     selector: 'app-post-create',
@@ -11,7 +11,7 @@ import { PostsService } from '../../../core/services/posts/posts.service';
 export class PostCreateComponent implements OnInit {
     posts: any[] = [];
 
-    constructor(private postService: PostsService) { }
+    constructor(private postService: PostService) { }
 
     ngOnInit() {
         this.postService.getPosts().subscribe(data => {

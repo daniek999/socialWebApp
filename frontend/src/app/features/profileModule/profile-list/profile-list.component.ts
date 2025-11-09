@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/services/users/auth.service';
 import { Profile } from '../../../models/profileModel/profile';
-import { ProfilesService } from '../../../core/services/profiles/profiles.service';
-import { NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { ProfileService } from '../../../core/services/profile.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 
 @Component({
-  selector: 'app-profile-list',
-  standalone: true,
-  imports: [NgIf, NgFor],
-  templateUrl: './profile-list.component.html',
-  styleUrl: './profile-list.component.css'
+    selector: 'app-profile-list',
+    standalone: true,
+    imports: [NgIf, NgFor, TopWebBarComponent, NgClass],
+    templateUrl: './profile-list.component.html',
+    styleUrl: './profile-list.component.css'
 })
 export class ProfileListComponent implements OnInit {
 
@@ -21,46 +22,37 @@ export class ProfileListComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private authService: AuthService,
-        private profileService: ProfilesService
-    ) {}
+        private profileService: ProfileService
+    ) { }
 
-    // Added Functions
+    /* ============================
+    // MARK: [Component Functions]
+    ============================ */
     ngOnInit() {
         this.loadProfiles();
     }
     loadProfiles() {
         this.profileService.getAllProfiles().subscribe({
-           next: (data) => {
-               this.profiles = data
-           },
-           error: (err) =>  {
-                this.setError(err.error?.message);
-           },
+            next: (data) => this.setProfiles(data),
+            error: (error) => this.setError(error.error?.message ?? 'Error al cargar perfiles'),
         });
     }
-    logout() {
-        this.authService.logout();
-        this.router.navigate(['/login']);
-    }
 
-    // Navigation Functions
-    goToHome() {
-        this.router.navigate(['/home']);
-    }
-    goToProfile() {
-        this.router.navigate(['/profile']);
-    }
-    goToCommunity() {
-        this.router.navigate(['/list-profile'])
-    }
+    // [Navigation]
     goToSelectedProfile(id: string) {
         this.router.navigate(['/profile', id]);
     }
-    
-    // Set Visual Functions
+
+    // [Setting Data]
+    private setProfiles(profiles: Profile[]): void {
+        for (let index = 0; index < profiles.length; index++) {
+            const element = profiles[index];
+        }
+        this.profiles = profiles;
+        console.log(this.profiles)
+    }
     private setError(message: string) {
-        this.errorMessage = message; 
+        this.errorMessage = message;
     }
 
 }

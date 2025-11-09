@@ -3,13 +3,19 @@ import { login, register, verifyEmail } from "../handlers/auth.handler.js";
 
 const authRoutes = Router();
 
-// Register User
+/* --------------------------------------------------------------------------
+ AUTH ROUTES
+-----------------------------------------------------------------------------
+ - POST     /auth/register          -> Registrar nuevo usuario
+ - POST     /auth/login             -> Iniciar sesión
+ - GET      /auth/verify/:token     -> Verificar cuenta de usuario por token
+-------------------------------------------------------------------------- */
+
+// [PUBLIC] Registrar nuevo usuario
 authRoutes.post('/register', register);
-
-// Login User
+// [PUBLIC] Iniciar sesión de usuario
 authRoutes.post('/login', login);
-
-// Mail User Verification
+// [PUBLIC] Verificar correo electrónico mediante token
 authRoutes.get('/verify/:token', verifyEmail)
 
 export default authRoutes;

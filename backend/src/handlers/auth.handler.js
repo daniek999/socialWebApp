@@ -5,14 +5,15 @@ import jwt from 'jsonwebtoken';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { sendVerificationMail } from '../utils/mailer.js';
 
+/* ----- [ AUTH HANDLER] ----- */
 
-// MARK: Register
+// [POST] - 'auth/register'
 export const register = async (req, res) => {
     try {
-        // 1. params
+        // Params
         const { email, username, password, role } = req.body;
 
-        // 2. verifications
+        // Verifications
         if (!email || !username || !password) {
             return res.status(400).json({ message: 'Todos los campos deben ser llenados.' })
         }
@@ -25,10 +26,9 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: 'La clave debe tener al menos 12 caracteres.' });
         }
 
-        // 3. process
+        // Process
         const salt = await genSalt(10);
         const hashedPass = await hash(password, salt);
-
         const newUser = new User({
             username,
             email,
@@ -36,7 +36,6 @@ export const register = async (req, res) => {
             role,
         });
         await newUser.save();
-
         const newProfile = new Profile({
             idUser: newUser._id,
             name: 'Tus Nombres',
@@ -49,16 +48,16 @@ export const register = async (req, res) => {
             curriculumvitae: ""
         });
         await newProfile.save();
-
-        // 4. result
         const temporalMailToken = jwt.sign(
             { id: newUser._id },
             process.env.JWT_SECRET,
             { expiresIn: '15m' }
         );
         await sendVerificationMail(email, temporalMailToken);
+
+        // Response
         return res.status(201).json({
-            message: 'Cuenta creada correctamente.',
+            message: 'Revisa tu correo para terminar tu registro.',
             user: newUser,
             profile: newProfile
         });
@@ -67,7 +66,7 @@ export const register = async (req, res) => {
     }
 };
 
-// MARK: Login
+// [POST] - 'auth/login'
 export const login = async (req, res) => {
     try {
         // 1. params
@@ -88,7 +87,7 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: 'Clave incorrecta.' });
 
         // 3. process
-        const payload = { id: user._id, username: user.username, email: user.email, role: user.role };
+        const payload = { id: user._id, username: user.username, email: user.email, role: user.role, isVerified: user.isVerified };
         const key = process.env.JWT_SECRET;
         // Create a digital signature [payload, key, options]
         const token = jwt.sign(
@@ -108,7 +107,7 @@ export const login = async (req, res) => {
     }
 };
 
-// MARK: Mail Verificator
+// [GET] - 'auth/verify/:token'
 export const verifyEmail = async (req, res) => {
     try {
         const { token } = req.params;

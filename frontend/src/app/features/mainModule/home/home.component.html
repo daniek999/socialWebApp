@@ -2,37 +2,7 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 
     <!-- TopAppBar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container py-2">
-            <!-- Brand -->
-            <a class="navbar-brand fw-bold text-uppercase">Red Social</a>
-            <!-- Links -->
-            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-                <ul class="navbar-nav d-flex align-items-center gap-2">
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToHome()">
-                            <i class="bi bi-house-door-fill"></i> Home
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToProfile()">
-                            <i class="bi bi-person-fill"></i> Perfil
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-0 border-0" (click)="goToCommunity()">
-                            <i class="bi bi-people-fill"></i> Comunidad
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-outline-danger rounded-0 border-0" (click)="logout()">
-                            <i class="bi bi-box-arrow-right me-2"></i> LogOut
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <topAppBar />
 
     <!-- Page Content -->
     <main class="flex-grow-1 d-flex align-items-center justify-content-center">
@@ -53,18 +23,18 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Título</label>
                                     <input type="text" class="form-control rounded-0" name="title"
-                                        placeholder="Ej. Mi nuevo proyecto" required />
+                                        placeholder="Ej. Mi nuevo proyecto" required disabled />
                                 </div>
 
                                 <!-- @content -->
                                 <div class="mb-3 flex-grow-1">
                                     <label class="form-label fw-semibold">Contenido</label>
                                     <textarea class="form-control rounded-0 h-100" rows="5" name="content"
-                                        placeholder="¿Qué estás pensando?" required></textarea>
+                                        placeholder="¿Qué estás pensando?" required disabled></textarea>
                                 </div>
 
                                 <!-- [Action] -->
-                                <button type="submit" class="btn btn-outline-dark rounded-0 w-100 fw-bold">
+                                <button type="submit" class="btn btn-outline-dark rounded-0 w-100 fw-bold" disabled>
                                     <i class="bi bi-send-fill me-1"></i> Publicar
                                 </button>
                             </form>
@@ -115,15 +85,15 @@
     </main>
 
     <!-- BottomAppBar -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <div class="container">
-            <p class="m-0 small">&copy; Red Social 2025 — Todos los derechos reservados</p>
+    <footer class="text-white text-center py-3 mt-auto" [ngClass]="errorMessage ? 'bg-danger' : 'bg-dark'">
+        <!-- Si hay error -->
+        <div *ngIf="errorMessage; else noError">
+            <p class="m-0 bodySmall">Error: [{{ errorMessage }}]</p>
         </div>
+        <!-- Si no hay error -->
+        <ng-template #noError>
+            <p class="m-0 bodySmall">&copy; Red Social 2025 — Todos los derechos reservado.</p>
+        </ng-template>
     </footer>
-
-    <!-- Error -->
-    <p *ngIf="errorMessage" class="text-danger text-center mt-4 fw-bold">
-        {{ errorMessage }}
-    </p>
 
 </body>
