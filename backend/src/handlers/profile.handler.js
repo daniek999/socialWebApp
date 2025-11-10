@@ -15,6 +15,7 @@ export const getCustomProfiles = async (req, res) => {
         const visibleUserProfiles = await Profile
             .find({visible: true})
             .populate("idUser", "username")
+            .select('-curriculumvitae');
 
         // Result
         res.status(200).json(visibleUserProfiles);
@@ -92,10 +93,15 @@ export const updateProfile = async (req, res) => {
     try {
         // [Params]
         const idUser = req.user.id;                                                             // [Key]
-        const { name, surname, profession, interests, hobbies, visible } = req.body;            // [Req Data]
-        const updateProfileData = { name, surname, profession, interests, hobbies, visible };   // [new Data]
+        const { name, surname, profession, employmentStatus, about, visible } = req.body;       // [Req Data]
+        const updateProfileData = { name, surname, profession, employmentStatus, about, visible };   // [new Data]
 
         // [Process] 
+        // Validate the employmentStatus
+        const validStatuses = ['Estudiante', 'Buscando', 'Practicante', 'Empleado'];
+        if (employmentStatus && !validStatuses.includes(employmentStatus)) {
+            return res.status(400).json({ message: `Estado de empleo inválido. Debe ser uno de: ${validStatuses.join(', ')}` });
+        }
         const existingProfile = await Profile.findOne({ idUser });
         // Manage uploaded files
         if (req.files) {
@@ -108,7 +114,6 @@ export const updateProfile = async (req, res) => {
                 // Asignar nueva foto
                 updateProfileData.photo = `/uploads/photos/${req.files.photo[0].filename}`;
             }
-            
             // Curriculum Vitae
             if (req.files.curriculumvitae && req.files.curriculumvitae[0]) {
                 // Eliminar CV antiguo si existe

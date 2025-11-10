@@ -19,16 +19,14 @@ const profileSchema = new Schema({
         type: String,
         trim: true
     },
-    interests: [
-        { type: String }
-    ],
-    hobbies: [
-        { type: String }
-    ],
-    visible: {
-        type: Boolean,
-        required: true,
-        default: false
+    employmentStatus: {
+        type: String,
+        enum: ['Estudiante', 'Buscando', 'Practicante', 'Empleado'],
+        default: 'Estudiante'
+    },
+    about: {
+        type: String,
+        trim: true
     },
     photo: {
         type: String,
@@ -37,6 +35,11 @@ const profileSchema = new Schema({
     curriculumvitae: {
         type: String,
         default: ""
+    },
+    visible: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 }, {timestamps: true});
 

@@ -2,12 +2,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
-import { Profile } from '../../../models/profileModel/profile';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../core/services/profile.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
+import { IProfilePopulated } from '../../../models/profile';
 
 @Component({
     selector: 'app-profile-detail',
@@ -28,7 +27,7 @@ export class ProfileDetailComponent implements OnInit {
     // MARK: [Params]
     ============================ */
     private apiUrl = 'http://localhost:4000';
-    profile: Profile | null = null;
+    profile: IProfilePopulated | null = null;
     // Estados de proceso
     isOwnProfile: boolean = false;
     successMessage: string = '';
@@ -56,30 +55,45 @@ export class ProfileDetailComponent implements OnInit {
         }
         console.log(this.isOwnProfile);
     }
-    // Función para obtener la URL completa de la foto
+    // [Getters]
+    // Obtener username de forma segura
+    getUsername(): string {
+        return this.profile?.idUser?.username || 'Usuario';
+    }
+    // Obtener email de forma segura
+    getEmail(): string {
+        return this.profile?.idUser?.email || 'email@ejemplo.com';
+    }
+    // Obtener nombre completo
+    getFullName(): string {
+        if (!this.profile) return 'Sin nombre';
+        const firstName = this.profile.name || '';
+        const lastName = this.profile.surname || '';
+        const fullName = `${firstName} ${lastName}`.trim();
+        return fullName || 'Sin nombre';
+    }
     getPhotoUrl(): string {
         if (this.profile?.photo) {
-            return `${this.apiUrl}${this.profile.photo}`;
+            return `http://localhost:4000${this.profile.photo}`;
         }
         return 'assets/img/default_user_photo.png';
     }
-    // Función para obtener la URL completa del CV
     getCVUrl(): string | null {
         if (this.profile?.curriculumvitae) {
             return `${this.apiUrl}${this.profile.curriculumvitae}`;
         }
         return null;
     }
-    // Función para descargar el CV
+    hasCurriculum(): boolean {
+        return !!this.profile?.curriculumvitae;
+    }
+
+    // [Actions]
     downloadCV() {
         const cvUrl = this.getCVUrl();
         if (cvUrl) {
             window.open(cvUrl, '_blank');
         }
-    }
-    // Verificar si hay CV disponible
-    hasCurriculum(): boolean {
-        return !!this.profile?.curriculumvitae;
     }
 
     // [Navigation]
@@ -90,12 +104,16 @@ export class ProfileDetailComponent implements OnInit {
         this.router.navigate(['/list-profile'])
     }
 
-    // [Setting Data]
-    private setProfile(profile: Profile) {
+    // [Private Methods]
+    private setProfile(profile: IProfilePopulated) {
         this.profile = profile;
+        console.log('Profile cargado:', profile);
     }
     private setError(message: string) {
         this.errorMessage = message;
+        setTimeout(() => {
+            this.errorMessage = '';
+        }, 5000);
     }
     
 }

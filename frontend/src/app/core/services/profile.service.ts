@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Profile } from '../../models/profileModel/profile';
+import { IProfile, IProfilePopulated } from '../../models/profile';
 
 @Injectable({
     providedIn: 'root'
@@ -34,32 +34,31 @@ export class ProfileService {
     // MARK: [Functions]
     ============================ */
     // Obtener todos los perfiles visibles
-    getAllProfiles(): Observable<Profile[]> {
+    getAllProfiles(): Observable<IProfilePopulated[]> {
         return this.http
-            .get<Profile[]>(`${this.BASE_URL}/`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated[]>(`${this.BASE_URL}/`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
     }
     // Obtener perfil propio
-    getSelfProfile(): Observable<Profile> {
+    getSelfProfile(): Observable<IProfilePopulated> {
         return this.http
-            .get<Profile>(`${this.BASE_URL}/self`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated>(`${this.BASE_URL}/self`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
     }
     // Obtener perfil de otro usuario
-    getOtherProfiles(idUser: string): Observable<Profile> {
+    getOtherProfiles(idUser: string): Observable<IProfilePopulated> {
         return this.http
-            .get<Profile>(`${this.BASE_URL}/${idUser}`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated>(`${this.BASE_URL}/${idUser}`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
     }
     // Actualizar perfil propio
-    updateProfile(formData: FormData): Observable<Profile> {
+    updateProfile(formData: FormData): Observable<IProfilePopulated> {
         const token = localStorage.getItem('token');
         // NO agregues Content-Type, se agrega automáticamente para multipart
         const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
         });
-
-        return this.http.put<Profile>(`${this.BASE_URL}/self-update`, formData, {
+        return this.http.put<IProfilePopulated>(`${this.BASE_URL}/self-update`, formData, {
         headers: headers
         });
     }

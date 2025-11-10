@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
 
@@ -10,7 +11,12 @@ export class AuthService {
 
     private user_url_base = 'http://localhost:4000/api/auth';
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private router: Router
+    ) {
+    }
+
 
     /* ============================
     // MARK: [Functions]

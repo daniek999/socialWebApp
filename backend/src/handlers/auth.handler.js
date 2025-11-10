@@ -41,11 +41,11 @@ export const register = async (req, res) => {
             name: 'Tus Nombres',
             surname: 'Tus Apellidos',
             profession: 'Tu Profesion',
-            interests: ['Interés número uno', 'Interés número dos'],
-            hobbies: ['Hobbie número uno', 'Hobbie número dos'],
-            visible: false,
+            employmentStatus: 'Estudiante',
+            about: 'Deja que te conozcan; escribe algo acerca de ti.',
             photo: "",
-            curriculumvitae: ""
+            curriculumvitae: "",
+            visible: false,
         });
         await newProfile.save();
         const temporalMailToken = jwt.sign(

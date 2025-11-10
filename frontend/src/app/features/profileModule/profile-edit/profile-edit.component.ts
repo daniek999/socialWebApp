@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Profile } from '../../../models/profileModel/profile';
 import { ProfileService } from '../../../core/services/profile.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
+import { IProfilePopulated } from '../../../models/profile';
 
 @Component({
     selector: 'app-profile-edit',
@@ -24,16 +24,15 @@ export class ProfileEditComponent implements OnInit {
     /* ============================
     // MARK: [Params]
     ============================ */
-    profile: Profile = {
-        idUser: { _id: '', username: '', email: '', role: '', isVerified: false },
+    profile: IProfilePopulated | null = null;
+    // Form data editable
+    editForm = {
         name: '',
         surname: '',
         profession: '',
-        interests: [],
-        hobbies: [],
-        visible: false,
-        photo: '',
-        curriculumvitae: ''
+        employmentStatus: 'Estudiante' as 'Estudiante' | 'Buscando' | 'Practicante' | 'Empleado',
+        about: '',
+        visible: false
     };
     // Estados de proceso
     loading = true;
@@ -42,6 +41,13 @@ export class ProfileEditComponent implements OnInit {
     // Archivos seleccionados
     selectedPhoto: File | null = null;
     selectedCV: File | null = null;
+    // Opciones para el select
+    employmentStatusOptions: Array<'Estudiante' | 'Buscando' | 'Practicante' | 'Empleado'> = [
+        'Estudiante',
+        'Buscando',
+        'Practicante',
+        'Empleado'
+    ];
 
     /* ============================
     // MARK: [Component Functions]
@@ -53,6 +59,15 @@ export class ProfileEditComponent implements OnInit {
         this.profileService.getSelfProfile().subscribe({
             next: (res) => {
                 this.profile = res;
+
+                this.editForm = {
+                    name: res.name || '',
+                    surname: res.surname || '',
+                    profession: res.profession || '',
+                    employmentStatus: res.employmentStatus || 'Estudiante',
+                    about: res.about || '',
+                    visible: res.visible
+                };
                 this.loading = false;
             },
             error: (err) => {
@@ -62,19 +77,22 @@ export class ProfileEditComponent implements OnInit {
         });
     }
     onUpdateProfile() {
-        // Process params
-        this.loading = true;
-        this.errorMessage = '';
-        this.successMessage = '';
+        // Basic Validations
+        // if (!this.editForm.name?.trim()) {
+        //     this.errorMessage = 'El nombre es obligatorio';
+        //     return;
+        // }
 
-        // Catch the form data from the 'Front'
+        // Preparing formData
         const formData = new FormData();
-        formData.append('name', this.profile.name);
-        formData.append('surname', this.profile.surname);
-        formData.append('profession', this.profile.profession);
-        formData.append('visible', this.profile.visible.toString());
-        formData.append('interests', (this.profile.interests || []).join(','));
-        formData.append('hobbies', (this.profile.hobbies || []).join(','));
+        formData.append('name', this.editForm.name);
+        formData.append('surname', this.editForm.surname);
+        formData.append('profession', this.editForm.profession);
+        formData.append('employmentStatus', this.editForm.employmentStatus);
+        formData.append('about', this.editForm.about);
+        formData.append('visible', this.editForm.visible.toString());
+
+        // Add files if they were selected
         if (this.selectedPhoto) {
             formData.append('photo', this.selectedPhoto);
         }
@@ -82,19 +100,48 @@ export class ProfileEditComponent implements OnInit {
             formData.append('curriculumvitae', this.selectedCV);
         }
 
-        // Send to data to the 'Backend'
+        // Send to backend
         this.profileService.updateProfile(formData).subscribe({
             next: (res) => {
+                this.profile = res;
                 this.successMessage = 'Perfil actualizado correctamente';
                 this.loading = false;
+                setTimeout(() => {
+                    this.successMessage = '';
+                }, 3000);
             },
             error: (err) => {
-                this.errorMessage = err.error?.message || 'Error al actualizar el perfil.';
+                this.errorMessage = err.error?.message || 'Error al actualizar el perfil';
                 this.loading = false;
                 console.error('Error al actualizar perfil:', err);
             }
         });
     }
+
+
+    // [Getters]
+    getPhotoUrl(): string {
+        if (this.profile?.photo) {
+            return `http://localhost:4000${this.profile.photo}`;
+        }
+        return 'assets/img/default_user_photo.png';
+    }
+    getCVUrl(): string | null {
+        if (this.profile?.curriculumvitae) {
+            return `http://localhost:4000${this.profile.curriculumvitae}`;
+        }
+        return null;
+    }
+    hasPhoto(): boolean {
+        return !!this.profile?.photo;
+    }
+    hasCV(): boolean {
+        return !!this.profile?.curriculumvitae;
+    }
+    getUsername(): string {
+        return this.profile?.idUser?.username || 'Usuario';
+    }
+
 
     /* ============================
     // MARK: [File Handlers]
@@ -144,15 +191,6 @@ export class ProfileEditComponent implements OnInit {
         this.errorMessage = '';
     }
 
-    /* ============================
-    // MARK: [Helper Functions]
-    ============================ */
-    updateInterests(value: string) {
-        this.profile.interests = value.split(',').map(i => i.trim());
-    }
-    updateHobbies(value: string) {
-        this.profile.hobbies = value.split(',').map(i => i.trim());
-    }
 
     /* ============================
     // MARK: [ Nav. Functions]
@@ -160,5 +198,4 @@ export class ProfileEditComponent implements OnInit {
     goToProfile() {
         this.router.navigate(['/profile']);
     }
-
 }
