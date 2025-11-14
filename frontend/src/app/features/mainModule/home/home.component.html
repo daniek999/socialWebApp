@@ -1,23 +1,23 @@
 <!-- Home Component -->
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- TopAppBar -->
+    <!-- HEADER -->
     <topAppBar />
 
-    <!-- Page Content -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+    <!-- MAIN -->
+    <main class="flex-grow-1 d-flex align-items-start justify-content-center py-5">
         <div class="container">
-            <div class="row" style="height: calc(100vh - 160px);">
-                <!-- Left Column: Form -->
-                <div class="col-lg-4">
+            <div class="h-100 row">
+                <!-- LEFT PANEL: Form -->
+                <div class="col-md-4 d-flex flex-column mb-3">
                     <!-- Title Section -->
-                    <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2">
-                        <i class="bi bi-pencil-square fs-4 text-dark me-2"></i>
-                        <h5 class="mb-0 fw-bold text-dark">Crear Nuevo Post</h5>
+                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                        <i class="bi bi-pencil-square fs-4 text-light me-2"></i>
+                        <h5 class="mb-0 fw-bold text-light">Crear Nuevo Post</h5>
                     </div>
                     <!-- Content Section -->
-                    <div class="card border-0 rounded-0">
-                        <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="flex-grow-1 overflow-auto">
+                        <div class="bg-white p-3 card-body d-flex flex-column justify-content-between">
                             <form class="flex-grow-1 d-flex flex-column">
                                 <!-- @title -->
                                 <div class="mb-3">
@@ -41,12 +41,12 @@
                         </div>
                     </div>
                 </div>
-                <!-- Right Column: Posts -->
-                <div class="col-lg-8 h-100 d-flex flex-column">
+                <!-- LEFT PANEL: [POSTS] -->
+                <div class="col-md-8 d-flex flex-column">
                     <!-- Title Section -->
-                    <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2 flex-shrink-0">
-                        <i class="bi bi-collection fs-4 text-dark me-2"></i>
-                        <h5 class="mb-0 fw-bold text-dark">Publicaciones</h5>
+                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                        <i class="bi bi-collection fs-4 text-light me-2"></i>
+                        <h5 class="mb-0 fw-bold text-light">Publicaciones</h5>
                     </div>
                     <!-- Content Section -->
                     <div class="flex-grow-1 overflow-auto">
@@ -84,16 +84,8 @@
         </div>
     </main>
 
-    <!-- BottomAppBar -->
-    <footer class="text-white text-center py-3 mt-auto" [ngClass]="errorMessage ? 'bg-danger' : 'bg-dark'">
-        <!-- Si hay error -->
-        <div *ngIf="errorMessage; else noError">
-            <p class="m-0 bodySmall">Error: [{{ errorMessage }}]</p>
-        </div>
-        <!-- Si no hay error -->
-        <ng-template #noError>
-            <p class="m-0 bodySmall">&copy; Red Social 2025 — Todos los derechos reservado.</p>
-        </ng-template>
-    </footer>
+    <!-- FOOTER -->
+    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>

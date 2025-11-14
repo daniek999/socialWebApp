@@ -11,7 +11,14 @@ import { IProfilePopulated } from '../../../models/profile';
 @Component({
     selector: 'app-profile-detail',
     standalone: true,
-    imports: [FormsModule, HttpClientModule, NgIf, NgClass, TopWebBarComponent, BottomWebBarComponent],
+    imports: [
+        FormsModule, 
+        HttpClientModule, 
+        NgIf, 
+        NgClass, 
+        TopWebBarComponent,
+        BottomWebBarComponent
+    ],
     templateUrl: './profile-detail.component.html',
     styleUrl: './profile-detail.component.css'
 })
@@ -53,24 +60,22 @@ export class ProfileDetailComponent implements OnInit {
                 error: (error) => this.setError(error.error?.message)
             });
         }
-        console.log(this.isOwnProfile);
     }
     // [Getters]
-    // Obtener username de forma segura
-    getUsername(): string {
-        return this.profile?.idUser?.username || 'Usuario';
+    getUserRole(): string {
+        if (this.profile?.idUser.role !== 'user') {
+            return 'Administrador';
+        }
+        return 'Usuario';
     }
-    // Obtener email de forma segura
-    getEmail(): string {
-        return this.profile?.idUser?.email || 'email@ejemplo.com';
-    }
-    // Obtener nombre completo
-    getFullName(): string {
-        if (!this.profile) return 'Sin nombre';
-        const firstName = this.profile.name || '';
-        const lastName = this.profile.surname || '';
-        const fullName = `${firstName} ${lastName}`.trim();
-        return fullName || 'Sin nombre';
+    getUserCreatedAt(): string {
+        if (!this.profile?.idUser?.createdAt) return '';
+        const date = new Date(this.profile.idUser.createdAt);
+        return date.toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     }
     getPhotoUrl(): string {
         if (this.profile?.photo) {
@@ -88,14 +93,6 @@ export class ProfileDetailComponent implements OnInit {
         return !!this.profile?.curriculumvitae;
     }
 
-    // [Actions]
-    downloadCV() {
-        const cvUrl = this.getCVUrl();
-        if (cvUrl) {
-            window.open(cvUrl, '_blank');
-        }
-    }
-
     // [Navigation]
     goToEditProfile() {
         this.router.navigate(['/edit-profile'])
@@ -103,11 +100,17 @@ export class ProfileDetailComponent implements OnInit {
     goToCommunity() {
         this.router.navigate(['/list-profile'])
     }
+    downloadCV() {
+        const cvUrl = this.getCVUrl();
+        if (cvUrl) {
+            window.open(cvUrl, '_blank');
+        }
+    }
 
     // [Private Methods]
     private setProfile(profile: IProfilePopulated) {
         this.profile = profile;
-        console.log('Profile cargado:', profile);
+        //console.log('Profile cargado:', profile);
     }
     private setError(message: string) {
         this.errorMessage = message;

@@ -1,86 +1,101 @@
 <!-- Profile-List Component -->
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- TopAppBar -->
-    <topAppBar/>
+    <!-- HEADER -->
+    <topAppBar />
 
-    <!-- Page Content -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-        <div class="container" style="height: 85vh;">
-            <div class="h-100 d-flex flex-column">
-                <!-- Title Section -->
-                <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2 flex-shrink-0">
-                    <i class="bi bi-people-fill fs-4 text-dark me-2"></i>
-                    <h5 class="mb-0 fw-bold text-dark">Comunidad</h5>
+    <!-- MAIN -->
+    <main class="flex-grow-1 d-flex align-items-start justify-content-center py-5">
+        <div class="container">
+            <div class="h-100 row">
+                <!-- LEFT PANEL: [FRIENDS] -->
+                <div class="col-md-3 d-flex flex-column mb-3">
+                    <!-- Title -->
+                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                        <i class="bi bi-person-heart fs-4 text-light me-2"></i>
+                        <h5 class="mb-0 fw-bold text-light">Amigos</h5>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-grow-1 overflow-auto" style="max-height: calc(85vh - 70px);">
+                        <!-- Ejemplo de lista de amigos -->
+                        <div *ngIf="profiles && profiles.length > 0; else noFriends">
+                            <ul class="list-group rounded-0">
+                                <li *ngFor="let friend of profiles.slice(0, 6)"
+                                    class="list-group-item border-0 border-bottom py-2 d-flex align-items-center">
+                                    <img [src]="getPhotoUrl(friend)" alt="Foto de {{ getFullName(friend) }}"
+                                        class="rounded-circle me-2" width="40" height="40" style="object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 fw-semibold small">{{ getFullName(friend) }}</p>
+                                        <small class="text-muted">{{ friend.profession || 'Sin profesión' }}</small>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Si no hay amigos -->
+                        <ng-template #noFriends>
+                            <div class="alert alert-light text-center small border rounded-0">
+                                <i class="bi bi-emoji-smile me-1"></i> Sin amigos todavía.
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
-                <!-- Content Section -->
-                <div class="flex-grow-1 overflow-auto pe-2" style="max-height: calc(85vh - 70px);">
-                    <!-- IF -->
-                    <div *ngIf="profiles && profiles.length > 0; else noProfiles">
-                        <div class="d-flex flex-column gap-4">
-                            <div *ngFor="let profile of profiles" class="card border-0 rounded-0 shadow-sm">
-                                <div class="card-body p-3">
-                                    <!-- Cabecera -->
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <div>
-                                            <h5 class="card-title fw-bold mb-1 text-primary">
-                                                {{ profile.name + " " + profile.surname }}
-                                            </h5>
-                                            <p class="text-muted small mb-0">
-                                                <i class="bi bi-person-badge me-1"></i>
-                                                {{ profile.profession || 'Sin profesión' }}
-                                            </p>
+                <!-- RIGHT PANEL: [PROFILE] -->
+                <div class="col-md-9 d-flex flex-column">
+                    <!-- Title -->
+                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                        <i class="bi bi-people-fill fs-4 text-light me-2"></i>
+                        <h5 class="mb-0 fw-bold text-light">Comunidad</h5>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-grow-1 overflow-auto pe-2" style="max-height: calc(85vh - 70px);">
+                        <div *ngIf="profiles && profiles.length > 0; else noProfiles">
+                            <div class="row g-3">
+                                <div *ngFor="let profile of profiles" class="col-md-6 col-lg-4">
+                                    <div class="card border-0 rounded-0 h-100">
+                                        <div class="card-body d-flex flex-column border border-dark-subtle">
+                                            <!-- Cabecera -->
+                                            <div class="d-flex flex-column align-items-center mb-3">
+                                                <img [src]="getPhotoUrl(profile)"
+                                                    alt="Foto de {{ getFullName(profile) }}"
+                                                    class="border-0 rounded-0 mb-2" width="120" height="120"
+                                                    style="object-fit: cover;" />
+                                                <p class="bodyLarge fw-bold mb-0 text-dark">
+                                                    {{ getFullName(profile) }}
+                                                </p>
+                                                <p class="bodySmall text-secondary small mb-0">
+                                                    {{ profile.profession || 'Sin profesión' }}
+                                                </p>
+                                            </div>
+                                            <!-- Acciones -->
+                                            <div class="d-flex justify-content-between border-top pt-3">
+                                                <button class="btn btn-outline-secondary btn-sm rounded-0" disabled>
+                                                    <i class="bi bi-person-plus me-1"></i> Agregar
+                                                </button>
+                                                <button class="btn btn-outline-primary btn-sm rounded-0"
+                                                    (click)="goToSelectedProfile(profile.idUser._id)">
+                                                    <i class="bi bi-eye me-1"></i> Ver Perfil
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <!-- Contenido -->
-                                    <div class="mb-2">
-                                        <!-- <p class="mb-1">
-                                            <strong>Intereses:</strong>
-                                            <span *ngIf="profile.interests">
-                                                {{ profile.interests.join(', ') }}
-                                            </span>
-                                        </p>
-                                        <p class="mb-1">
-                                            <strong>Hobbies:</strong>
-                                            <span *ngIf="profile.hobbies">
-                                                {{ profile.hobbies.join(', ') }}
-                                            </span>
-                                        </p> -->
-                                    </div>
-                                    <!-- Acciones -->
-                                    <div class="d-flex justify-content-end gap-2 mt-3">
-                                        <button class="btn btn-outline-secondary btn-sm rounded-0" disabled>
-                                            <i class="bi bi-person-plus me-1"></i> Agregar
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm rounded-0" (click)="goToSelectedProfile(profile.idUser._id)">
-                                            <i class="bi bi-eye me-1"></i> Ver Perfil Completo
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ELSE -->
+                        <ng-template #noProfiles>
+                            <div class="alert alert-secondary rounded-0 text-center fw-semibold">
+                                <i class="bi bi-exclamation-circle me-1"></i> Cargando Perfiles...
+                            </div>
+                        </ng-template>
                     </div>
-                    <!-- ELSE -->
-                    <ng-template #noProfiles>
-                        <div class="alert alert-secondary rounded-0 text-center fw-semibold">
-                            <i class="bi bi-exclamation-circle me-1"></i> Cargando Perfiles.
-                        </div>
-                    </ng-template>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- BottomAppBar -->
-    <footer class="text-white text-center py-3 mt-auto" [ngClass]="errorMessage ? 'bg-danger' : 'bg-dark'">
-        <!-- Si hay error -->
-        <div *ngIf="errorMessage; else noError">
-            <p class="m-0 bodySmall">Error: [{{ errorMessage }}]</p>
-        </div>
-        <!-- Si no hay error -->
-        <ng-template #noError>
-            <p class="m-0 bodySmall">&copy; Red Social 2025 — Todos los derechos reservado.</p>
-        </ng-template>
-    </footer>
+    <!-- FOOTER -->
+    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>

@@ -1,138 +1,137 @@
 <!-- Profile-Detail Component -->
-
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- TopAppBar -->
+    <!-- HEADER -->
     <topAppBar />
 
-    <!-- Page Content -->
-    <main class="flex-grow-1 py-5">
+    <!-- MAIN -->
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center bg-light py-5">
         <div class="container">
-            <!-- Fila principal -->
-            <div class="row g-4 align-items-stretch">
-                <!-- User Data (3/10) -->
-                <div class="col-md-4 col-lg-3">
-                    <div class="bg-white shadow-sm rounded-0 p-3 h-100 d-flex flex-column justify-content-between">
+            <div class="h-100 row">
+                <!-- LEFT PANEL: [USER] -->
+                <div class="col-md-3 d-flex flex-column mb-3">
+                    <!-- [User Data] -->
+                    <div class="rounded-0 h-100 d-flex flex-column justify-content-between">
                         <!-- Title -->
-                        <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2">
-                            <i class="bi bi-person-badge-fill fs-4 text-dark me-2"></i>
-                            <p class="bodyLarge m-0 fw-bold text-dark">Usuario</p>
+                        <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0" *ngIf="isOwnProfile">
+                            <i class="bi bi-file-earmark-lock2-fill fs-4 text-light me-2"></i>
+                            <h5 class="mb-0 fw-bold text-light">Usuario</h5>
+                        </div>
+                        <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0" *ngIf="!isOwnProfile">
+                            <i class="bi bi-gear-fill fs-4 text-light me-2"></i>
+                            <h5 class="mb-0 fw-bold text-light">Acciones</h5>
                         </div>
                         <!-- Content -->
-                        <div class="text-center flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                            <!-- @Photo -->
-                            <img [src]="getPhotoUrl()" alt="Foto de perfil" class="rounded-5" 
-                                width="120" height="120" style="object-fit: cover;" />
-
-                            <!-- If isn't your profile -->
+                        <div class="flex-grow-1 d-flex flex-column justify-content-start">
+                            <!-- Si no es tu perfil -->
                             <div class="text-center w-100" *ngIf="!isOwnProfile">
-                                <!-- Actions -->
-                                <div class="mt-3">
-                                    <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold" (click)="goToCommunity()">
+                                <div>
+                                    <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold w-100 mb-3"
+                                        (click)="goToCommunity()">
                                         <i class="bi bi-arrow-left"></i> Regresar
                                     </button>
-                                </div>
-                            </div>
-                            <!-- If is your profile -->
-                            <div class="text-center w-100" *ngIf="isOwnProfile">
-                                <!-- Data -->
-                                <div class="mt-3">
-                                    <h3 class="bodyMedium fw-bold mb-0">{{ profile?.idUser?.username }}</h3>
-                                    <small class="bodySmall text-muted d-block">{{ profile?.idUser?.email }}</small>
-                                </div>
-                                <!-- Actions -->
-                                <div class="mt-3">
-                                    <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold"
-                                        (click)="goToEditProfile()">
-                                        <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                                    <button class="btn btn-outline-primary rounded-0 btn-sm fw-bold w-100">
+                                        <i class="bi bi-person-plus"></i> Agregar
                                     </button>
                                 </div>
                             </div>
+                            <!-- Si es tu perfil -->
+                            <div class="text-start w-100" *ngIf="isOwnProfile">
+                                <div class="mb-3">
+                                    <!-- @username -->
+                                    <div class="bg-white border border-dark-subtle p-2 mb-2">
+                                        <p class="text-primary bodySmall mb-0">Usuario</p>
+                                        <p class="text-dark bodyMedium mb-0">{{ profile?.idUser?.username }}</p>
+                                    </div>
+                                    <!-- @email -->
+                                    <div class="bg-white border border-dark-subtle p-2 mb-2">
+                                        <p class="text-primary bodySmall mb-0">Email</p>
+                                        <p class="text-dark bodyMedium mb-0">{{ profile?.idUser?.email }}</p>
+                                    </div>
+                                    <!-- @role -->
+                                    <div class="bg-white border border-dark-subtle p-2 mb-2">
+                                        <p class="text-primary bodySmall mb-0">Rol</p>
+                                        <p class="text-dark bodyMedium mb-0">{{ getUserRole() }}</p>
+                                    </div>
+                                    <!-- @createdAt -->
+                                    <div class="bg-white border border-dark-subtle p-2 mb-2">
+                                        <p class="text-primary bodySmall mb-0">Registrado El</p>
+                                        <p class="text-dark bodyMedium mb-0">{{ getUserCreatedAt() }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Profile Data (7/10) -->
-                <div class="col-md-8 col-lg-9">
-                    <div class="bg-white shadow-sm rounded-0 p-3 h-100 d-flex flex-column">
+                <!-- LEFT PANEL: [PROFILE + ACHIEVEMENTS] -->
+                <div class="col-md-9 d-flex flex-column">
+                    <!-- [Profile Data] -->
+                    <div class="rounded-0 mb-3">
                         <div *ngIf="profile">
                             <!-- Title -->
-                            <div class="d-flex align-items-center justify-content-between border-bottom border-dark mb-3 pb-2">
-                                <!-- Título e ícono (derecha) -->
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-file-earmark-text-fill fs-4 text-dark"></i>
-                                    <p class="bodyLarge m-0 fw-bold text-dark">Perfil</p>
-                                </div>
-                                <!-- Estado de visibilidad (izquierda) -->
-                                <div *ngIf="isOwnProfile">
-                                    <span class="badge rounded-0 px-3 py-1 fw-semibold bodySmall"
-                                        [ngClass]="profile.visible ? 'bg-success text-white' : 'bg-danger text-white'">
-                                        {{ profile.visible ? 'Público' : 'Privado' }}
-                                    </span>
-                                </div>
+                            <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                                <i class="bi bi-person-badge-fill fs-4 text-light me-2"></i>
+                                <h5 class="mb-0 fw-bold text-light">Perfil</h5>
                             </div>
                             <!-- Content -->
-                            <div class="flex-grow-1 d-flex flex-column">
-                                <!-- Info personal -->
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <p class="m-0 text-secondary bodySmall">Nombre</p>
-                                        <p class="bodyMedium">{{ profile.name }}</p>
+                            <div class="border border-dark-subtle">
+                                <div class="d-flex flex-column flex-md-row align-items-start gap-3 p-3 bg-white">
+                                    <!-- @photo -->
+                                    <div class="text-center">
+                                        <img [src]="getPhotoUrl()" alt="Foto de perfil" width="160" height="160"
+                                            class="border-none rounded-0" style="object-fit: cover;" />
                                     </div>
-                                    <div class="col-md-4">
-                                        <p class="m-0 text-secondary bodySmall">Apellido</p>
-                                        <p class="bodyMedium">{{ profile.surname }}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p class="m-0 text-secondary bodySmall">Profesión</p>
-                                        <p class="bodyMedium">{{ profile.profession }}</p>
+                                    <!-- @name, @surname, @profession, @emplotmentStatus -->
+                                    <div class="flex-grow-1">
+                                        <p class="bodyLarge mb-3">{{ profile.name }} {{ profile.surname }}</p>
+                                        <p class="text-secondary bodySmall mb-0">Profesion</p>
+                                        <p class="bodyMedium mb-3">{{ profile.profession }}</p>
+                                        <p class="text-secondary bodySmall mb-0">Situacion</p>
+                                        <p class="bodyMedium mb-3">{{ profile.employmentStatus }}</p>
                                     </div>
                                 </div>
-                                <!-- Intereses -->
-                                <div class="mb-3">
-                                    <p class="mb-0 text-secondary bodySmall">Estado</p>
-                                    <p class="bodyMedium">
-                                        {{ profile.employmentStatus }}
+                                <div class="p-3 bg-white">
+                                    <!-- @about -->
+                                    <p class="text-secondary bodySmall mb-0">Sobre mí</p>
+                                    <p class="bodyMedium text-dark mb-0" style="white-space: pre-line;">
+                                        {{ profile.about || 'Sin descripción disponible.' }}
                                     </p>
                                 </div>
-                                <!-- Hobbies -->
-                                <div class="mb-3">
-                                    <p class="mb-0 text-secondary bodySmall">Acerca de mi</p>
-                                    <p class="bodyMedium">
-                                        {{ profile.about }}
-                                    </p>
+                                <div class="d-flex gap-3 pt-3 mt-auto p-3 bg-white">
+                                    <button class="btn flex-fill fw-bold rounded-0"
+                                        [ngClass]="hasCurriculum() ? 'btn-primary' : 'btn-secondary'"
+                                        [disabled]="!hasCurriculum()" (click)="downloadCV()">
+                                        <i class="bi bi-download me-1"></i>
+                                        {{ hasCurriculum() ? 'Ver CV' : 'CV no disponible' }}
+                                    </button>
+                                    <div *ngIf="isOwnProfile">
+                                        <button class="btn btn-outline-dark rounded-0 fw-bold" (click)="goToEditProfile()">
+                                            <i class="bi bi-pencil-square me-1"></i> Cambiar mi perfil
+                                        </button>
+                                    </div>
                                 </div>
-                                <!-- BOTÓN CV DINÁMICO -->
-                                <button class="btn rounded-0 w-100 fw-bold mt-auto"
-                                    [ngClass]="hasCurriculum() ? 'btn-primary' : 'btn-secondary'"
-                                    [disabled]="!hasCurriculum()" (click)="downloadCV()">
-                                    <i class="bi bi-download me-1"></i>
-                                    {{ hasCurriculum() ? 'Descargar CV' : 'CV no disponible' }}
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- Achievements Data -->
-            <div class="row mt-4">
-                <div class="col">
-                    <div class="bg-white shadow-sm rounded-0 p-3">
+                    <!-- [Achievements Data] -->
+                    <div class="rounded-0">
                         <!-- Title -->
-                        <div class="d-flex align-items-center border-bottom border-dark mb-3 pb-2">
-                            <i class="bi bi-bookmark-star-fill fs-4 text-dark me-2"></i>
-                            <p class="bodyLarge m-0 fw-bold text-dark">Logros</p>
+                        <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
+                            <i class="bi bi-bookmark-star-fill fs-4 text-light me-2"></i>
+                            <h5 class="mb-0 fw-bold text-light">Logros</h5>
                         </div>
                         <!-- Content -->
-                        <p class="text-muted bodySmall mb-3">Próximamente podrás ver tus logros y reconocimientos aquí.
+                        <p class="border border-dark-subtle bg-white text-muted bodySmall mb-0 p-3">
+                            Próximamente podrás ver tus logros y reconocimientos aquí.
                         </p>
-
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- BottomAppBar -->
-    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"  [message]="errorMessage || successMessage"/>
+    <!-- FOOTER -->
+    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>

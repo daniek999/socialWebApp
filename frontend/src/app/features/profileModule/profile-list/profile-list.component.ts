@@ -5,11 +5,12 @@ import { ProfileService } from '../../../core/services/profile.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { IProfilePopulated } from '../../../models/profile';
+import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
 
 @Component({
     selector: 'app-profile-list',
     standalone: true,
-    imports: [NgIf, NgFor, TopWebBarComponent, NgClass],
+    imports: [NgIf, NgFor, TopWebBarComponent, NgClass, BottomWebBarComponent],
     templateUrl: './profile-list.component.html',
     styleUrl: './profile-list.component.css'
 })
@@ -25,8 +26,8 @@ export class ProfileListComponent implements OnInit {
     ============================ */
     profiles: IProfilePopulated[] = [];
     loading: boolean = true;
-    successMessage: string | null = null;
-    errorMessage: string | null = null;
+    successMessage: string = '';
+    errorMessage: string = '';
 
 
     /* ============================
@@ -73,7 +74,7 @@ export class ProfileListComponent implements OnInit {
     private setError(message: string) {
         this.errorMessage = message;
         setTimeout(() => {
-            this.errorMessage = null;
+            this.errorMessage = '';
         }, 5000);
     }
 }

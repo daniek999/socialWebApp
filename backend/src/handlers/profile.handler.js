@@ -47,7 +47,7 @@ export const getSelfProfile = async (req, res) => {
         // Process 
         const userProfile = await Profile
             .findOne({ idUser })
-            .populate("idUser", "username email role isVerified");
+            .populate("idUser", "username email role isVerified createdAt");
 
         // Verifications 
         if (!userProfile) {
