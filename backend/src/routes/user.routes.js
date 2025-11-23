@@ -4,22 +4,28 @@ import { verifyAdmin, verifyToken } from '../middleware/auth.js';
 
 const userRouter = Router();
 
-/* ---------------------------------------------------------------------------
- USER ROUTES
----------------------------------------------------------------------------
- - GET      /users/                 -> Listar todos los usuarios
- - GET      /users/self             -> Obtener el perfil propio
- - GET      /users/:id              -> Obtener detalle de un usuario específico
- - DELETE   /users/:id              -> Eliminar usuario
---------------------------------------------------------------------------- */
+/* ==========================================================================
+ USER ROUTES [4]
+=============================================================================
+ - GET      /api/users/                                 -> Listar todos los usuarios
+ - GET      /api/users/self                             -> Obtener el perfil propio
+ - GET      /api/users/:id                              -> Obtener detalle de un usuario por Id
+ - DELETE   /api/users/:id                              -> Eliminar usuario por Id
+========================================================================== */
 
-// [ADMIN] Obtener todos los usuarios
-userRouter.get('/', verifyToken, verifyAdmin, getUsers);
-// [ADMIN] Obtener detalle propio 
-userRouter.get('/self', verifyToken, verifyAdmin, getSelfUser);
-// [ADMIN] Obtener detalle de otro usuario
-userRouter.get('/:idUser', verifyToken, verifyAdmin, getOtherUsers);
-// [ADMIN] Eliminar usuario por ID
-userRouter.delete('/:idUser', verifyToken, verifyAdmin, deleteUser);
+// [GLOBAL] Middleware of token verification
+userRouter.use(verifyToken);
+// [GLOBAL] Middleware of role verification
+userRouter.use(verifyAdmin);
+
+
+// [ADMIN]
+userRouter.get('/', getUsers);
+// [ADMIN] 
+userRouter.get('/self', getSelfUser);
+// [ADMIN]
+userRouter.get('/:idUser', getOtherUsers);
+// [ADMIN]
+userRouter.delete('/:idUser', deleteUser);
 
 export default userRouter;

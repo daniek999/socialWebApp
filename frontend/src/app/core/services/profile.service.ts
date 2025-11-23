@@ -8,73 +8,68 @@ import { IProfile, IProfilePopulated } from '../../models/profile';
 })
 export class ProfileService {
 
-    private readonly BASE_URL = 'http://localhost:4000/api/profiles';
-    private readonly API_URL = 'http://localhost:4000';
+    private readonly PROFILE_BASE_URL = 'http://localhost:4000/api/profiles';
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient
+    ) { }
 
-    /* ============================
-    // MARK: [Extras]
-    ============================ */
-    // Genera cabeceras con token de autorización
+    /** * MARK: [Helpers]
+        * 
+        * 1. Used to get the token to bring authorization.
+        * 2. Centralized HTTP error handling.
+    */
     private getAuthHeaders(): HttpHeaders {
         const token = localStorage.getItem('token');
         return new HttpHeaders({
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Bearer ${token}` })
         });
-    }
-    // Manejo centralizado de errores HTTP
+    };
     private handleError(error: any) {
         console.error('Error en ProfilesService:', error);
         return throwError(() => error.error?.message || 'Error desconocido del servidor.');
-    }
+    };
 
-    /* ============================
-    // MARK: [Functions]
-    ============================ */
-    // Obtener todos los perfiles visibles
+
+    /** * MARK: [Handlers]
+        * 
+    */
     getAllProfiles(): Observable<IProfilePopulated[]> {
         return this.http
-            .get<IProfilePopulated[]>(`${this.BASE_URL}/`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated[]>(`${this.PROFILE_BASE_URL}/`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
-    }
-    // Obtener perfil propio
+    };
     getSelfProfile(): Observable<IProfilePopulated> {
         return this.http
-            .get<IProfilePopulated>(`${this.BASE_URL}/self`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated>(`${this.PROFILE_BASE_URL}/self`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
-    }
-    // Obtener perfil de otro usuario
+    };
     getOtherProfiles(idUser: string): Observable<IProfilePopulated> {
         return this.http
-            .get<IProfilePopulated>(`${this.BASE_URL}/${idUser}`, { headers: this.getAuthHeaders() })
+            .get<IProfilePopulated>(`${this.PROFILE_BASE_URL}/${idUser}`, { headers: this.getAuthHeaders() })
             .pipe(catchError(this.handleError));
-    }
-    // Actualizar perfil propio
+    };
     updateProfile(formData: FormData): Observable<IProfilePopulated> {
         const token = localStorage.getItem('token');
-        // NO agregues Content-Type, se agrega automáticamente para multipart
         const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
         });
-        return this.http.put<IProfilePopulated>(`${this.BASE_URL}/self-update`, formData, {
+        return this.http.put<IProfilePopulated>(`${this.PROFILE_BASE_URL}/self-update`, formData, {
         headers: headers
         });
-    }
-    // Obtener URL completa de la foto
+    };
     getPhotoUrl(photoPath: string): string {
         if (photoPath && photoPath.startsWith('/uploads')) {
-        return `${this.API_URL}${photoPath}`;
+        return `http://localhost:4000${photoPath}`;
         }
         return photoPath || 'assets/img/default_user_photo.png';
-    }
-    // Obtener URL completa del CV
+    };
     getCVUrl(cvPath: string): string | null {
         if (cvPath && cvPath.startsWith('/uploads')) {
-        return `${this.API_URL}${cvPath}`;
+        return `http://localhost:4000${cvPath}`;
         }
         return null;
-    }
+    };
 
 }

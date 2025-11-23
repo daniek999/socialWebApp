@@ -5,29 +5,32 @@ import { upload, validateFileSize } from '../middleware/upload.js';
 
 const profileRouter = Router();
 
-/* --------------------------------------------------------------------------
- PROFILE ROUTES
------------------------------------------------------------------------------
- - GET      /profiles               -> Listar perfiles visibles
- - GET      /profiles/self          -> Obtener el perfil propio
- - GET      /profiles/all           -> Listar todos los perfiles
- - PUT      /profiles/self-update   -> Actualizar perfil propio
- - GET      /profiles/:idUser       -> Obtener detalle de otro perfil
--------------------------------------------------------------------------- */
+/* ==========================================================================
+ PROFILE ROUTES [5]
+=============================================================================
+ - GET      /api/profiles                               -> Listar todos los perfiles que esten marcados como visibles
+ - GET      /api/profiles/self                          -> Obtener el perfil propio
+ - GET      /api/profiles/all                           -> Listar todos los perfiles
+ - PUT      /api/profiles/self-update                   -> Actualizar perfil propio
+ - GET      /api/profiles/:idUser                       -> Obtener perfil de otro usuario
+========================================================================== */
 
-// [USER] Listar todos los perfiles que esten marcados como visibles
-profileRouter.get('/', verifyToken, getCustomProfiles);
-// [USER] Obtener perfil proio
-profileRouter.get('/self', verifyToken, getSelfProfile);
-// [ADMIN] Listar todos los perfiles
-profileRouter.get('/all', verifyToken, verifyAdmin, getAllProfiles);
-// [USER] Actualizar perfil propio
-profileRouter.put('/self-update', verifyToken, 
+// [GLOBAL] Middleware of token verification for all routes below
+profileRouter.use(verifyToken);
+
+// [USER] 
+profileRouter.get('/', getCustomProfiles);
+// [USER]
+profileRouter.get('/self', getSelfProfile);
+// [ADMIN]
+profileRouter.get('/all', verifyAdmin, getAllProfiles);
+// [USER]
+profileRouter.put('/self-update', 
     upload.fields([ { name: 'photo', maxCount: 1 }, { name: 'curriculumvitae', maxCount: 1}]), 
     validateFileSize, 
     updateProfile
 );
-// [USER] Obtener perfil de otro usuario
-profileRouter.get('/:idUser', verifyToken, getOtherProfiles);
+// [USER] 
+profileRouter.get('/:idUser', getOtherProfiles);
 
 export default profileRouter;

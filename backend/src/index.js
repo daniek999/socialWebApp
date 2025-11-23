@@ -8,23 +8,28 @@ import userRouter from './routes/user.routes.js';
 import postRouter from './routes/post.routes.js';
 import profileRouter from './routes/profile.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import friendshipRouter from './routes/friendship.routes.js';
 
-// [Instances] app and initialize the connection to the database
+// [Instances]
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 connectionPool();
 
-// [Usages]
-app.use(express.json());                                                    // Reads JSON data.
-app.use(cors());                                                            // Access to HTTP headers.
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));    // Load static files
+
+// [Middlwares]
+app.use(express.json());
+app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 
 // [Routes]
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRouter);
 app.use('/api/posts', postRouter);
-app.use('/api/profiles', profileRouter)
+app.use('/api/profiles', profileRouter);
+app.use('/api/friendships', friendshipRouter);
+
 
 // [MIDDLEWARE]
 app.use((error, req, res, next) => {

@@ -3,159 +3,209 @@ import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 
+/**
+ * -------------------
+ * [ PROFILE HANDLER ]
+ * -------------------
+ */
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-/* ----- [ PROFILE HANDLER] ----- */
 
 // [GET] - 'profiles/'
 export const getCustomProfiles = async (req, res) => {
     try {
-        // Process
+        //#region [ Process ]
         const visibleUserProfiles = await Profile
-            .find({visible: true})
+            .find({ visible: true })
             .populate("idUser", "username")
             .select('-curriculumvitae');
+        //#endregion
 
-        // Result
-        res.status(200).json(visibleUserProfiles);
+        //#region [ Result ]
+        return res.status(200).json(visibleUserProfiles);
+        //#endregion
+
     } catch (error) {
-        res.status(500).json({ message: "Error al Obtener Perfiles Publicos -> " + error  })
+        console.error("Error en [getCustomProfiles]: " + error);
+        return res.status(500).json({ 
+            message: "Error al obtener perfiles públicos",
+            error: error.message
+        });
     }
 };
-
 // [GET] - 'profiles/all'
 export const getAllProfiles = async (req, res) => {
     try {
-        // Process
+        //#region [ Process ]
         const profiles = await Profile.find();
+        //#endregion
 
-        // Result
-        res.status(200).json(profiles);
+        //#region [ Result ]
+        return res.status(200).json(profiles);
+        //#endregion
+
     } catch (error) {
-        res.status(400).json({ message: 'Error: ' + error})
+        console.error("Error en [getAllProfiles]: " + error);
+        return res.status(400).json({ 
+            message: "Error al obtener todos los perfiles",
+            error: error.message
+        });
     }
-}
-
+};
 // [GET] - 'profiles/self'
 export const getSelfProfile = async (req, res) => {
     try {
-        // Params
-        const idUser = req.user.id
-        const username = req.user.username
-        
-        // Process 
+        //#region [ Params ]
+        const idUser = req.user.id;
+        const username = req.user.username;
+        //#endregion
+
+        //#region [ Process ]
         const userProfile = await Profile
             .findOne({ idUser })
             .populate("idUser", "username email role isVerified createdAt");
+        //#endregion
 
-        // Verifications 
+        //#region [ Validations ]
         if (!userProfile) {
-            return res.status(404).json({ message: "El Usuario '" + username + "' no posee un perfil." });
+            return res.status(404).json({ 
+                message: `El usuario '${username}' no posee un perfil.` 
+            });
         }
+        //#endregion
 
-        // Result
-        res.status(200).json(userProfile);
+        //#region [ Result ]
+        return res.status(200).json(userProfile);
+        //#endregion
+
     } catch (error) {
-        res.status(500).json({ message: "Error al Obtener Perfil del Usuario: " + error });
+        console.error("Error en [getSelfProfile]: " + error);
+        return res.status(500).json({ 
+            message: "Error al obtener perfil del usuario",
+            error: error.message
+        });
     }
 };
-
 // [GET] - 'profiles/:idUser'
 export const getOtherProfiles = async (req, res) => {
     try {
-        // Params
+        //#region [ Params ]
         const { idUser } = req.params;
+        const myUserId = req.user.id;
+        //#endregion
 
-        // Process
+        //#region [ Process ]
         const userProfile = await Profile
             .findOne({ idUser })
             .populate("idUser", "username email role isVerified");
+        //#endregion
 
-        // Verifications
+        //#region [ Validations ]
         if (!userProfile) {
             return res.status(404).json({ message: "Perfil no encontrado." });
         }
-        if (!userProfile.visible && req.user.id !== idUser) {
+
+        if (!userProfile.visible && myUserId !== idUser) {
             return res.status(403).json({ message: "Este perfil es privado." });
         }
+        //#endregion
 
-        // Result
-        res.status(200).json(userProfile);
+        //#region [ Result ]
+        return res.status(200).json(userProfile);
+        //#endregion
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error al obtener perfil ajeno -> " + error });
+        console.error("Error en [getOtherProfiles]: " + error);
+        return res.status(500).json({ 
+            message: "Error al obtener perfil ajeno",
+            error: error.message
+        });
     }
-}
-
-// [Put] - 'profiles/self-update'
+};
+// [PUT] - 'profiles/self-update'
 export const updateProfile = async (req, res) => {
     try {
-        // [Params]
-        const idUser = req.user.id;                                                             // [Key]
-        const { name, surname, profession, employmentStatus, about, visible } = req.body;       // [Req Data]
-        const updateProfileData = { name, surname, profession, employmentStatus, about, visible };   // [new Data]
+        //#region [ Params ]
+        const idUser = req.user.id;
+        const { name, surname, profession, employmentStatus, about, visible } = req.body;
 
-        // [Process] 
-        // Validate the employmentStatus
+        const updateProfileData = { 
+            name, surname, profession, employmentStatus, about, visible 
+        };
+        //#endregion
+
+        //#region [ Validations ]
         const validStatuses = ['Estudiante', 'Buscando', 'Practicante', 'Empleado'];
+
         if (employmentStatus && !validStatuses.includes(employmentStatus)) {
-            return res.status(400).json({ message: `Estado de empleo inválido. Debe ser uno de: ${validStatuses.join(', ')}` });
+            return res.status(400).json({ 
+                message: `Estado de empleo inválido. Debe ser uno de: ${validStatuses.join(', ')}` 
+            });
         }
+
         const existingProfile = await Profile.findOne({ idUser });
-        // Manage uploaded files
+        //#endregion
+
+        //#region [ Process ]
+        // Archivos subidos
         if (req.files) {
-            // Photo
-            if (req.files.photo && req.files.photo[0]) {
-                // Eliminar foto antigua si existe
+            if (req.files.photo?.[0]) {
                 if (existingProfile?.photo) {
                     await deleteOldFile(existingProfile.photo);
                 }
-                // Asignar nueva foto
                 updateProfileData.photo = `/uploads/photos/${req.files.photo[0].filename}`;
             }
-            // Curriculum Vitae
-            if (req.files.curriculumvitae && req.files.curriculumvitae[0]) {
-                // Eliminar CV antiguo si existe
+
+            if (req.files.curriculumvitae?.[0]) {
                 if (existingProfile?.curriculumvitae) {
                     await deleteOldFile(existingProfile.curriculumvitae);
                 }
-                // Asignar nuevo CV
                 updateProfileData.curriculumvitae = `/uploads/cvs/${req.files.curriculumvitae[0].filename}`;
             }
         }
-        // Update the profile
-        const updatedProfile = await Profile.findOneAndUpdate(
-            { idUser }, updateProfileData, { new: true, runValidators: true }
-        );
 
-        // [Verifications]
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { idUser },
+            updateProfileData,
+            { new: true, runValidators: true }
+        );
+        //#endregion
+
+        //#region [ Validations - Post ]
         if (!updatedProfile) {
-            // Si hay error y se subieron archivos, eliminarlos
+
             if (req.files?.photo?.[0]) {
                 await deleteOldFile(`/uploads/photos/${req.files.photo[0].filename}`);
             }
             if (req.files?.curriculumvitae?.[0]) {
                 await deleteOldFile(`/uploads/cvs/${req.files.curriculumvitae[0].filename}`);
             }
+
             return res.status(404).json({ message: "Perfil no encontrado" });
         }
+        //#endregion
 
-        // [Result]
-        res.status(200).json(updatedProfile);
+        //#region [ Result ]
+        return res.status(200).json(updatedProfile);
+        //#endregion
+
     } catch (error) {
+
         if (req.files?.photo?.[0]) {
             await deleteOldFile(`/uploads/photos/${req.files.photo[0].filename}`);
         }
         if (req.files?.curriculumvitae?.[0]) {
             await deleteOldFile(`/uploads/cvs/${req.files.curriculumvitae[0].filename}`);
         }
-        console.error(error);
-        res.status(500).json({ message: "Error al editar el perfil -> " + error });
+
+        console.error("Error en [updateProfile]: " + error);
+        return res.status(500).json({ 
+            message: "Error al editar el perfil",
+            error: error.message
+        });
     }
 };
-
-
 // MARK: Auxiliar Functions.
 const deleteOldFile = async (filePath) => {
     if (filePath) {

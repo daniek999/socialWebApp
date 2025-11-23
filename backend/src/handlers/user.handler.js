@@ -2,125 +2,156 @@ import User from "../models/user.js";
 import Post from '../models/post.js';
 import Profile from "../models/profile.js";
 
-/* ----- [ USER HANDLER] ----- */
+/**
+ * ----------------
+ * [ USER HANDLER ]
+ * ----------------
+ */
 
 // [GET] Obtener todos los usuarios (Admin)
 export const getUsers = async (req, res) => {
     try {
-        // Process
+        //#region [ Process ]
         const users = await User.find();
+        //#endregion
 
-        // Result
+        //#region [ Result ]
         return res.status(200).json({
             success: true,
             message: 'Usuarios obtenidos correctamente.',
             data: users,
         });
+        //#endregion
+
     } catch (error) {
+        //#region [ Error ]
         res.status(500).json({
             success: false,
             message: 'Error al obtener los usuarios.',
             error: error.message,
         });
+        //#endregion
     }
 };
-
 // [GET] Obtener usuario propio (Admin)
 export const getSelfUser = async (req, res) => {
     try {
-        // Params from Payload
+        //#region [ Params ]
         const idUser = req.user.id;
+        //#endregion
 
-        // Process
+        //#region [ Process ]
         const userData = await User.findById(idUser);
+        //#endregion
 
-        // Verifications
+        //#region [ Verifications ]
         if (!userData) {
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado.',
             });
         }
+        //#endregion
 
-        // Result
+        //#region [ Result ]
         res.status(200).json({
             success: true,
             message: 'Usuario obtenido correctamente.',
             data: userData,
         });
+        //#endregion
+
     } catch (error) {
+        //#region [ Error ]
         res.status(500).json({
             success: false,
             message: 'Error al obtener el usuario autenticado.',
             error: error.message,
         });
+        //#endregion
     }
 };
-
 // [GET] Obtener usuario diferente (Admin)
 export const getOtherUsers = async (req, res) => {
     try {
-        // Params
+        //#region [ Params ]
         const { idUser } = req.params;
+        //#endregion
 
-        // Process
+        //#region [ Process ]
         const userData = await User.findById(idUser);
+        //#endregion
 
-        // Verifications
+        //#region [ Verifications ]
         if (!userData) {
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado.',
             });
         }
+        //#endregion
 
-        // Result
+        //#region [ Result ]
         res.status(200).json({
             success: true,
             message: 'Usuario obtenido correctamente.',
             data: userData,
         });
+        //#endregion
+
     } catch (error) {
+        //#region [ Error ]
         res.status(500).json({
             success: false,
             message: 'Error al obtener el usuario.',
             error: error.message,
         });
+        //#endregion
     }
 };
-
 // [DELETE] Eliminar usuario por ID (Admin)
 export const deleteUser = async (req, res) => {
     try {
-        // Params
+        //#region [ Params ]
         const { idUser } = req.params;
+        //#endregion
 
-        // Process
+        //#region [ Process ]
         const userToDelete = await User.findById(idUser);
-        
-        // Verifications
+        //#endregion
+
+        //#region [ Verifications ]
         if (!userToDelete) {
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado.',
             });
         }
-        await Promise.all([
-            Post.deleteMany({ idUser: idUser }),
-            Profile.deleteOne({ idUser: idUser }),
-        ]);
-        await User.findByIdAndDelete(idUser);
+        //#endregion
 
-        // Result
+        //#region [ Process - related data ]
+        await Promise.all([
+            Post.deleteMany({ idUser }),
+            Profile.deleteOne({ idUser }),
+        ]);
+
+        await User.findByIdAndDelete(idUser);
+        //#endregion
+
+        //#region [ Result ]
         res.status(200).json({
             success: true,
             message: `El usuario "${userToDelete.username}" y sus datos relacionados fueron eliminados correctamente.`,
         });
+        //#endregion
+
     } catch (error) {
+        //#region [ Error ]
         res.status(500).json({
             success: false,
             message: 'Error al eliminar el usuario.',
             error: error.message,
         });
+        //#endregion
     }
 };

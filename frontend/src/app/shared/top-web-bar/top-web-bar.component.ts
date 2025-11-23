@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'topAppBar',
@@ -9,14 +10,23 @@ import { Router } from '@angular/router';
   templateUrl: './top-web-bar.component.html',
   styleUrl: './top-web-bar.component.css'
 })
-export class TopWebBarComponent {
+export class TopWebBarComponent implements OnInit {
 
+
+    
     constructor(
+        private _userService: UserService,
         private _authService: AuthService,
         private router: Router
     ) { }
 
     
+    ngOnInit() {
+        
+    }
+    verifyAdminRole() {
+    }
+
     // [Auth Functions]
     logout() {
         this._authService.logout();
@@ -32,5 +42,8 @@ export class TopWebBarComponent {
     }
     goToCommunity() {
         this.router.navigate(['/list-profile'])
+    }
+    goToAdminPanel() {
+        this.router.navigate(['/admin'])
     }
 }

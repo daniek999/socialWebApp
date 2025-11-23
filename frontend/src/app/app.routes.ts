@@ -8,13 +8,14 @@ import { PostUpdateComponent } from './features/postModule/post-update/post-upda
 import { ProfileDetailComponent } from './features/profileModule/profile-detail/profile-detail.component';
 import { ProfileEditComponent } from './features/profileModule/profile-edit/profile-edit.component';
 import { ProfileListComponent } from './features/profileModule/profile-list/profile-list.component';
+import { AdminPanelComponent } from './features/adminModule/admin-panel/admin-panel.component';
 
 export const routes: Routes = [
-    // User/Auth
+    // Authentication
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
 
-    // Main
+    // Posts
     { path: 'home', component: HomeComponent, canActivate: [authGuard] },
 
     // Profiles
@@ -22,12 +23,13 @@ export const routes: Routes = [
     { path: 'profile/:id', component: ProfileDetailComponent, canActivate: [authGuard] },
     { path: 'edit-profile', component: ProfileEditComponent, canActivate: [authGuard] },
     { path: 'list-profile', component: ProfileListComponent, canActivate: [authGuard] },
-    // list-profile (Para Panel Administrador o Publico ['en revision'])
 
     // Posts
     { path: 'create-post', component: PostCreateComponent, canActivate: [authGuard] },
     { path: 'update-post', component: PostUpdateComponent, canActivate: [authGuard] },
-    // delete falta
+
+    // Admin
+    { path: 'admin', component: AdminPanelComponent, canActivate: [authGuard]},
     // list falta (Para Panel Administrador)
 
     // Default redirects

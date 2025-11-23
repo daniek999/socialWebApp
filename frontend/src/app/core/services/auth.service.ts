@@ -9,52 +9,38 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-    private user_url_base = 'http://localhost:4000/api/auth';
+    private readonly AUTH_BASE_URL = 'http://localhost:4000/api/auth';
 
     constructor(
         private http: HttpClient,
         private router: Router
-    ) {
-    }
+    ) { }
 
+    // NOTA: AGREGAR MANEJADOR DE ERRORES PARA QUE NO SE VEA FEO EL CONSOLE.LOG
 
-    /* ============================
-    // MARK: [Functions]
-    ============================ */
+    /** * MARK: [Handlers]
+        * 
+    */
     register(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/register`, data);
-    }
+        return this.http.post(`${this.AUTH_BASE_URL}/register`, data);
+    };
     login(data: any): Observable<any> {
-        return this.http.post(`${this.user_url_base}/login`, data);
-    }
+        return this.http.post(`${this.AUTH_BASE_URL}/login`, data);
+    };
     logout() {
         localStorage.removeItem('token');
-    }
-    /* ============================
-    // MARK: [Extras]
-    ============================ */
+    };
+
+    /** * MARK: [Extras]
+        * 
+    */
     setToken(token: string) {
         localStorage.setItem('token', token);
-    }
+    };
     getToken() {
         return localStorage.getItem('token');
-    }
+    };
     isLogged() {
         return !!this.getToken();
-    }
-    getUserData(): any | null {
-        const token = this.getToken();
-        if (!token) return null;
-
-        try {
-            return jwtDecode<any>(token);
-        } catch (e) {
-            console.error('Error decodificando token:', e);
-            return null;
-        }
-    }
-    getUsername(): string | null {
-        const data = this.getUserData();
-        return data?.username || null;
-    }
+    };
 }

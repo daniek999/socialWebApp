@@ -1,0 +1,119 @@
+<!-- Admin-Panel Component -->
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- HEADER -->
+    <topAppBar />
+
+    <div class="container mt-4">
+
+        <!-- Success message -->
+        <div *ngIf="successMessage" class="alert alert-success py-2">{{ successMessage }}</div>
+
+        <!-- Error message -->
+        <div *ngIf="errorMessage" class="alert alert-danger py-2">{{ errorMessage }}</div>
+
+        <!-- Título -->
+        <h2 class="mb-3">Panel de Usuarios</h2>
+
+        <!-- Loader -->
+        <div *ngIf="loadingUsers" class="text-center my-4">
+            <div class="spinner-border"></div>
+            <p class="mt-2">Cargando usuarios...</p>
+        </div>
+
+        <!-- Contenido -->
+        <div *ngIf="!loadingUsers">
+
+            <!-- Filtros -->
+            <div class="row mb-3">
+
+                <!-- Grupo de radios -->
+                <div class="col-12 d-flex gap-4">
+                    <!-- Más antiguos -->
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="sortOption" id="old" checked
+                            (change)="sortBy('old')">
+                        <label class="form-check-label" for="old">
+                            Más antiguos
+                        </label>
+                    </div>
+                    <!-- Más recientes -->
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="sortOption" id="recent" 
+                            (change)="sortBy('recent')">
+                        <label class="form-check-label" for="recent">
+                            Más recientes
+                        </label>
+                    </div>
+                    <!-- Orden alfabético (email) -->
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="sortOption" id="emailAlpha"
+                            (change)="sortBy('email')">
+                        <label class="form-check-label" for="emailAlpha">
+                            Orden alfabético (Email)
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Cantidad -->
+            <div class="fw-bold mb-2">Usuarios Totales: {{ usersCount }}</div>
+
+            <!-- Tabla -->
+            <table *ngIf="usersData.length > 0" class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Verificado</th>
+                        <th>Registrado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let user of usersData; let i = index">
+                        <td>{{ user._id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+
+                        <td [ngClass]="user.isVerified ? 'text-success' : 'text-warning'">
+                            {{ user.isVerified ? 'Sí' : 'No' }}
+                        </td>
+
+                        <td>{{ user.createdAt | date:'medium' }}</td>
+
+                        <!-- Acciones -->
+                        <td class="text-center">
+
+                            <!-- Ver -->
+                            <button class="btn btn-outline-primary btn-sm me-1" (click)="viewUser(user)">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+
+                            <!-- Editar -->
+                            <button class="btn btn-outline-warning btn-sm me-1" (click)="editUser(user)">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button class="btn btn-outline-danger btn-sm" (click)="deleteUser(user)">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</body>
