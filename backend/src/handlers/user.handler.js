@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import Post from '../models/post.js';
 import Profile from "../models/profile.js";
+import Friendship from "../models/friendship.js";
 
 /**
  * ----------------
@@ -116,11 +117,8 @@ export const deleteUser = async (req, res) => {
         const { idUser } = req.params;
         //#endregion
 
-        //#region [ Process ]
-        const userToDelete = await User.findById(idUser);
-        //#endregion
-
         //#region [ Verifications ]
+        const userToDelete = await User.findById(idUser);
         if (!userToDelete) {
             return res.status(404).json({
                 success: false,
@@ -133,8 +131,13 @@ export const deleteUser = async (req, res) => {
         await Promise.all([
             Post.deleteMany({ idUser }),
             Profile.deleteOne({ idUser }),
+            Friendship.deleteMany({
+                $or: [
+                    { requester: idUser },
+                    { recipient: idUser }
+                ]
+            })
         ]);
-
         await User.findByIdAndDelete(idUser);
         //#endregion
 
@@ -150,6 +153,53 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error al eliminar el usuario.',
+            error: error.message,
+        });
+        //#endregion
+    }
+};
+
+/** [PATCH] Desactivar usuario por ID (Admin)
+ * 
+ */
+export const deactivateUser = async (req, res) => {
+    try {
+        //#region [ Params ]
+        const { idUser } = req.params;
+        //#endregion
+
+        //#region [ Verifications ]
+        const userToDeactivate = await User.findById(idUser);
+        if (!userToDeactivate) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado.',
+            });
+        }
+        //#endregion
+
+        //#region [ Process ]
+        userToDeactivate.state = !userToDeactivate.state;
+        await userToDeactivate.save();
+        //#endregion
+
+        //#region [ Result ]
+        res.status(200).json({
+            success: true,
+            message: `El estado del usuario [${userToDeactivate.username}] ha cambiado.`,
+            // data: {
+            //     _id: userToDeactivate._id,
+            //     username: userToDeactivate.username,
+            //     state: userToDeactivate.state,
+            // },
+        });
+        //#endregion
+        
+    } catch (error) {
+        //#region [ Error ]
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar el estado del usuario.',
             error: error.message,
         });
         //#endregion

@@ -1,91 +1,71 @@
-<!-- Home Component -->
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- HEADER -->
-    <topAppBar />
+    <!-- ================= HEADER ================= -->
+    <app-TopBar />
 
-    <!-- MAIN -->
-    <main class="flex-grow-1 d-flex align-items-start justify-content-center py-5">
-        <div class="container">
-            <div class="h-100 row">
-                <!-- LEFT PANEL: Form -->
-                <div class="col-md-4 d-flex flex-column mb-3">
-                    <!-- Title Section -->
-                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
-                        <i class="bi bi-pencil-square fs-4 text-light me-2"></i>
-                        <h5 class="mb-0 fw-bold text-light">Crear Nuevo Post</h5>
+    <!-- ================== MAIN ================== -->
+    <main class="content-wrapper d-flex">
+        <!-- View Navigation -->
+        <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
+        <!-- View Content -->
+        <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
+            <!-- Post Form -->
+            <div class="mb-3">
+                <!-- Title -->
+                <div class="d-flex align-items-center justify-content-start px-0">
+                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
+                        style="width: 40px; height: 40px;">
+                        <i class="bi bi-pencil-square fs-5"></i>
                     </div>
-                    <!-- Content Section -->
-                    <div class="flex-grow-1 overflow-auto">
-                        <div class="bg-white p-3 card-body d-flex flex-column justify-content-between">
-                            <form class="flex-grow-1 d-flex flex-column">
-                                <!-- @title -->
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Título</label>
-                                    <input type="text" class="form-control rounded-0" name="title"
-                                        placeholder="Ej. Mi nuevo proyecto" required disabled />
-                                </div>
-
-                                <!-- @content -->
-                                <div class="mb-3 flex-grow-1">
-                                    <label class="form-label fw-semibold">Contenido</label>
-                                    <textarea class="form-control rounded-0 h-100" rows="5" name="content"
-                                        placeholder="¿Qué estás pensando?" required disabled></textarea>
-                                </div>
-
-                                <!-- [Action] -->
-                                <button type="submit" class="btn btn-outline-dark rounded-0 w-100 fw-bold" disabled>
-                                    <i class="bi bi-send-fill me-1"></i> Publicar
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    <p class="bodyLarge m-0 fw-bold text-dark">Crear Nuevo Post</p>
                 </div>
-                <!-- LEFT PANEL: [POSTS] -->
-                <div class="col-md-8 d-flex flex-column">
-                    <!-- Title Section -->
-                    <div class="bg-dark d-flex align-items-center border-0 mb-3 px-2 py-1 flex-shrink-0">
-                        <i class="bi bi-collection fs-4 text-light me-2"></i>
-                        <h5 class="mb-0 fw-bold text-light">Publicaciones</h5>
-                    </div>
-                    <!-- Content Section -->
-                    <div class="flex-grow-1 overflow-auto">
-                        <!-- IF -->
-                        <div *ngIf="posts && posts.length > 0; else noPosts">
-                            <div class="d-flex flex-column gap-4">
-                                <div *ngFor="let post of posts" class="card border-0 rounded-0">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="text-muted small">
-                                                {{ post.createdAt | date:'mediumDate' }}
-                                            </span>
-                                        </div>
-                                        <h5 class="card-title fw-bold mb-2">{{ post.title }}</h5>
-                                        <p class="card-text text-muted mb-0">
-                                            <span class="text-primary fw-semibold">
-                                                {{ post.idUser.username }}:
-                                            </span>
-                                            {{ post.content }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Content -->
+                <div class="d-flex flex-column flex-grow-1 mt-3">
+                    <form class="bg-white p-3 d-flex flex-column rounded-2">
+                        <!-- @title -->
+                        <div class="mb-3">
+                            <label for="title" class="bodyMedium fw-semibold">Título</label>
+                            <input type="text" class="form-control rounded-2" name="title" id="title"
+                                placeholder="Ej. Mi nuevo proyecto" required disabled />
                         </div>
-
-                        <!-- ELSE -->
-                        <ng-template #noPosts>
-                            <div class="alert alert-secondary rounded-0 text-center fw-semibold">
-                                <i class="bi bi-exclamation-circle me-1"></i> Cargando publicaciones.
-                            </div>
-                        </ng-template>
+                        <!-- @content -->
+                        <div class="mb-3">
+                            <label class="bodyMedium fw-semibold">Contenido</label>
+                            <textarea class="form-control rounded-2" rows="3" name="content"
+                                placeholder="¿En qué estás pensando?" required disabled></textarea>
+                        </div>
+                        <!-- [Action] -->
+                        <button type="submit" class="bodyMedium btn btn-outline-dark rounded-0 fw-bold rounded-2"
+                            disabled>
+                            <i class="bi bi-send-fill me-1"></i> Publicar
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Post Data[] -->
+            <div class="flex-grow-1 d-flex flex-column">
+                <!-- Title -->
+                <div class="d-flex align-items-center justify-content-start px-0">
+                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
+                        style="width: 40px; height: 40px;">
+                        <i class="bi bi-collection fs-5"></i>
+                    </div>
+                    <p class="bodyLarge m-0 fw-bold text-dark">Publicaciones</p>
+                </div>
+                <!-- Content -->
+                <div class="flex-grow-1 overflow-auto">
+                    <div class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0">
+                        <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
+                        <p class="bodyMedium fw-semibold m-0">No hay publicaciones.</p>
+                        <p class="bodySmall text-muted m-0">Wow, este mensaje se llego a mostrar.</p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+    <!-- ================= FOOTER ================= -->
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
         [message]="errorMessage || successMessage" />
 
 </body>

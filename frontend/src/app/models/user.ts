@@ -4,7 +4,7 @@ export interface IUser {
     email: string;
     role: string;
     isVerified: boolean;
-    // Agregar Estado ._. tmb en el backend
+    state: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

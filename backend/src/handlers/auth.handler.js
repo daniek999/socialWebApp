@@ -89,24 +89,36 @@ export const login = async (req, res) => {
         //#endregion
 
         //#region [ Validations ]
+        // 1. Verifica que los parametros no esten vacios.
         if (!email || !password) {
             return res.status(400).json({ message: 'Debe ingresar correo y clave.' });
         }
+        // 2. Verifica que el correo ya este registrado
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Correo no registrado.' });
         }
+        // 3. Verifica que el usuario este verificado
         if (!user.isVerified) {
             return res.status(401).json({ message: 'Debes verificar tu cuenta antes de iniciar sesión.' });
         }
+        // 4. Verifica que la clave enviada sea la correspondiente 
         const passwordMatch = await compare(password, user.password);
         if (!passwordMatch) {
             return res.status(400).json({ message: 'Clave incorrecta.' });
         }
+        // 5. Verifica que la cuenta del usuario este 'Desactivada'
+        if (user.state === false) {
+            return res.status(400).json({ message: 'Tu cuenta se encuentra desactivada.' });
+        }
+        
         //#endregion
 
         //#region [ Process ]
-        const payload = { id: user._id, username: user.username, email: user.email, role: user.role, isVerified: user.isVerified };
+        const payload = { 
+            id: user._id, 
+            role: user.role
+        };
         const key = process.env.JWT_SECRET;
         // Create a digital signature [payload, key, options]
         const token = jwt.sign(

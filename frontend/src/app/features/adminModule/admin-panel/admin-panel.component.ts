@@ -3,11 +3,13 @@ import { UserService } from '../../../core/services/user.service';
 import { IUser } from '../../../models/user';
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
+import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
+import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
 
 @Component({
     selector: 'app-admin-panel',
     standalone: true,
-    imports: [NgClass, DatePipe, NgIf, NgFor, TopWebBarComponent],
+    imports: [NgClass, DatePipe, NgIf, NgFor, TopWebBarComponent, BottomWebBarComponent, NavBarComponent],
     templateUrl: './admin-panel.component.html',
     styleUrl: './admin-panel.component.css'
 })
@@ -63,7 +65,7 @@ export class AdminPanelComponent implements OnInit {
                 this.usersData.sort((a, b) => a.email.localeCompare(b.email));
                 break;
         }
-    }
+    };
     viewUser(user: IUser) {
         this._userService.getUserById(user._id!).subscribe({
             next: (res) => {
@@ -73,10 +75,10 @@ export class AdminPanelComponent implements OnInit {
             },
             error: (error) => this.setError(error),
         });
-    }
+    };
     editUser(user: IUser) {
         console.log('Editar usuario (no implementado aún):', user);
-    }
+    };
     deleteUser(user: IUser) {
         if (!confirm(`¿Eliminar a ${user.username}?`)) return;
 
@@ -84,12 +86,22 @@ export class AdminPanelComponent implements OnInit {
             next: () => {
                 this.setSuccess(`Usuario "${user.username}" eliminado.`);
                 this.loadUsers();
-                console.log(`Usuario "${user.username}" eliminado.`)
                 console.log(user);
             },
             error: (error) => this.setError(error),
         });
-    }
+    };
+    deactivateUser(user: IUser) {
+        this._userService.deactivateUser(user._id!).subscribe({
+            next: () => {
+                this.loadUsers();
+                this.setSuccess(`Estado del usuario "${user.username}" cambiado.`);
+            },
+            error: (err) => {
+                this.setError(err);
+            }
+        });
+    };
     //#endregion
 
     //#region [Setting Data]

@@ -61,5 +61,13 @@ export class UserService {
             .delete(url, {headers})
             .pipe(catchError(this.handleError));
     };
+    deactivateUser(idUser: String) {
+        const headers = this.getAuthHeaders();
+        const url = `${this.USER_BASE_URL}/${idUser}`;
+    
+        return this.http
+            .patch(url, {}, {headers})
+            .pipe(catchError(this.handleError));
+    };
 
 }

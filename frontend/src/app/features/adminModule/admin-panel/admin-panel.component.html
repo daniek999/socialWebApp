@@ -1,119 +1,139 @@
-<!-- Admin-Panel Component -->
+<body class="d-flex flex-column min-vh-100">
 
-<body class="d-flex flex-column min-vh-100 bg-light">
+    <!-- ================= HEADER ================= -->
+    <app-TopBar />
 
-    <!-- HEADER -->
-    <topAppBar />
-
-    <div class="container mt-4">
-
-        <!-- Success message -->
-        <div *ngIf="successMessage" class="alert alert-success py-2">{{ successMessage }}</div>
-
-        <!-- Error message -->
-        <div *ngIf="errorMessage" class="alert alert-danger py-2">{{ errorMessage }}</div>
-
-        <!-- Título -->
-        <h2 class="mb-3">Panel de Usuarios</h2>
-
-        <!-- Loader -->
-        <div *ngIf="loadingUsers" class="text-center my-4">
-            <div class="spinner-border"></div>
-            <p class="mt-2">Cargando usuarios...</p>
-        </div>
-
-        <!-- Contenido -->
-        <div *ngIf="!loadingUsers">
-
-            <!-- Filtros -->
-            <div class="row mb-3">
-
-                <!-- Grupo de radios -->
-                <div class="col-12 d-flex gap-4">
-                    <!-- Más antiguos -->
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" name="sortOption" id="old" checked
-                            (change)="sortBy('old')">
-                        <label class="form-check-label" for="old">
-                            Más antiguos
-                        </label>
-                    </div>
-                    <!-- Más recientes -->
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" name="sortOption" id="recent" 
-                            (change)="sortBy('recent')">
-                        <label class="form-check-label" for="recent">
-                            Más recientes
-                        </label>
-                    </div>
-                    <!-- Orden alfabético (email) -->
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" name="sortOption" id="emailAlpha"
-                            (change)="sortBy('email')">
-                        <label class="form-check-label" for="emailAlpha">
-                            Orden alfabético (Email)
-                        </label>
-                    </div>
-
+    <!-- ================== MAIN ================== -->
+    <main class="content-wrapper d-flex">
+        <!-- View Navigation -->
+        <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
+        <!-- View Content -->
+        <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
+            <!-- Title -->
+            <div class="d-flex align-items-center justify-content-start px-0">
+                <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
+                    style="width: 40px; height: 40px;">
+                    <i class="bi bi-person-vcard fs-5"></i>
                 </div>
-
+                <p class="bodyLarge m-0 fw-bold text-dark">Panel Administrativo</p>
             </div>
-
-
-            <!-- Cantidad -->
-            <div class="fw-bold mb-2">Usuarios Totales: {{ usersCount }}</div>
-
-            <!-- Tabla -->
-            <table *ngIf="usersData.length > 0" class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Usuario</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>Verificado</th>
-                        <th>Registrado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr *ngFor="let user of usersData; let i = index">
-                        <td>{{ user._id }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.role }}</td>
-
-                        <td [ngClass]="user.isVerified ? 'text-success' : 'text-warning'">
-                            {{ user.isVerified ? 'Sí' : 'No' }}
-                        </td>
-
-                        <td>{{ user.createdAt | date:'medium' }}</td>
-
-                        <!-- Acciones -->
-                        <td class="text-center">
-
-                            <!-- Ver -->
-                            <button class="btn btn-outline-primary btn-sm me-1" (click)="viewUser(user)">
-                                <i class="bi bi-eye-fill"></i>
-                            </button>
-
-                            <!-- Editar -->
-                            <button class="btn btn-outline-warning btn-sm me-1" (click)="editUser(user)">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-
-                            <!-- Eliminar -->
-                            <button class="btn btn-outline-danger btn-sm" (click)="deleteUser(user)">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
+            <!-- Content -->
+            <div class="d-flex flex-column flex-grow-1 mt-3">
+                <!-- [Loading] -->
+                <div *ngIf="loadingUsers" class="text-center py-4 m-auto">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="small text-muted mt-2 mb-0">Cargando usuarios...</p>
+                </div>
+                <!-- [Filled] -->
+                <div *ngIf="!loadingUsers" class="flex-grow-1 overflow-auto">
+                    <!-- Tablas -->
+                    <div class="bg-white mb-3 p-3 rounded-2 d-flex flex-column w-25">
+                        <p class="bodyMedium fw-semibold mb-1">Usuarios</p>
+                        <p class="fs-1 text-primary fw-bold m-0 text-center">{{ usersCount }}</p>
+                        <p class="bodySmall text-muted text-end m-0">Registrados en total.</p>
+                    </div>
+                    <!-- Filtros -->
+                    <div class="bg-white mb-3 p-3 rounded-2">
+                        <p class="bodyMedium fw-semibold mb-1">Filtros</p>
+                        <div class="d-flex flex-wrap gap-4">
+                            <!-- Más antiguos -->
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" name="sortOption" id="old" checked
+                                    (change)="sortBy('old')" />
+                                <label class="form-check-label" for="old">
+                                    Más antiguos
+                                </label>
+                            </div>
+                            <!-- Más recientes -->
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" name="sortOption" id="recent"
+                                    (change)="sortBy('recent')" />
+                                <label class="form-check-label" for="recent">
+                                    Más recientes
+                                </label>
+                            </div>
+                            <!-- Email A-Z -->
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" name="sortOption" id="emailAlpha"
+                                    (change)="sortBy('email')" />
+                                <label class="form-check-label" for="emailAlpha">
+                                    Orden alfabético (Email)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lista de Usuarios -->
+                    <div *ngIf="usersData.length > 0" class="d-flex flex-column gap-3">
+                        <div class="bg-white p-3 rounded-2" *ngFor="let user of usersData; let i = index">
+                            <!-- Title -->
+                            <div class="d-flex justify-content-between align-items-start flex-wrap">
+                                <div>
+                                    <p class="bodyLarge m-0">{{ user.username }}</p>
+                                </div>
+                                <div class="d-flex flex-row gap-2">
+                                    <span class="text-white bodySmall py-1 px-3 rounded-pill"
+                                        [ngClass]="user.state ? 'bg-success' : 'bg-danger'">
+                                        {{ user.state ? 'Activo' : 'Desactivado' }}
+                                    </span>
+                                    <span class="text-white bodySmall py-1 px-3 rounded-pill"
+                                        [ngClass]="user.isVerified ? 'bg-primary' : 'bg-danger'">
+                                        {{ user.isVerified ? 'Verificado' : 'No Verificado' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <!-- Data -->
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="d-flex flex-column">
+                                    <p class="bodySmall text-muted m-0">ID</p>
+                                    <p class="bodyMedium m-0">{{ user._id }}</p>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="bodySmall text-muted m-0">Correo</p>
+                                    <p class="bodyMedium m-0">{{ user.email }}</p>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="bodySmall text-muted m-0">Rol</p>
+                                    <p class="bodyMedium m-0">{{ user.role }}</p>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="bodySmall text-muted m-0">Registrado</p>
+                                    <p class="bodyMedium m-0">{{ user.createdAt | date:'medium' }}</p>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <p class="bodySmall text-muted m-0">Modificado</p>
+                                    <p class="bodyMedium m-0">{{ user.updatedAt | date:'medium' }}</p>
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <!-- Actions -->
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="bodySmall btn btn-outline-primary btn-sm rounded-2" 
+                                    (click)="viewUser(user)">
+                                    Ver Detalles
+                                </button>
+                                <!-- <button class="btn btn-outline-warning btn-sm rounded-0"
+                                    (click)="editUser(user)">
+                                    Editar
+                                </button> -->
+                                <button class="bodySmall btn btn-outline-danger btn-sm rounded-2" 
+                                    (click)="deleteUser(user)">
+                                    Eliminar
+                                </button>
+                                <button class="bodySmall btn btn-outline-secondary btn-sm rounded-2"
+                                    (click)="deactivateUser(user)">
+                                    {{ user.state ? 'Desactivar' : 'Activar' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>

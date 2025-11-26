@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteUser, getOtherUsers, getSelfUser, getUsers } from '../handlers/user.handler.js';
+import { deactivateUser, deleteUser, getOtherUsers, getSelfUser, getUsers } from '../handlers/user.handler.js';
 import { verifyAdmin, verifyToken } from '../middleware/auth.js';
 
 const userRouter = Router();
@@ -25,6 +25,8 @@ userRouter.get('/', getUsers);
 userRouter.get('/self', getSelfUser);
 // [ADMIN]
 userRouter.get('/:idUser', getOtherUsers);
+// [ADMIN]
+userRouter.patch('/:idUser', deactivateUser)
 // [ADMIN]
 userRouter.delete('/:idUser', deleteUser);
 

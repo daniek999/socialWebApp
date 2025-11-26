@@ -4,11 +4,12 @@ import { PostService } from '../../../core/services/post.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { Post } from '../../../models/post';
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
+import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
 
 @Component({
     selector: 'app-home',
     standalone: true,
-    imports: [DatePipe, NgFor, NgIf, TopWebBarComponent, BottomWebBarComponent],
+    imports: [DatePipe, NgFor, NgIf, TopWebBarComponent, BottomWebBarComponent, NavBarComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })

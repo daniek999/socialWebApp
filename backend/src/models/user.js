@@ -26,6 +26,11 @@ const userSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    state: {
+        type: Boolean,
+        required: true,
+        default: true
     }
 }, { timestamps: true });
 

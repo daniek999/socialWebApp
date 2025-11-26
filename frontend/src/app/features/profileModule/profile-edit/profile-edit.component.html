@@ -1,11 +1,9 @@
-<!-- Profile-Edit Component -->
-
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- TopAppBar -->
-    <topAppBar />
+    <!-- ================= HEADER ================= -->
+    <app-TopBar />
 
-    <!-- Page Content -->
+    <!-- ================== MAIN ================== -->
     <main class="flex-grow-1 d-flex align-items-center justify-content-center bg-light py-5">
         <div class="container">
             <!-- Loading Screen -->
@@ -15,32 +13,31 @@
                 </div>
                 <p class="mt-3 text-muted">Cargando perfil...</p>
             </div>
-                <!-- LEFT PANEL: Form -->
-            <div *ngIf="profile" class="card border-0 shadow-lg rounded-0 ">
+            <!-- LEFT PANEL: Form -->
+            <div *ngIf="profile" class="card rounded-2 border-0 p-3">
                 <!-- Header -->
-                <div class="card-header bg-dark text-white rounded-0 py-3">
+                <div class="bg-white text-dark">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-pencil-square me-2"></i> Editar Perfil
-                        </h5>
+                        <p class="bodyLarge mb-0 fw-bold">Editar Perfil</p>
+                        <i class="bodyLarge bi bi-pencil-square"></i> 
                     </div>
                 </div>
+                <hr class="my-3">
                 <!-- Body -->
-                <div class="card-body bg-white p-3">
+                <div class="bg-white p-0">
                     <form (ngSubmit)="onUpdateProfile()" autocomplete="on">
-
                         <div class="row mb-3">
                             <!-- @name -->
                             <div class="col">
                                 <label for="name" class="form-label bodySmall fw-semibold">Nombre</label>
                                 <input id="name" name="name" type="text" [(ngModel)]="editForm.name"
-                                    class="form-control rounded-0" placeholder="Ej: Juan" required [disabled]="loading">
+                                    class="form-control rounded-2" placeholder="Ej: Juan" required [disabled]="loading">
                             </div>
                             <!-- @surname -->
                             <div class="col">
                                 <label for="surname" class="form-label bodySmall fw-semibold">Apellidos</label>
                                 <input id="surname" name="surname" type="text" [(ngModel)]="editForm.surname"
-                                    class="form-control rounded-0" placeholder="Ej: Pérez García" required
+                                    class="form-control rounded-2" placeholder="Ej: Pérez García" required
                                     [disabled]="loading">
                             </div>
                             <!-- @profession -->
@@ -49,7 +46,7 @@
                                     Profesión
                                 </label>
                                 <input id="profession" name="profession" type="text" [(ngModel)]="editForm.profession"
-                                    class="form-control rounded-0" placeholder="Ej: Ingeniero de Software"
+                                    class="form-control rounded-2" placeholder="Ej: Ingeniero de Software"
                                     [disabled]="loading">
                             </div>
                             <!-- @employmentStatus -->
@@ -58,7 +55,7 @@
                                     Situación
                                 </label>
                                 <select id="employmentStatus" name="employmentStatus"
-                                    [(ngModel)]="editForm.employmentStatus" class="form-select rounded-0"
+                                    [(ngModel)]="editForm.employmentStatus" class="form-select rounded-2"
                                     [disabled]="loading">
                                     <option *ngFor="let status of employmentStatusOptions" [value]="status">
                                         {{ status }}
@@ -66,55 +63,54 @@
                                 </select>
                             </div>
                         </div>
-
                         <!-- @about -->
                         <div class="mb-3">
                             <label for="about" class="form-label bodySmall fw-semibold">
                                 Acerca de mí
                             </label>
                             <textarea id="about" name="about" [(ngModel)]="editForm.about"
-                                class="form-control rounded-0" rows="4"
+                                class="form-control rounded-2" rows="4"
                                 placeholder="Describe quién eres, qué te gusta hacer, tus objetivos profesionales, etc."
                                 [disabled]="loading"></textarea>
                         </div>
-
                         <!-- @photo -->
                         <div class="row mb-3">
                             <!-- Left: GetPhoto() -->
                             <div class="col-md-2 text-center">
                                 <div *ngIf="hasPhoto(); else noPhoto">
-                                    <img [src]="getPhotoUrl()" alt="Foto actual" class="rounded" width="80"
-                                        height="80" style="object-fit: cover;" />
+                                    <img [src]="getPhotoUrl()" alt="Foto actual" class="rounded" width="80" height="80"
+                                        style="object-fit: cover;" />
                                     <p class="mb-0 bodySmall text-muted">Foto actual</p>
                                 </div>
                                 <ng-template #noPhoto>
-                                    <img [src]="getPhotoUrl()" alt="Foto actual" class="rounded" width="80"
-                                        height="80" style="object-fit: cover;" />
+                                    <img [src]="getPhotoUrl()" alt="Foto actual" class="rounded" width="80" height="80"
+                                        style="object-fit: cover;" />
                                     <p class="mb-0 bodySmall text-muted">Sin foto</p>
                                 </ng-template>
                             </div>
                             <!-- Right: Control -->
                             <div class="col-md-10">
                                 <div class="row">
-                                    <label for="photo" class="col form-label bodySmall fw-semibold">Foto de Perfil</label>
+                                    <label for="photo" class="col form-label bodySmall fw-semibold">Foto de
+                                        Perfil</label>
                                     <!-- Estado: nueva foto seleccionada -->
                                     <small *ngIf="selectedPhoto" class="col bodySmall text-success text-end">
                                         Foto Agregada: '{{ selectedPhoto.name }}'.
                                     </small>
                                     <!-- Estado: sin nueva foto -->
-                                    <small *ngIf="!selectedPhoto && hasPhoto()" class="col bodySmall text-primary text-end">
+                                    <small *ngIf="!selectedPhoto && hasPhoto()"
+                                        class="col bodySmall text-primary text-end">
                                         No se ha seleccionado una nueva foto.
                                     </small>
                                 </div>
                                 <input id="photo" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-                                    class="form-control rounded-0 mb-2" (change)="onPhotoSelected($event)"
+                                    class="form-control rounded-2 mb-2" (change)="onPhotoSelected($event)"
                                     [disabled]="loading">
                                 <small class="text-muted bodySmall d-block mb-1">
                                     Formatos: JPG, PNG, GIF, WEBP (máx. 2MB)
                                 </small>
                             </div>
                         </div>
-
                         <!-- @curriculumvitae -->
                         <div class="row align-items-start mb-4">
                             <!-- Left: GetCv() -->
@@ -133,7 +129,7 @@
                                 </div>
                                 <!-- Input para nuevo CV -->
                                 <input id="curriculumvitae" type="file" accept="application/pdf"
-                                    class="form-control rounded-0" (change)="onCVSelected($event)" [disabled]="loading">
+                                    class="form-control rounded-2" (change)="onCVSelected($event)" [disabled]="loading">
                                 <div class="mt-1">
                                     <small class="text-muted bodySmall me-2">
                                         Solo archivos PDF (máx. 2MB)
@@ -144,7 +140,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- @visible -->
                         <div class="p-3 bg-light rounded">
                             <div class="form-check form-switch">
@@ -158,13 +153,13 @@
                                 Si está activado, otros usuarios podrán ver tu perfil en la comunidad.
                             </small>
                         </div>
-
                         <!-- Botones de acción -->
                         <div class="d-flex justify-content-between gap-2 pt-3">
-                            <button class="btn btn-dark rounded-0" (click)="goToProfile()">
+                            <button class="bodyMedium btn btn-dark rounded-2" 
+                                (click)="goToProfile()">
                                 <i class="bi bi-arrow-left me-2"></i> Volver al perfil
                             </button>
-                            <button type="submit" class="btn btn-primary rounded-0 px-4 fw-semibold"
+                            <button class="bodyMedium btn btn-primary rounded-2" 
                                 [disabled]="loading">
                                 <span *ngIf="!loading">
                                     <i class="bi bi-save me-2"></i> Guardar Cambios
@@ -182,8 +177,8 @@
         </div>
     </main>
 
-    <!-- BottomAppBar -->
-    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+    <!-- ================= FOOTER ================= -->
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
         [message]="errorMessage || successMessage" />
 
 </body>

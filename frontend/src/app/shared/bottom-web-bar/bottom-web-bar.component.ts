@@ -1,10 +1,10 @@
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'bottomAppBar',
+  selector: 'app-BottomBar',
   standalone: true,
-  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault],
+  imports: [ NgClass, NgIf],
   templateUrl: './bottom-web-bar.component.html',
   styleUrl: './bottom-web-bar.component.css'
 })

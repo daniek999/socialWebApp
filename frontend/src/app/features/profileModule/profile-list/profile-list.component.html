@@ -1,244 +1,79 @@
-<!-- Profile-List Component -->
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100">
 
-    <!-- HEADER -->
-    <topAppBar />
+    <!-- ================= HEADER ================= -->
+    <app-TopBar />
 
-    <!-- MAIN -->
-    <main class="flex-grow-1 d-flex align-items-start justify-content-center py-5">
-        <div class="container">
-            <div class="h-100 row">
-                <!-- ============================================ -->
-                <!-- LEFT PANEL: CONEXIONES -->
-                <!-- ============================================ -->
-                <div class="col-md-3 d-flex flex-column mb-3">
-                    <!-- Title -->
-                    <div class="bg-dark d-flex align-items-center justify-content-between border-0 mb-3 p-2 flex-shrink-0">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-person-heart fs-4 text-light me-2"></i>
-                            <h5 class="mb-0 fw-bold text-light">Conexiones</h5>
-                        </div>
-                    </div>
-                    <!-- Content -->
-                    <div class="flex-grow-1 overflow-auto" style="max-height: calc(85vh - 70px);">
-                        <!-- Loading State -->
-                        <div *ngIf="isLoadingFriendsData()" class="text-center py-4">
-                            <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                            <p class="small text-muted mt-2 mb-0">Cargando conexiones...</p>
-                        </div>
-                        <!-- Loaded State -->
-                        <div *ngIf="!isLoadingFriendsData()">
-                            <!-- SOLICITUDES ACEPTADAS -->
-                            <div class="border border-success mb-3" *ngIf="isFriendsListFill()">
-                                <!-- Titulo -->
-                                <div class="bg-success text-white d-flex align-items-center justify-content-between m-0 p-1">
-                                    <p class="bodySmall m-0 fw-semibold">Amigos</p>
-                                    <span class="badge bg-light text-dark rounded-0">
-                                        {{ friendsCount }}
-                                    </span>
+    <!-- ================== MAIN ================== -->
+    <main class="content-wrapper d-flex">
+        <!-- View Navigation -->
+        <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
+        <!-- View Content -->
+        <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
+            <!-- Title -->
+            <div class="d-flex align-items-center justify-content-start px-0">
+                <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
+                    style="width: 40px; height: 40px;">
+                    <i class="bi bi-globe-americas fs-5"></i>
+                </div>
+                <p class="bodyLarge m-0 fw-bold text-dark">Comunidad</p>
+            </div>
+            <!-- Content -->
+            <div class="d-flex flex-column flex-grow-1 mt-3">
+                <!-- [Loading] -->
+                <div *ngIf="isLoadingProfilesData()" class="text-center py-4 m-auto">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="small text-muted mt-2 mb-0">Cargando perfiles...</p>
+                </div>
+                <!-- [Filled] -->
+                <div *ngIf="!isLoadingProfilesData()">
+                    <div class="d-flex flex-column gap-3">
+                        <div *ngFor="let profile of profiles"
+                            class="bg-white d-flex align-items-center gap-3 rounded-2 p-3">
+                            <!-- FOTO -->
+                            <img [src]="getPhotoUrl(profile)" width="100" height="100" class="rounded-circle border"
+                                style="object-fit: cover;" />
+                            <!-- INFO -->
+                            <div class="flex-grow-1">
+                                <div class="bodySmall d-flex flex-wrap text-primary">
+                                    <span><i class="bi bi-at me-1"></i>{{ profile.idUser.username }}</span>
                                 </div>
-                                <!-- Contenido -->
-                                <ul class="list-group rounded-0">
-                                    <li *ngFor="let friend of friends"
-                                        class="list-group-item border-0 border-bottom p-2 d-flex align-items-center"
-                                        style="cursor: pointer;">
-                                        <!-- Foto -->
-                                        <img [src]="getFriendPhoto(friend)" [alt]="getFriendFullName(friend)"
-                                            class="rounded-circle me-2 border" width="40" height="40"
-                                            style="object-fit: cover;" (click)="goToSelectedProfile(friend.user.id)">
-                                        <!-- Info -->
-                                        <div class="flex-grow-1 overflow-hidden"
-                                            (click)="goToSelectedProfile(friend.user.id)">
-                                            <p class="mb-0 fw-semibold small text-truncate">
-                                                {{ getFriendFullName(friend) }}
-                                            </p>
-                                            <small class="text-muted text-truncate d-block">
-                                                {{ friend.profile?.profession || 'Sin profesión' }}
-                                            </small>
-                                        </div>
-                                        <!-- Botón eliminar -->
-                                        <button class="btn btn-outline-danger btn-sm rounded-0 px-2 py-0"
-                                            (click)="removeFriend(friend.friendshipId)"
-                                            title="Eliminar amigo">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- SOLICITUDES PENDIENTES -->
-                            <div class="border border-warning mb-3" *ngIf="hasPendingRequests()">
-                                <!-- Titulo -->
-                                <div class="bg-warning text-dark d-flex align-items-center justify-content-between m-0 p-1">
-                                    <p class="bodySmall m-0 fw-semibold">Pendientes</p>
-                                    <span class="badge bg-light text-dark rounded-0">
-                                        {{ pendingCount }}
-                                    </span>
+                                <p class="bodyLarge fw-bold  mb-3">
+                                    {{ profile.name + ' ' + profile.surname }}
+                                </p>
+                                <div class="bodySmall d-flex flex-wrap gap-2 text-secondary">
+                                    <span><i class="bi bi-briefcase-fill me-1"></i>{{ profile.profession || 'Sin profesión' }}</span>
+                                    <span><i class="bi bi-person-arms-up me-1"></i>{{ profile.employmentStatus}}</span>
                                 </div>
-                                <!-- Contenido -->
-                                <ul class="list-group rounded-0">
-                                    <li *ngFor="let request of pendingRequests"
-                                        class="list-group-item border-0 border-bottom p-2 d-flex align-items-center">
-                                        <!-- Foto -->
-                                        <img [src]="getPendingPhoto(request)" [alt]="getPendingFullName(request)"
-                                            class="rounded-circle me-2 border" width="40" height="40"
-                                            style="object-fit: cover; cursor: pointer;"
-                                            (click)="goToSelectedProfile(request.requester.id)">
-                                        <!-- Info -->
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <p class="mb-0 fw-semibold small text-truncate">
-                                                {{ getPendingFullName(request) }}
-                                            </p>
-                                            <small class="text-muted text-truncate d-block">
-                                                {{ request.profile?.profession || 'Sin profesión' }}
-                                            </small>
-                                        </div>
-                                        <!-- Acciones -->
-                                        <div class="d-flex gap-1">
-                                            <!-- Aceptar -->
-                                            <button class="btn btn-outline-success btn-sm rounded-0 px-2 py-0"
-                                                (click)="acceptRequest(request.friendshipId)" title="Aceptar solicitud">
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                            <!-- Rechazar -->
-                                            <button class="btn btn-outline-danger btn-sm rounded-0 px-2 py-0"
-                                                (click)="rejectRequest(request.friendshipId)"
-                                                title="Rechazar solicitud">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </li>
-                                </ul>
                             </div>
-                            <!-- SOLICITUDES ENVIADAS -->
-                            <div class="border border-info mb-3" *ngIf="hasSentRequests()">
-                                <!-- Titulo -->
-                                <div class="bg-info text-dark d-flex align-items-center justify-content-between m-0 p-1">
-                                    <p class="bodySmall m-0 fw-semibold">Enviadas</p>
-                                    <span class="badge bg-light text-dark rounded-0">
-                                        {{ sentCount }}
-                                    </span>
-                                </div>
-                                <!-- Contenido -->
-                                <ul class="list-group rounded-0">
-                                    <li *ngFor="let request of sentRequests"
-                                        class="list-group-item border-0 border-bottom p-2 d-flex align-items-center">
-                                        <!-- Foto -->
-                                        <img [src]="getSentPhoto(request)" [alt]="getSentFullName(request)"
-                                            class="rounded-circle me-2 border" width="40" height="40"
-                                            style="object-fit: cover; cursor: pointer;"
-                                            (click)="goToSelectedProfile(request.recipient.id)">
-                                        <!-- Info -->
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <p class="bodyMedium m-0 text-truncate">
-                                                {{ getSentFullName(request) }}
-                                            </p>
-                                            <small class="bodySmall text-muted d-block">
-                                                {{ request.profile?.profession || 'Sin profesión' }}
-                                            </small>
-                                        </div>
-                                        <!-- Acciones -->
-                                        <button class="btn btn-outline-danger btn-sm rounded-0 px-2 py-0"
-                                            (click)="cancelSentRequest(request.friendshipId)"
-                                            title="Rechazar solicitud">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </li>
-                                </ul>
+                            <!-- BOTONES -->
+                            <div class="d-flex flex-column gap-2">
+                                <button class="bodySmall btn btn-outline-dark btn-sm rounded-2"
+                                    (click)="sendFriendRequest(profile.idUser._id)">
+                                    <i class="bi bi-person-plus me-1"></i>
+                                    Agregar
+                                </button>
+                                <button class="bodySmall btn btn-outline-primary btn-sm rounded-2"
+                                    (click)="goToSelectedProfile(profile.idUser._id)">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Ver Perfil
+                                </button>
                             </div>
-                        </div>
-                        <!-- Empty State -->
-                        <div *ngIf="isFriendsListEmpty() && !hasPendingRequests() && !hasSentRequests()"
-                            class="alert alert-light text-center small border rounded-0 m-0">
-                            <i class="bi bi-emoji-neutral fs-4 d-block text-muted mb-2"></i>
-                            <p class="fw-semibold mb-1">Sin conexiones todavía</p>
-                            <small class="text-muted">
-                                Explora la comunidad y envía solicitudes de amistad
-                            </small>
                         </div>
                     </div>
                 </div>
-                <!-- ============================================ -->
-                <!-- RIGHT PANEL: COMUNIDAD -->
-                <!-- ============================================ -->
-                <div class="col-md-9 d-flex flex-column">
-                    <!-- Title -->
-                    <div class="bg-dark d-flex align-items-center justify-content-between border-0 mb-3 p-2 flex-shrink-0">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-people-fill fs-4 text-light me-2"></i>
-                            <p class="bodyLarge mb-0 fw-bold text-light">Comunidad</p>
-                        </div>
-                    </div>
-                    <!-- Content -->
-                    <div class="flex-grow-1 overflow-auto" style="max-height: calc(70vh - 10px);">
-                        <!-- Loading State -->
-                        <div *ngIf="isLoadingProfilesData()" class="text-center py-4">
-                            <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                            <p class="small text-muted mt-2 mb-0">Cargando perfiles...</p>
-                        </div>
-                        <!-- Loaded State -->
-                        <div *ngIf="!isLoadingProfilesData()">
-                            <div *ngFor="let profile of profiles"
-                                class="bg-white d-flex align-items-start mb-3 border p-3 gap-3 hover-shadow"
-                                style="transition: box-shadow 0.2s;">
-                                <!-- Foto -->
-                                <img [src]="getPhotoUrl(profile)" width="100"
-                                    height="100" class="rounded-circle border" style="object-fit: cover;" />
-                                <!-- Contenedor de Info + Botones -->
-                                <div class="d-flex flex-column justify-content-between flex-grow-1"
-                                    style="min-height: 100px;">
-
-                                    <!-- Datos -->
-                                    <div>
-                                        <p class="fw-bold mb-0 text-dark">
-                                            {{ profile.name + " " + profile.surname}}
-                                        </p>
-                                        <p class="text-secondary small mb-1">
-                                            {{ profile.profession || 'Sin profesión' }}
-                                        </p>
-                                        <span *ngIf="profile.employmentStatus" class="badge rounded rounded-0" [ngClass]="{
-                                                  'bg-primary': profile.employmentStatus === 'Empleado',
-                                                  'bg-warning text-dark': profile.employmentStatus === 'Practicante',
-                                                  'bg-info text-dark': profile.employmentStatus === 'Buscando',
-                                                  'bg-secondary': profile.employmentStatus === 'Estudiante'
-                                              }">
-                                            {{ profile.employmentStatus }}
-                                        </span>
-                                    </div>
-
-                                    <!-- Acciones -->
-                                    <div class="d-flex justify-content-end gap-2 mt-2">
-                                        <button class="btn btn-outline-dark btn-sm rounded-0" (click)="sendFriendRequest(profile.idUser._id)">
-                                            <i class="bi bi-person-plus me-1"></i> Agregar
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm rounded-0"
-                                            (click)="goToSelectedProfile(profile.idUser._id)">
-                                            <i class="bi bi-eye me-1"></i> Ver Perfil
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Empty State -->
-                        <div *ngIf="isProfilesListEmpty()"
-                            class="alert alert-secondary rounded-0 text-center">
-                            <i class="bi bi-exclamation-circle fs-1 mb-3 d-block"></i>
-                            <h5 class="fw-semibold">No hay perfiles disponibles</h5>
-                            <p class="text-muted mb-0">
-                                No se encontraron perfiles en la comunidad.
-                            </p>
-                        </div>
-                    </div>
+                <!-- [Empty] -->
+                <div *ngIf="isProfilesListEmpty()"
+                    class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0">
+                    <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
+                    <p class="bodyMedium fw-semibold m-0">No hay perfiles públicos.</p>
+                    <p class="bodySmall text-muted m-0">Vamos, no sean tímidos y compartan su perfil con los demás.</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <bottomAppBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+    <!-- ================= FOOTER ================= -->
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
         [message]="errorMessage || successMessage" />
 
 </body>

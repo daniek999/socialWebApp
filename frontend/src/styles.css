@@ -1,12 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-    font-family: "Exo 2", sans-serif;
+    font-family: "Red Hat Text", sans-serif;
+}
+.content-wrapper {
+    height: calc(100vh - 70px - 50px);
+}
+.nav-panel {
+    width: 260px !important;
+    flex-shrink: 0;
+}
+.bg-custom-background {
+    background: #f3f5f7;
 }
 .bg-custom {
-    background: linear-gradient(135deg, #1B1833, #441752, #AB4459, #F29F58);
-}
-.bg-custom-2 {
-    background: #060606;
+    background: #eef4f7;
 }
 ::-webkit-scrollbar { display: none; }
 
@@ -16,7 +23,7 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
     -webkit-text-fill-color: #000000 !important;
-    font-family: "Exo 2", sans-serif !important;
+    font-family: "Red Hat Text", sans-serif !important;
 }
 
 /* MARK: Matherials */
@@ -32,9 +39,9 @@ input:-webkit-autofill:active {
     --tertiary: #f2777a;
     --action: #3DA5D9;
     /* Typography */
-    --bodyLarge: normal normal bold 20px "Exo 2", sans-serif;
-    --bodyMedium: normal normal normal 16px "Exo 2", sans-serif;
-    --bodySmall: italic normal normal 13px "Exo 2", sans-serif;
+    --bodyLarge: normal normal bold 20px "Red Hat Text", sans-serif;
+    --bodyMedium: italic normal normal 16px "Red Hat Text", sans-serif;
+    --bodySmall: normal normal normal 13px "Red Hat Text", sans-serif;
     /* Icons */
     --iconDefault: 24px;
 }

@@ -9,6 +9,7 @@ import { ProfileDetailComponent } from './features/profileModule/profile-detail/
 import { ProfileEditComponent } from './features/profileModule/profile-edit/profile-edit.component';
 import { ProfileListComponent } from './features/profileModule/profile-list/profile-list.component';
 import { AdminPanelComponent } from './features/adminModule/admin-panel/admin-panel.component';
+import { ConnectionViewComponent } from './features/connection-view/connection-view.component';
 
 export const routes: Routes = [
     // Authentication
@@ -24,9 +25,12 @@ export const routes: Routes = [
     { path: 'edit-profile', component: ProfileEditComponent, canActivate: [authGuard] },
     { path: 'list-profile', component: ProfileListComponent, canActivate: [authGuard] },
 
-    // Posts
-    { path: 'create-post', component: PostCreateComponent, canActivate: [authGuard] },
-    { path: 'update-post', component: PostUpdateComponent, canActivate: [authGuard] },
+    // // Posts
+    // { path: 'create-post', component: PostCreateComponent, canActivate: [authGuard] },
+    // { path: 'update-post', component: PostUpdateComponent, canActivate: [authGuard] },
+
+    // Connection
+    { path: 'connections', component: ConnectionViewComponent, canActivate: [authGuard]},
 
     // Admin
     { path: 'admin', component: AdminPanelComponent, canActivate: [authGuard]},

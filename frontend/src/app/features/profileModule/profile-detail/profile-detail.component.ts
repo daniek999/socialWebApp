@@ -7,18 +7,21 @@ import { ProfileService } from '../../../core/services/profile.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
 import { IProfilePopulated } from '../../../models/profile';
+import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
+import { IUser } from '../../../models/user';
 
 @Component({
     selector: 'app-profile-detail',
     standalone: true,
     imports: [
-        FormsModule, 
-        HttpClientModule, 
-        NgIf, 
-        NgClass, 
-        TopWebBarComponent,
-        BottomWebBarComponent
-    ],
+    FormsModule,
+    HttpClientModule,
+    NgIf,
+    NgClass,
+    TopWebBarComponent,
+    BottomWebBarComponent,
+    NavBarComponent
+],
     templateUrl: './profile-detail.component.html',
     styleUrl: './profile-detail.component.css'
 })
