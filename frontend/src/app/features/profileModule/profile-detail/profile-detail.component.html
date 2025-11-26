@@ -15,41 +15,77 @@
                 <div class="d-flex align-items-center justify-content-start px-0">
                     <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
                         style="width: 40px; height: 40px;">
-                        <i class="bi bi-person-badge-fill fs-5"></i>
+                        <i class="bi bi-person-bounding-box fs-5"></i>
                     </div>
                     <p class="bodyLarge m-0 fw-bold text-dark">Perfil</p>
                 </div>
                 <!-- Content -->
                 <div *ngIf="profile" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-                    <!-- Data -->
+                    <!-- @photo, @name, @surname, @profession, @situation, @description -->
                     <div class="d-flex flex-column flex-md-row gap-3 p-0">
-                        <img [src]="getPhotoUrl()" alt="Foto" width="160" height="160" class="rounded-2"
+                        <img [src]="getPhotoUrl()" alt="Foto" width="200" height="200" class="rounded-2"
                             style="object-fit: cover;" />
-
                         <div class="flex-grow-1">
-                            <p class="bodyLarge mb-3">{{ profile.name }} {{ profile.surname }}</p>
-
+                            <p class="bodyLarge mb-0">{{ profile.name }} {{ profile.surname }}</p>
+                            <p class="bodyMedium mb-3">{{ profile.description || 'No definido' }}</p>
                             <p class="text-secondary bodySmall mb-0">Profesión</p>
-                            <p class="bodyMedium mb-3">{{ profile.profession }}</p>
-
-                            <p class="text-secondary bodySmall mb-0">Situación</p>
-                            <p class="bodyMedium mb-3">{{ profile.employmentStatus }}</p>
+                            <p class="bodyMedium mb-3">{{ profile.profession || 'Sin especificar' }}</p>
+                            <p class="text-secondary bodySmall mb-0">Profesión</p>
+                            <p class="bodyMedium mb-3">{{ profile.situation || 'No definida' }}</p>
                         </div>
                     </div>
-                    <hr class="my-3">
-                    <div class="p-0">
+                    <!-- @about -->
+                    <div class="bg-light mt-3 p-2 rounded-2">
                         <p class="text-secondary bodySmall mb-0">Sobre mí</p>
                         <p class="bodyMedium text-dark mb-0" style="white-space: pre-line;">
                             {{ profile.about || 'Sin descripción disponible.' }}
                         </p>
                     </div>
-                    <hr class="my-3">
-                    <!-- Actions -->
-                    <div class="d-flex gap-3">
+                    <!-- @interests -->
+                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length === 0">
+                        <p class="text-secondary bodySmall mb-0">Intereses</p>
+                        <p class="bodyMedium text-dark m-0">Sin intereses añadidos.</p>
+                    </div>
+                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length > 0">
+                        <p class="text-secondary bodySmall mb-0">Intereses</p>
+                        <ul class="bodyMedium text-dark ps-3 m-0">
+                            <li *ngFor="let item of profile.interests || []">
+                                {{ item }}
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- @skills -->
+                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length === 0">
+                        <p class="text-secondary bodySmall mb-0">Habilidades</p>
+                        <p class="bodyMedium text-dark m-0">Sin habilidades añadidas.</p>
+                    </div>
+                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length > 0">
+                        <p class="text-secondary bodySmall mb-0">Habilidades</p>
+                        <ul class="bodyMedium text-dark ps-3 m-0">
+                            <li *ngFor="let item of profile.skills || []">
+                                {{ item }}
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- @birthday -->
+                    <div class="bg-light mt-3 p-2 rounded-2">
+                        <p class="text-secondary bodySmall mb-0">Cumpleaños</p>
+                        <p class="bodyMedium mb-0">
+                            {{ formatBirthdayShort(profile.birthday) }}
+                        </p>
+                    </div>
+                    <!-- @visible -->
+                    <div class="bg-light mt-3 p-2 rounded-2">
+                        <p class="text-secondary bodySmall mb-0">Estado del Perfil</p>
+                        <p class="bodyMedium mb-0">
+                            {{ profile.visible ? 'Público' : 'Oculto' }}
+                        </p>
+                    </div>
+                    <!-- @curriculumvitae + Actions -->
+                    <div class="d-flex gap-3 mt-3">
                         <button class="bodyMedium btn flex-fill fw-bold rounded-2"
-                            [ngClass]="hasCurriculum() ? 'btn-outline-primary' : 'btn-outline-secondary'" 
-                            [disabled]="!hasCurriculum()"
-                            (click)="downloadCV()">
+                            [ngClass]="hasCurriculum() ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                            [disabled]="!hasCurriculum()" (click)="downloadCV()">
                             <i class="bi bi-download me-1"></i>
                             {{ hasCurriculum() ? 'Ver CV' : 'CV no disponible' }}
                         </button>
@@ -62,7 +98,6 @@
             </div>
             <!-- Achievements Data -->
             <div class="my-3">
-                <!-- Title -->
                 <div class="d-flex align-items-center justify-content-start px-0">
                     <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
                         style="width: 40px; height: 40px;">
@@ -70,7 +105,7 @@
                     </div>
                     <p class="bodyLarge m-0 fw-bold text-dark">Logros</p>
                 </div>
-                <!-- Content -->
+
                 <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
                     <p class="bg-white text-muted bodySmall mb-0">
                         Próximamente podrás ver tus logros y reconocimientos aquí.
@@ -79,7 +114,6 @@
             </div>
             <!-- User Data -->
             <div *ngIf="isOwnProfile">
-                <!-- Title -->
                 <div class="d-flex align-items-center justify-content-start px-0">
                     <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
                         style="width: 40px; height: 40px;">
@@ -87,8 +121,9 @@
                     </div>
                     <p class="bodyLarge m-0 fw-bold text-dark">Usuario</p>
                 </div>
-                <!-- Content -->
+
                 <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
+
                     <!-- Si NO es mi perfil -->
                     <div *ngIf="!isOwnProfile">
                         <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold w-100 mb-3"
@@ -99,6 +134,7 @@
                             <i class="bi bi-person-plus"></i> Agregar
                         </button>
                     </div>
+
                     <!-- Si es mi perfil -->
                     <div *ngIf="isOwnProfile">
                         <div class="d-flex flex-row gap-2">
@@ -120,6 +156,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

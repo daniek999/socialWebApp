@@ -1,14 +1,13 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgIf, NgForOf } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../core/services/profile.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
 import { IProfilePopulated } from '../../../models/profile';
 import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
-import { IUser } from '../../../models/user';
 
 @Component({
     selector: 'app-profile-detail',
@@ -20,7 +19,8 @@ import { IUser } from '../../../models/user';
     NgClass,
     TopWebBarComponent,
     BottomWebBarComponent,
-    NavBarComponent
+    NavBarComponent,
+    NgForOf
 ],
     templateUrl: './profile-detail.component.html',
     styleUrl: './profile-detail.component.css'
@@ -31,49 +31,54 @@ export class ProfileDetailComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private profileService: ProfileService,
-    ) {}
+    ) { }
 
-    /* ============================
-    // MARK: [Params]
-    ============================ */
-    private apiUrl = 'http://localhost:4000';
+    // MARK: [VARIABLES]
     profile: IProfilePopulated | null = null;
+    loadingProfile: boolean = false;
     // Estados de proceso
     isOwnProfile: boolean = false;
     successMessage: string = '';
     errorMessage: string = '';
 
-    /* ============================
-    // MARK: [Component Functions]
-    ============================ */
+    // MARK: [INIT - METHODS]
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
-            // Viendo otro perfil
-            this.isOwnProfile = false;
-            this.profileService.getOtherProfiles(id).subscribe({                
-                next: (data) => this.setProfile(data),
-                error: (error) => this.setError(error.error?.message)
-            });
+            // Perfil ajeno
+            this.loadOtherProfile(id);
         } else {
-            // Viendo tu propio perfil
-            this.isOwnProfile = true;
-            this.profileService.getSelfProfile().subscribe({
-                next: (data) => this.setProfile(data),
-                error: (error) => this.setError(error.error?.message)
-            });
+            // Perfil propio
+            this.loadSelfProfile();
         }
     }
-    // [Getters]
+    loadSelfProfile(): void {
+        this.isOwnProfile = true;
+        this.profileService.getSelfProfile().subscribe({
+            next: (response) => this.setProfile(response.data),
+            error: (error) => this.setError(error.error?.message ?? 'Error al cargar tu perfil')
+        });
+    }
+    loadOtherProfile(id: string): void {
+        this.isOwnProfile = false;
+        this.profileService.getOtherProfile(id).subscribe({
+            next: (response) => this.setProfile(response.data),
+            error: (error) => this.setError(error.error?.message ?? 'Error al cargar el perfil')
+        });
+    }
+    
+    // MARK: [GETTERS]
     getUserRole(): string {
-        if (this.profile?.idUser.role !== 'user') {
-            return 'Administrador';
-        }
-        return 'Usuario';
+        if (!this.profile) return '';
+        return this.profile.idUser.role === 'user'
+            ? 'Usuario'
+            : 'Administrador';
     }
     getUserCreatedAt(): string {
-        if (!this.profile?.idUser?.createdAt) return '';
-        const date = new Date(this.profile.idUser.createdAt);
+        const dateStr = this.profile?.idUser?.createdAt;
+        if (!dateStr) return '';
+
+        const date = new Date(dateStr);
         return date.toLocaleDateString('es-ES', {
             day: 'numeric',
             month: 'long',
@@ -81,27 +86,25 @@ export class ProfileDetailComponent implements OnInit {
         });
     }
     getPhotoUrl(): string {
-        if (this.profile?.photo) {
-            return `http://localhost:4000${this.profile.photo}`;
-        }
-        return 'assets/img/default_user_photo.png';
+        return this.profile?.photo
+            ? `http://localhost:4000${this.profile.photo}`
+            : 'assets/img/default_user_photo.png';
     }
     getCVUrl(): string | null {
-        if (this.profile?.curriculumvitae) {
-            return `${this.apiUrl}${this.profile.curriculumvitae}`;
-        }
-        return null;
+        return this.profile?.curriculumvitae
+            ? `http://localhost:4000${this.profile.curriculumvitae}`
+            : null;
     }
     hasCurriculum(): boolean {
         return !!this.profile?.curriculumvitae;
     }
-
-    // [Navigation]
+    
+    // MARK: [ACTIONS]
     goToEditProfile() {
-        this.router.navigate(['/edit-profile'])
+        this.router.navigate(['/edit-profile']);
     }
     goToCommunity() {
-        this.router.navigate(['/list-profile'])
+        this.router.navigate(['/list-profile']);
     }
     downloadCV() {
         const cvUrl = this.getCVUrl();
@@ -110,16 +113,32 @@ export class ProfileDetailComponent implements OnInit {
         }
     }
 
-    // [Private Methods]
+    // MARK: [SETTERS]
     private setProfile(profile: IProfilePopulated) {
         this.profile = profile;
-        //console.log('Profile cargado:', profile);
+        console.log('Perfil cargado:', profile);
     }
     private setError(message: string) {
         this.errorMessage = message;
-        setTimeout(() => {
-            this.errorMessage = '';
-        }, 5000);
-    }
-    
+        setTimeout(() => this.errorMessage = '', 5000);
+    };
+    formatBirthdayShort(dateString?: string): string {
+        if (!dateString) return '';
+
+        const date = new Date(dateString);
+
+        // Ajustar timezone igual que antes
+        date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
+        const meses = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+
+        const dia = date.getDate();
+        const mes = meses[date.getMonth()];
+
+        return `${dia} de ${mes}`;
+    };
+
 }

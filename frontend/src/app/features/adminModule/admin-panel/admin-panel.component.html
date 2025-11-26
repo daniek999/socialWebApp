@@ -32,9 +32,9 @@
                         <p class="fs-1 text-primary fw-bold m-0 text-center">{{ usersCount }}</p>
                         <p class="bodySmall text-muted text-end m-0">Registrados en total.</p>
                     </div>
-                    <!-- Filtros -->
+                    <!-- Ordernar Por -->
                     <div class="bg-white mb-3 p-3 rounded-2">
-                        <p class="bodyMedium fw-semibold mb-1">Filtros</p>
+                        <p class="bodyMedium fw-semibold mb-1">Ordenar Por</p>
                         <div class="d-flex flex-wrap gap-4">
                             <!-- Más antiguos -->
                             <div class="form-check">
@@ -82,41 +82,17 @@
                                 </div>
                             </div>
                             <hr class="my-3">
-                            <!-- Data -->
-                            <div class="d-flex flex-wrap gap-4">
-                                <div class="d-flex flex-column">
-                                    <p class="bodySmall text-muted m-0">ID</p>
-                                    <p class="bodyMedium m-0">{{ user._id }}</p>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <p class="bodySmall text-muted m-0">Correo</p>
-                                    <p class="bodyMedium m-0">{{ user.email }}</p>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <p class="bodySmall text-muted m-0">Rol</p>
-                                    <p class="bodyMedium m-0">{{ user.role }}</p>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <p class="bodySmall text-muted m-0">Registrado</p>
-                                    <p class="bodyMedium m-0">{{ user.createdAt | date:'medium' }}</p>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <p class="bodySmall text-muted m-0">Modificado</p>
-                                    <p class="bodyMedium m-0">{{ user.updatedAt | date:'medium' }}</p>
-                                </div>
-                            </div>
-                            <hr class="my-3">
                             <!-- Actions -->
                             <div class="d-flex flex-wrap gap-2">
-                                <button class="bodySmall btn btn-outline-primary btn-sm rounded-2" 
-                                    (click)="viewUser(user)">
+                                <button class="bodySmall btn btn-outline-primary btn-sm rounded-2"
+                                    data-bs-toggle="modal" data-bs-target="#userDetailsModal" (click)="viewUser(user)">
                                     Ver Detalles
                                 </button>
                                 <!-- <button class="btn btn-outline-warning btn-sm rounded-0"
                                     (click)="editUser(user)">
                                     Editar
                                 </button> -->
-                                <button class="bodySmall btn btn-outline-danger btn-sm rounded-2" 
+                                <button class="bodySmall btn btn-outline-danger btn-sm rounded-2"
                                     (click)="deleteUser(user)">
                                     Eliminar
                                 </button>
@@ -132,8 +108,49 @@
         </div>
     </main>
 
+    <!-- ================= MODAL - USER_DETAILS ================= -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-2 p-3" *ngIf="userDataUnique">
+                <!-- Header -->
+                <div class="d-flex flex-row align-items-center justify-content-between">
+                    <p class="bodyLarge modal-title m-0">{{userDataUnique.username}}</p>
+                    <button type="button" class="btn btn-outline-secondary px-3 py-1 rounded-2" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+                <hr class="my-3">
+                <!-- Body -->
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-column">
+                        <p class="bodySmall text-muted m-0">ID</p>
+                        <p class="bodyMedium m-0">{{ userDataUnique._id }}</p>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <p class="bodySmall text-muted m-0">Correo</p>
+                        <p class="bodyMedium m-0">{{ userDataUnique.email }}</p>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <p class="bodySmall text-muted m-0">Rol</p>
+                        <p class="bodyMedium m-0">{{ userDataUnique.role }}</p>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <p class="bodySmall text-muted m-0">Registrado</p>
+                        <p class="bodyMedium m-0">{{ userDataUnique.createdAt | date:'medium' }}</p>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <p class="bodySmall text-muted m-0">Modificado</p>
+                        <p class="bodyMedium m-0">{{ userDataUnique.updatedAt | date:'medium' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- ================= FOOTER ================= -->
     <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
         [message]="errorMessage || successMessage" />
+
 
 </body>

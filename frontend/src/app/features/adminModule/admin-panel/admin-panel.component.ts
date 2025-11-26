@@ -71,7 +71,6 @@ export class AdminPanelComponent implements OnInit {
             next: (res) => {
                 this.setUser(res.data);
                 this.setSuccess("Usuario cargado.");
-                console.log(res.data)
             },
             error: (error) => this.setError(error),
         });

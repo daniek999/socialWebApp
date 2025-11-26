@@ -4,7 +4,7 @@ import { BottomWebBarComponent } from "../../shared/bottom-web-bar/bottom-web-ba
 import { Router } from '@angular/router';
 import { FriendshipService } from '../../core/services/friendship.service';
 import { NgFor, NgIf } from '@angular/common';
-import { IFriendWithProfile, IPendingRequest, ISentRequest } from '../../models/friendship';
+import { IAcceptedRequest, IPendingRequest, ISentRequest } from '../../models/friendship';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 
 @Component({
@@ -25,7 +25,7 @@ export class ConnectionViewComponent implements OnInit {
     successMessage: string = '';
     errorMessage: string = '';
     // Accepted Requests (Confirmed)
-    acceptedRequests: IFriendWithProfile[] = [];
+    acceptedRequests: IAcceptedRequest[] = [];
     acceptedLoading: boolean = false;
     acceptedCount: number = 0;
     // Pending Requests (Received)
@@ -77,12 +77,10 @@ export class ConnectionViewComponent implements OnInit {
                 this.pendingRequests = response.requests;
                 this.pendingCount = response.count;
                 this.pendingLoading = false;
-                console.log('Pendientes cargados:', response.count);
             },
             error: (error) => {
                 this.setError('Error al cargar solicitudes pendientes');
                 this.pendingLoading = false;
-                console.error('Error al cargar pendientes:', error.message);
             }
         });
     };
@@ -93,12 +91,10 @@ export class ConnectionViewComponent implements OnInit {
                 this.sentRequests = response.sentRequests;
                 this.sentCount = response.count;
                 this.sentLoading = false;
-                console.log('Solicitudes enviadas cargadas:', response.count);
             },
             error: (error) => {
                 this.setError('Error al cargar solicitudes enviadas');
                 this.sentLoading = false;
-                console.error('Error al cargar enviadas:', error.message);
             }
         });
     };
@@ -108,43 +104,34 @@ export class ConnectionViewComponent implements OnInit {
     acceptRequest(friendshipId: string): void {
         this.friendshipService.acceptFriendRequest(friendshipId).subscribe({
             next: (response) => {
-                this.setSuccess('Solicitud aceptada correctamente');
-                // Recargar datos
+                this.setSuccess(response.message);
                 this.loadFriends();
                 this.loadPendingRequests();
-                console.log('Solicitud aceptada:', response.message);
             },
             error: (error) => {
-                this.setError('Error al aceptar solicitud');
-                console.error('Error al aceptar:', error.message);
+                this.setError(error.message);
             }
         });
     }
     rejectRequest(friendshipId: string): void {
         this.friendshipService.rejectFriendRequest(friendshipId).subscribe({
             next: (response) => {
-                this.setSuccess('Solicitud rechazada');
-                // Recargar pendientes
+                this.setSuccess(response.message);
                 this.loadPendingRequests();
-                console.log('Solicitud rechazada:', response.message);
             },
             error: (error) => {
-                this.setError('Error al rechazar solicitud');
-                console.error('Error al rechazar:', error.message);
+                this.setError(error.message);
             }
         });
     }
     cancelSentRequest(friendshipId: string): void {
         this.friendshipService.cancelFriendRequest(friendshipId).subscribe({
             next: (response) => {
-                this.setSuccess('Solicitud cancelada');
-                // Recargar enviadas
+                this.setSuccess(response.message);
                 this.loadSentRequests();
-                console.log('Solicitud cancelada:', response.message);
             },
             error: (error) => {
-                this.setError('Error al cancelar solicitud');
-                console.error('Error al cancelar:', error.message);
+                this.setError(error.message);
             }
         });
     }
@@ -152,14 +139,11 @@ export class ConnectionViewComponent implements OnInit {
         if (confirm('¿Estás seguro de eliminar esta amistad?')) {
             this.friendshipService.removeFriend(friendshipId).subscribe({
                 next: (response) => {
-                    this.setSuccess('Amistad eliminada');
-                    // Recargar amigos
+                    this.setSuccess(response.message);
                     this.loadFriends();
-                    console.log('Amistad eliminada:', response.message);
                 },
                 error: (error) => {
-                    this.setError('Error al eliminar amistad');
-                    console.error('Error al eliminar:', error.message);
+                    this.setError(error.message);
                 }
             });
         }
@@ -167,80 +151,68 @@ export class ConnectionViewComponent implements OnInit {
     sendFriendRequest(userId: string): void {
         this.friendshipService.sendFriendRequest(userId).subscribe({
             next: (response) => {
-                this.setSuccess('Solicitud enviada correctamente');
-                // Recargar solicitudes enviadas
+                this.setSuccess(response.message);
                 this.loadSentRequests();
-                console.log('Solicitud enviada:', response.message);
             },
             error: (error) => {
                 this.setError(error.message);
-                console.error('Error al enviar:', error.message);
             }
         });
     }
     //#endregion
 
-    //#region [Friendship Getters]
+    //#region [Getters]
     // 'Aceptado'
-    getFriendFullName(friend: IFriendWithProfile): string {
-        if (friend.profile?.name && friend.profile?.surname) {
-            return `${friend.profile.name} ${friend.profile.surname}`;
-        }
-        return friend.user.username;
-    }
-    getFriendPhoto(friend: IFriendWithProfile): string {
-        if (friend.profile?.photo) {
-            return `http://localhost:4000${friend.profile.photo}`;
-        }
-        return 'assets/img/default_user_photo.png';
-    }
+    getFriendFullName(friend: IAcceptedRequest): string | null {
+        return this.setNameFromProfile(friend.profile?.name, friend.profile?.surname);
+    };
+    getFriendPhoto(friend: IAcceptedRequest): string {
+        return this.setPhotoFromProfile(friend.profile?.photo);
+    };
     // 'Pendiente - Recibido'
-    getPendingFullName(request: IPendingRequest): string {
-        if (request.profile?.name && request.profile?.surname) {
-            return `${request.profile.name} ${request.profile.surname}`;
-        }
-        return request.requester.username;
-    }
+    getPendingFullName(request: IPendingRequest): string | null {
+        return this.setNameFromProfile(request.profile?.name, request.profile?.surname);
+    };
     getPendingPhoto(request: IPendingRequest): string {
-        if (request.profile?.photo) {
-            return `http://localhost:4000${request.profile.photo}`;
-        }
-        return 'assets/img/default_user_photo.png';
-    }
+        return this.setPhotoFromProfile(request.profile?.photo);
+    };
     // 'Pendiente - Enviado'
-    getSentFullName(request: ISentRequest): string {
-        if (request.profile?.name && request.profile?.surname) {
-            return `${request.profile.name} ${request.profile.surname}`;
-        }
-        return request.recipient.username;
-    }
+    getSentFullName(request: ISentRequest): string | null {
+        return this.setNameFromProfile(request.profile?.name, request.profile?.surname);
+    };
     getSentPhoto(request: ISentRequest): string {
-        if (request.profile?.photo) {
-            return `http://localhost:4000${request.profile.photo}`;
+        return this.setPhotoFromProfile(request.profile?.photo);
+    };
+    //#endregion
+
+    //#region [Setters]
+    private setNameFromProfile(name?: string, surname?: string): string | null {
+        if (name && surname) {
+            return name + ' ' + surname;
         }
-        return 'assets/img/default_user_photo.png';
+        return null;
     }
-    //#endregion
-
-    //#region [Navigation]
-    goToSelectedProfile(id: string) {
-        this.router.navigate(['/profile', id]);
+    private setPhotoFromProfile(photo?: string): string {
+        return photo ? `http://localhost:4000${photo}` : 'assets/img/default_user_photo.png';
     }
-    //#endregion
-
-    //#region [Setting Data]
     private setSuccess(message: string): void {
         this.successMessage = message;
         setTimeout(() => {
             this.successMessage = '';
         }, 3000);
-    }
+    };
     private setError(message: string) {
         this.errorMessage = message;
         setTimeout(() => {
             this.errorMessage = '';
-        }, 5000);
-    }
+        }, 3000);
+    };
+    //#endregion
+
+    //#region [Navigation]
+    goToSelectedProfile(id: string) {
+        this.router.navigate(['/profile', id]);
+    };
     //#endregion
 
     //#region [Helpers]

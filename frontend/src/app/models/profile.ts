@@ -2,25 +2,46 @@ import { IUser } from "./user";
 
 export interface IProfileBase {
     _id?: string;
-    idUser: IUser | string;
+    // Puede venir poblado o solo ID
+    idUser: IUser;
+    // Datos básicos
     name?: string;
     surname?: string;
+    birthday?: string;
+    interests?: string[];
+    // Datos profesionales
     profession?: string;
-    employmentStatus?: 'Estudiante' | 'Buscando' | 'Practicante' | 'Empleado';
+    situation?: 'Estudiante' | 'Buscando' | 'Practicante' | 'Empleado';
+    description?: string;
     about?: string;
+    skills?: string[];
+    // Media
     photo?: string;
     curriculumvitae?: string;
+    // Configuración visual
     visible: boolean;
     createdAt?: string;
     updatedAt?: string;
     __v?: number;
-}
+};
 
-// 1. Extending the interface when in the backend 'profile' is populated with idUser.
+export interface IProfileSingleResponse {
+    success: boolean;
+    message: string;
+    data: IProfile;
+};
+
+export interface IProfileListResponse {
+    success: boolean;
+    message: string;
+    data: IProfile[];
+};
+
+// Caso cuando backend hace populate de idUser
 export interface IProfilePopulated extends Omit<IProfileBase, 'idUser'> {
     idUser: IUser;
-}
+};
 
-// 2. We mix it using 'type' for each case.
+// Tipo general que soporta ambos
 export type IProfile = IProfileBase | IProfilePopulated;
 

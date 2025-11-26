@@ -27,7 +27,7 @@
                 <!-- [Filled] -->
                 <div *ngIf="!isLoadingFriendsData()" class="d-flex flex-column">
                     <!-- SOLICITUDES ACEPTADAS -->
-                    <div *ngIf="hasAcceptedRequests()" class="bg-white p-3 rounded-2">
+                    <div *ngIf="hasAcceptedRequests()" class="bg-white p-3 rounded-2 mb-3">
                         <!-- HEADER -->
                         <div class="px-0 mb-1 d-flex align-items-center">
                             <span class="bodyMedium fw-bold text-success m-0 me-2">{{ acceptedCount }}</span>
@@ -38,35 +38,37 @@
                         <ul class="list-group">
                             <li *ngFor="let friend of acceptedRequests"
                                 class="list-group-item d-flex align-items-center p-0 border-0 mt-3">
-                                <!-- Foto -->
-                                <img [src]="getFriendPhoto(friend)" width="45" height="45"
-                                    style="object-fit: cover; border-radius: 50%;" class="me-3"
-                                    />
-                                <!-- Texto -->
+                                <!-- Data -->
+                                <img [src]="getFriendPhoto(friend)" 
+                                    width="50" 
+                                    height="50"
+                                    style="object-fit: cover;" 
+                                    class="me-3 rounded-circle"
+                                />
                                 <div class="flex-grow-1">
-                                    <p class="mb-0 fw-semibold small text-truncate">
+                                    <p class="bodyMedium fw-semibold mb-0">
                                         {{ getFriendFullName(friend) }}
                                     </p>
-                                    <small class="text-muted text-truncate">
+                                    <p class="bodySmall text-muted mb-0">
                                         {{ friend.profile?.profession || 'Sin profesión' }}
-                                    </small>
+                                    </p>
                                 </div>
-                                <!-- Action -->
+                                <!-- Actions -->
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-outline-primary btn-sm rounded-0 px-2 py-0 rounded-2"
                                         (click)="goToSelectedProfile(friend.user.id)">
-                                        <i class="bi bi-eye"></i>
+                                        <i class="bi bi-person-lines-fill fs-5"></i>
                                     </button>
                                     <button class="btn btn-outline-danger btn-sm rounded-0 px-2 py-0 rounded-2"
                                         (click)="removeFriend(friend.friendshipId)">
-                                        <i class="bi bi-x-lg"></i>
+                                        <i class="bi bi-person-dash-fill fs-5"></i>
                                     </button>
                                 </div>
                             </li>
                         </ul>
                     </div>
                     <!-- SOLICITUDES PENDIENTES -->
-                    <div *ngIf="hasPendingRequests()" class="bg-white p-3 rounded-2 my-3">
+                    <div *ngIf="hasPendingRequests()" class="bg-white p-3 rounded-2 mb-3">
                         <!-- HEADER -->
                         <div class="px-0 mb-1 d-flex align-items-center">
                             <span class="bodyMedium fw-bold text-warning m-0 me-2">{{ pendingCount }}</span>
@@ -77,35 +79,34 @@
                         <ul class="list-group">
                             <li *ngFor="let request of pendingRequests"
                                 class="list-group-item d-flex align-items-center p-0 border-0 mt-3">
-                                <!-- Foto -->
+                                <!-- Data -->
                                 <img [src]="getPendingPhoto(request)" 
-                                    class="me-3"
-                                    style="object-fit: cover; border-radius: 50%;" 
-                                    width="45" 
-                                    height="45"
+                                    width="50" 
+                                    height="50"
+                                    style="object-fit: cover;" 
+                                    class="me-3 rounded-circle"
                                 />
-                                <!-- Texto -->
                                 <div class="flex-grow-1">
-                                    <p class="mb-0 fw-semibold small text-truncate">
+                                    <p class="bodyMedium fw-semibold mb-0">
                                         {{ getPendingFullName(request) }}
                                     </p>
-                                    <small class="text-muted">
+                                    <p class="bodySmall text-muted mb-0">
                                         {{ request.profile?.profession || 'Sin profesión' }}
-                                    </small>
+                                    </p>
                                 </div>
                                 <!-- Actions -->
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-outline-primary btn-sm rounded-0 px-2 py-0 rounded-2"
                                         (click)="goToSelectedProfile(request.requester.id)">
-                                        <i class="bi bi-eye"></i>
+                                        <i class="bi bi-person-lines-fill fs-5"></i>
                                     </button>
                                     <button class="btn btn-outline-success btn-sm rounded-2 px-2 py-0"
                                         (click)="acceptRequest(request.friendshipId)">
-                                        <i class="bi bi-check-lg"></i>
+                                        <i class="bi bi-person-plus-fill fs-5"></i>
                                     </button>
                                     <button class="btn btn-outline-danger btn-sm rounded-2 px-2 py-0"
-                                        (click)="rejectRequest(request.requester.id)">
-                                        <i class="bi bi-x-lg"></i>
+                                        (click)="rejectRequest(request.friendshipId)">
+                                        <i class="bi bi-person-dash-fill fs-5"></i>
                                     </button>
                                 </div>
                             </li>
@@ -123,31 +124,30 @@
                         <ul class="list-group">
                             <li *ngFor="let request of sentRequests"
                                 class="list-group-item d-flex align-items-center p-0 border-0 mt-3">
-                                <!-- Foto -->
+                                <!-- Data -->
                                 <img [src]="getSentPhoto(request)" 
-                                    width="45" 
-                                    height="45"
-                                    style="object-fit: cover; border-radius: 50%;" 
-                                    class="me-3"
+                                    width="50" 
+                                    height="50"
+                                    style="object-fit: cover;" 
+                                    class="me-3 rounded-circle"
                                 />
-                                <!-- Texto -->
                                 <div class="flex-grow-1">
-                                    <p class="mb-0 fw-semibold small text-truncate">
+                                    <p class="bodyMedium fw-semibold mb-0">
                                         {{ getSentFullName(request) }}
                                     </p>
-                                    <small class="text-muted">
+                                    <p class="bodySmall text-muted mb-0">
                                         {{ request.profile?.profession || 'Sin profesión' }}
-                                    </small>
+                                    </p>
                                 </div>
                                 <!-- Action -->
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-outline-primary btn-sm rounded-0 px-2 py-0 rounded-2"
                                         (click)="goToSelectedProfile(request.recipient.id)">
-                                        <i class="bi bi-eye"></i>
+                                        <i class="bi bi-person-lines-fill fs-5"></i>
                                     </button>                                
                                     <button class="btn btn-outline-danger btn-sm rounded-2 px-2 py-0"
                                         (click)="cancelSentRequest(request.friendshipId)">
-                                        <i class="bi bi-x-lg"></i>
+                                        <i class="bi bi-person-dash-fill fs-5"></i>
                                     </button>
                                 </div>
                             </li>
@@ -166,7 +166,6 @@
     </main>
 
     <!-- ================= FOOTER ================= -->
-    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
-        [message]="errorMessage || successMessage" />
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null" [message]="errorMessage || successMessage" />
 
 </body>

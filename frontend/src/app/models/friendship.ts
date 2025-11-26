@@ -20,7 +20,7 @@ export interface IFriendshipPopulated {
 };
 
 // Interfaces of json responses.
-export interface IFriendWithProfile {
+export interface IAcceptedRequest {
     friendshipId: string;
     user: {
         id: string;

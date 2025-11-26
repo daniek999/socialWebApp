@@ -12,9 +12,6 @@ body {
 .bg-custom-background {
     background: #f3f5f7;
 }
-.bg-custom {
-    background: #eef4f7;
-}
 ::-webkit-scrollbar { display: none; }
 
 input:-webkit-autofill,
@@ -40,8 +37,8 @@ input:-webkit-autofill:active {
     --action: #3DA5D9;
     /* Typography */
     --bodyLarge: normal normal bold 20px "Red Hat Text", sans-serif;
-    --bodyMedium: italic normal normal 16px "Red Hat Text", sans-serif;
-    --bodySmall: normal normal normal 13px "Red Hat Text", sans-serif;
+    --bodyMedium: normal normal normal 16px "Red Hat Text", sans-serif;
+    --bodySmall: italic normal normal 13px "Red Hat Text", sans-serif;
     /* Icons */
     --iconDefault: 24px;
 }

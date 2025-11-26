@@ -50,13 +50,27 @@ export const register = async (req, res) => {
         // 3. Crear un nuevo Perfil
         const newProfile = new Profile({
             idUser: newUser._id,
+            // Datos Básicos
             name: 'Tus Nombres',
             surname: 'Tus Apellidos',
-            profession: 'Tu Profesion',
-            employmentStatus: 'Estudiante',
+            birthday: null,
+            interests: [],
+            // Datos Profesionales
+            profession: 'Tu Profesión',
+            situation: 'Estudiante',
+            description: 'Escribe una breve descripción profesional.',
             about: 'Deja que te conozcan; escribe algo acerca de ti.',
+            skills: [],
+            // Media
             photo: "",
             curriculumvitae: "",
+            // Redes Sociales
+            socialLinks: {
+                github: "",
+                youtube: "",
+                twitch: ""
+            },
+            // Estado del perfil
             visible: false,
         });
         await newProfile.save();
@@ -139,7 +153,7 @@ export const login = async (req, res) => {
         return res.status(500).json({ message: 'Error del servidor -> ' + error });
     }
 };
-// [GET] - 'auth/verify/:token'
+// [GET] - 'auth/verify/:token' - Ver como redireccionar siempre al login
 export const verifyEmail = async (req, res) => {
     try {
         //#region [ Params ]
@@ -150,7 +164,6 @@ export const verifyEmail = async (req, res) => {
         //#region [ Validations ]
         const user = await User.findById(decoded.id);
         if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-
         if (user.verified) {
             return res.status(200).json({ message: 'Tu cuenta ya está verificada.' });
         }

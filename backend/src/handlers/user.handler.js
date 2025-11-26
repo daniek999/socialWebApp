@@ -80,7 +80,7 @@ export const getOtherUsers = async (req, res) => {
         //#endregion
 
         //#region [ Process ]
-        const userData = await User.findById(idUser);
+        const userData = await User.findById(idUser).select('-password');;
         //#endregion
 
         //#region [ Verifications ]
@@ -93,6 +93,7 @@ export const getOtherUsers = async (req, res) => {
         //#endregion
 
         //#region [ Result ]
+        //console.log(userData);
         res.status(200).json({
             success: true,
             message: 'Usuario obtenido correctamente.',
@@ -158,7 +159,6 @@ export const deleteUser = async (req, res) => {
         //#endregion
     }
 };
-
 /** [PATCH] Desactivar usuario por ID (Admin)
  * 
  */
@@ -179,8 +179,17 @@ export const deactivateUser = async (req, res) => {
         //#endregion
 
         //#region [ Process ]
+        // Desactiva la cuenta.
         userToDeactivate.state = !userToDeactivate.state;
         await userToDeactivate.save();
+        // Deja el perfil en privado.
+        if (!userToDeactivate.state) {
+            await Profile.findOneAndUpdate(
+                { idUser },
+                { visible: false },
+                { new: true }
+            );
+        }
         //#endregion
 
         //#region [ Result ]

@@ -7,27 +7,47 @@ const profileSchema = new Schema({
         required: true,
         unique: true
     },
+    // Datos Basicos
     name: {
         type: String,
         trim: true,
+        required: true,
     },
     surname: {
         type: String,
-        trim: true
+        trim: true,
+        required: true,
     },
+    birthday: {
+        type: Date,
+    },
+    interests: {
+        type: [String]
+    },
+    // Datos Profesionales
     profession: {
         type: String,
-        trim: true
+        trim: true,
+        required: true,
     },
-    employmentStatus: {
+    situation: {
         type: String,
         enum: ['Estudiante', 'Buscando', 'Practicante', 'Empleado'],
         default: 'Estudiante'
+    },
+    description: {
+        type: String,
+        trim: true,
+        maxLength: 280
     },
     about: {
         type: String,
         trim: true
     },
+    skills: {
+        type: [String]
+    },
+    // Media
     photo: {
         type: String,
         default: ""
@@ -36,6 +56,13 @@ const profileSchema = new Schema({
         type: String,
         default: ""
     },
+    // Redes sociales
+    socialLinks: {
+        github: {type: String},
+        youtube: {type: String},
+        twitch: {type: String},
+    },
+    // Estado Visual del Perfil
     visible: {
         type: Boolean,
         required: true,

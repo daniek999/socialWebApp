@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IFriendshipPopulated, IFriendWithProfile, IPendingRequest, IRelationshipStatus, ISentRequest } from '../../models/friendship';
+import { IFriendshipPopulated, IAcceptedRequest, IPendingRequest, IRelationshipStatus, ISentRequest } from '../../models/friendship';
 import { catchError, Observable, throwError } from 'rxjs';
 
 interface SendFriendRequestResponse {
@@ -16,7 +16,7 @@ interface SimpleMessageResponse {
 }
 interface GetFriendsResponse {
     count: number;
-    friends: IFriendWithProfile[];
+    friends: IAcceptedRequest[];
 }
 interface GetPendingRequestsResponse {
     count: number;
