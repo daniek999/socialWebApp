@@ -23,8 +23,8 @@ input:-webkit-autofill:active {
     font-family: "Red Hat Text", sans-serif !important;
 }
 
-/* MARK: Matherials */
 
+/* MARK: Matherials */
 :root {
     /* Colors */
     --background: #131313;
@@ -42,7 +42,6 @@ input:-webkit-autofill:active {
     /* Icons */
     --iconDefault: 24px;
 }
-
 .bodySmall {
     font: var(--bodySmall);
 }
@@ -53,13 +52,12 @@ input:-webkit-autofill:active {
     font: var(--bodyLarge);
 }
 
-
+/* MARK: Login & Register */
 /* === [ Groups ] === */
 .cst-form-group {
     display: flex;
     flex-direction: column;
 }
-
 /* === [ Controls ] === */
 .cst-fg-control {
     padding: 0.4em 0.8em;
@@ -70,7 +68,6 @@ input:-webkit-autofill:active {
     background-color: transparent;
     box-shadow: none;
 }
-
 /* === [ Texts ] === */
 .cst-fg-label {
     font-size: small;
@@ -91,7 +88,6 @@ input:-webkit-autofill:active {
     font-size: small;
     color: #295afd;
 }
-
 /* === [ Animations ] === */
 .cst-form-group:focus-within .cst-fg-label {
     color: #007bff;

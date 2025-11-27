@@ -20,7 +20,7 @@ const friendshipSchema = new Schema({
 }, { timestamps: true });
 
 // Indexes
-friendshipSchema.index({ requester: 1, recipient: 1 }, { unique: true }); // Avoid duplicate applications
+friendshipSchema.index({ requester: 1, recipient: 1 }, { unique: true });
 friendshipSchema.index({ status: 1 });
 friendshipSchema.index({ requester: 1, status: 1 });
 friendshipSchema.index({ recipient: 1, status: 1 });

@@ -326,7 +326,7 @@ export const getFriends = async (req, res) => {
                         : friendship.requester;
 
                 const profile = await Profile.findOne({ idUser: friendUser._id })
-                    .select('name surname profession photo');
+                    .select('name surname situation description profession photo');
 
                 return {
                     friendshipId: friendship._id,
@@ -375,7 +375,7 @@ export const getPendingRequests = async (req, res) => {
         const formattedRequests = await Promise.all(
             requests.map(async (request) => {
                 const profile = await Profile.findOne({ idUser: request.requester._id })
-                    .select('name surname profession photo');
+                    .select('name surname situation description profession photo');
 
                 return {
                     friendshipId: request._id,
@@ -424,7 +424,7 @@ export const getSentRequests = async (req, res) => {
         const formattedRequests = await Promise.all(
             sentRequests.map(async (request) => {
                 const profile = await Profile.findOne({ idUser: request.recipient._id })
-                    .select('name surname profession photo');
+                    .select('name surname situation description profession photo');
 
                 return {
                     friendshipId: request._id,
