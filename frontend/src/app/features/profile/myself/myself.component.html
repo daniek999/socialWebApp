@@ -98,6 +98,7 @@
             </div>
             <!-- Achievements Data -->
             <div class="my-3">
+                <!-- Title -->
                 <div class="d-flex align-items-center justify-content-start px-0">
                     <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
                         style="width: 40px; height: 40px;">
@@ -105,15 +106,32 @@
                     </div>
                     <p class="bodyLarge m-0 fw-bold text-dark">Logros</p>
                 </div>
-
-                <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-                    <p class="bg-white text-muted bodySmall mb-0">
-                        Próximamente podrás ver tus logros y reconocimientos aquí.
-                    </p>
+                <!-- Content -->
+                <div *ngFor="let item of achievement" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
+                    <div class="achievement-card d-flex align-items-center gap-3 mb-0">
+                        <!-- @icon -->
+                        <div class="d-flex justify-content-center align-items-center rounded-2 m-0"
+                            style="width: 40px; height: 40px;">
+                            <i class="text-dark" style="font-size: 40px;" [ngClass]="item.idAchievement.icon"></i>
+                        </div>
+                        <!-- @name, @description, @createdAt -->
+                        <div class="flex-grow-1 m-auto">
+                            <p class="bodyMedium fw-semibold m-0">{{ item.idAchievement.name }}</p>
+                            <p class="bodySmall mb-3">{{ item.idAchievement.description }}</p>
+                            <p class="bodySmall text-muted m-0">Obtenido el {{ item.createdAt | date:'EEEE d MMM, y, h:mm a' }}</p>
+                        </div>
+                        <!-- @points -->
+                        <div class="d-flex justify-content-start align-items-start rounded-2 m-auto">
+                            <p class=" bodySmall text-muted m-auto">
+                                <span class="bg-dark text-white py-1 px-2 rounded-pill">{{ item.idAchievement.points }} pts.</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- User Data -->
             <div *ngIf="isOwnProfile">
+                <!-- Title -->
                 <div class="d-flex align-items-center justify-content-start px-0">
                     <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
                         style="width: 40px; height: 40px;">
@@ -121,9 +139,8 @@
                     </div>
                     <p class="bodyLarge m-0 fw-bold text-dark">Usuario</p>
                 </div>
-
+                <!-- Content -->
                 <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-
                     <!-- Si NO es mi perfil -->
                     <div *ngIf="!isOwnProfile">
                         <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold w-100 mb-3"
@@ -134,7 +151,6 @@
                             <i class="bi bi-person-plus"></i> Agregar
                         </button>
                     </div>
-
                     <!-- Si es mi perfil -->
                     <div *ngIf="isOwnProfile">
                         <div class="d-flex flex-row gap-2">
@@ -156,7 +172,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

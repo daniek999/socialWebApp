@@ -10,7 +10,13 @@ import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
 @Component({
     selector: 'app-connections',
     standalone: true,
-    imports: [TopWebBarComponent, BottomWebBarComponent, NgIf, NgFor, NavBarComponent],
+    imports: [
+        TopWebBarComponent, 
+        BottomWebBarComponent, 
+        NgIf, 
+        NgFor, 
+        NavBarComponent
+    ],
     templateUrl: './connections.component.html',
     styleUrl: './connections.component.css'
 })
@@ -21,7 +27,7 @@ export class ConnectionsComponent implements OnInit {
         private friendshipService: FriendshipService
     ) { }
 
-    //#region [Variables]
+    //#region - [VARIABLES]
     successMessage: string = '';
     errorMessage: string = '';
     // Accepted Requests (Confirmed)
@@ -38,7 +44,7 @@ export class ConnectionsComponent implements OnInit {
     sentCount: number = 0;
     //#endregion
 
-    //#region [On Init Methods]
+    //#region - [INIT - METHODS]
     ngOnInit() {
         this.loadFriends();
         this.loadPendingRequests();
@@ -102,7 +108,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region [Action Methods - Friendship]
+    //#region - [ACTIONS - METHODS]
     acceptRequest(friendshipId: string): void {
         this.friendshipService.acceptFriendRequest(friendshipId).subscribe({
             next: (response) => {
@@ -114,7 +120,7 @@ export class ConnectionsComponent implements OnInit {
                 this.setError(error.message);
             }
         });
-    }
+    };
     rejectRequest(friendshipId: string): void {
         this.friendshipService.rejectFriendRequest(friendshipId).subscribe({
             next: (response) => {
@@ -125,7 +131,7 @@ export class ConnectionsComponent implements OnInit {
                 this.setError(error.message);
             }
         });
-    }
+    };
     cancelSentRequest(friendshipId: string): void {
         this.friendshipService.cancelFriendRequest(friendshipId).subscribe({
             next: (response) => {
@@ -136,7 +142,7 @@ export class ConnectionsComponent implements OnInit {
                 this.setError(error.message);
             }
         });
-    }
+    };
     removeFriend(friendshipId: string): void {
         if (confirm('¿Estás seguro de eliminar esta amistad?')) {
             this.friendshipService.removeFriend(friendshipId).subscribe({
@@ -149,7 +155,7 @@ export class ConnectionsComponent implements OnInit {
                 }
             });
         }
-    }
+    };
     sendFriendRequest(userId: string): void {
         this.friendshipService.sendFriendRequest(userId).subscribe({
             next: (response) => {
@@ -160,10 +166,10 @@ export class ConnectionsComponent implements OnInit {
                 this.setError(error.message);
             }
         });
-    }
+    };
     //#endregion
 
-    //#region [Getters]
+    //#region - [GETTERS]
     // 'Aceptado'
     getFriendFullName(friend: IAcceptedRequest): string | null {
         return this.setNameFromProfile(friend.profile?.name, friend.profile?.surname);
@@ -187,16 +193,16 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region [Setters]
+    //#region - [SETTERS]
     private setNameFromProfile(name?: string, surname?: string): string | null {
         if (name && surname) {
             return name + ' ' + surname;
         }
         return null;
-    }
+    };
     private setPhotoFromProfile(photo?: string): string {
         return photo ? `http://localhost:4000${photo}` : 'assets/img/default_user_photo.png';
-    }
+    };
     private setSuccess(message: string): void {
         this.successMessage = message;
         setTimeout(() => {
@@ -211,13 +217,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region [Navigation]
-    goToSelectedProfile(id: string) {
-        this.router.navigate(['/profile', id]);
-    };
-    //#endregion
-
-    //#region [Helpers]
+    //#region - [HELPERS]
     // Friendship
     isFriendsListEmpty(): boolean {
         const noAccepted = !this.acceptedRequests || this.acceptedRequests.length === 0;
@@ -241,4 +241,10 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-}
+    //#region - [NAVIGATION]
+    goToSelectedProfile(id: string) {
+        this.router.navigate(['/profile', id]);
+    };
+    //#endregion
+
+};

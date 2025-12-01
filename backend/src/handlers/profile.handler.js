@@ -1,18 +1,20 @@
 import Profile from '../models/profile.js';
-import path from 'path';
-import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
+import { grantAchievement } from '../utils/grantAchievement.js';
+import { deleteOldFile } from '../utils/deleteOldFile.js';
 
-/**
- * -------------------
- * [ PROFILE HANDLER ]
- * -------------------
+/** [ PROFILE HANDLER ]
+ *  -------------------------------------------------------------------------
+ *  FUNCTION                | DESCRIPTION                           
+ *  -------------------------------------------------------------------------
+ *  getCustomProfiles()     | Obtiene perfiles públicos visibles.
+ *  getAllProfiles()        | Obtiene todos los perfiles sin links sociales.
+ *  getSelfProfile()        | Obtiene el perfil del usuario autenticado.
+ *  getOtherProfiles()      | Obtiene el perfil de otro usuario, respetando privacidad.
+ *  updateProfile()         | Actualiza datos, archivos y logros del perfil.
  */
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-// [GET] - 'profiles/' → User
+//* [HANDLER ACTIONS]
 export const getCustomProfiles = async (req, res) => {
     try {
         // Process
@@ -37,8 +39,6 @@ export const getCustomProfiles = async (req, res) => {
         });
     }
 };
-
-// [GET] - 'profiles/all' → Admin
 export const getAllProfiles = async (req, res) => {
     try {
         // Process
@@ -62,8 +62,6 @@ export const getAllProfiles = async (req, res) => {
         });
     }
 };
-
-// [GET] - 'profiles/self' → User
 export const getSelfProfile = async (req, res) => {
     try {
         // Params
@@ -99,8 +97,6 @@ export const getSelfProfile = async (req, res) => {
         });
     }
 };
-
-// [GET] - 'profiles/:idUser' → User
 export const getOtherProfiles = async (req, res) => {
     try {
         // Params
@@ -143,8 +139,6 @@ export const getOtherProfiles = async (req, res) => {
         });
     }
 };
-
-// [PUT] - 'profiles/self-update' → User
 export const updateProfile = async (req, res) => {
     try {
         // Params
@@ -212,6 +206,7 @@ export const updateProfile = async (req, res) => {
             updateData,
             { new: true, runValidators: true }
         ).select("-socialLinks");
+        await grantAchievement(idUser, "APRENDIENDO_MODULO_PERFIL");
 
         // Result
         return res.status(200).json({
@@ -234,17 +229,5 @@ export const updateProfile = async (req, res) => {
             error: error.message
         });
         console.error("Error en [updateProfile]: " + error);
-    }
-};
-
-// Auxiliar: Eliminar archivos del servidor
-const deleteOldFile = async (filePath) => {
-    if (!filePath) return;
-    try {
-        const fullPath = path.join(__dirname, '../../uploads', filePath.replace('/uploads/', ''));
-        await fs.unlink(fullPath);
-        console.log("Archivo eliminado:", filePath);
-    } catch (error) {
-        console.log("Error eliminando archivo:", error.message);
     }
 };

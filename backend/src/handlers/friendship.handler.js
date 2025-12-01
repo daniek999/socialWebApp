@@ -3,13 +3,23 @@ import User from '../models/user.js';
 import Profile from '../models/profile.js';
 import mongoose from 'mongoose';
 
-/**
- * ----------------------
- * [ FRIENDSHIP HANDLER ]
- * ----------------------
+/** [ FRIENDSHIP HANDLER ]
+ *  -------------------------------------------------------------------------
+ *  FUNCTION                | DESCRIPTION                          
+ *  -------------------------------------------------------------------------
+ *  sendFriendRequest()     | Envia una solicitud de amistad a otros usuario.
+ *  acceptFriendRequest()   | Acepta una solicitud enviada por otros usuarios.
+ *  rejectFriendRequest()   | Rechaza la solicitud enviada por otros usuarios.
+ *  cancelFriendRequest()   | Cancela la solicitud enviada a otros usuarios.
+ *  removeFriend()          | Elimina a un amigo ya aceptado.
+ *  getFriends()            | Lista a todos tus amigos marcados como 'Aceptado'.
+ *  getPendingRequests()    | Lista todos las solicitudes pendientes de otros usuarios.
+ *  getSentRequests()       | Lista todos las solicitudes enviadas a otros usuarios.
+ *  getRelationshipStatus() | Obtiene el estado de la relacion con otros usuarios.
  */
 
-// [POST] - 'friendships/request'
+
+//* [HANDLER ACTIONS]
 export const sendFriendRequest = async (req, res) => {
     try {
         //#region [ Params ]
@@ -100,7 +110,6 @@ export const sendFriendRequest = async (req, res) => {
         });
     }
 };
-// [PATCH] - 'friendships/:friendshipId/accept'
 export const acceptFriendRequest = async (req, res) => {
     try {
         //#region [ Params ]
@@ -154,7 +163,6 @@ export const acceptFriendRequest = async (req, res) => {
         });
     }
 };
-// [DELETE] - 'friendships/:friendshipId/reject'
 export const rejectFriendRequest = async (req, res) => {
     try {
         //#region [ Params ]
@@ -202,7 +210,6 @@ export const rejectFriendRequest = async (req, res) => {
         });
     }
 };
-// [DELETE] - 'friendships/:friendshipId/cancel'
 export const cancelFriendRequest = async (req, res) => {
     try {
         //#region [ Params ]
@@ -250,7 +257,6 @@ export const cancelFriendRequest = async (req, res) => {
         });
     }
 };
-// [DELETE] - 'friendships/:friendshipId'
 export const removeFriend = async (req, res) => {
     try {
         //#region [ Params ]
@@ -300,7 +306,6 @@ export const removeFriend = async (req, res) => {
         });
     }
 };
-// [GET] - 'friendships/friends'
 export const getFriends = async (req, res) => {
     try {
         //#region [ Params ]
@@ -357,7 +362,6 @@ export const getFriends = async (req, res) => {
         });
     }
 };
-// [GET] - 'friendships/pending'
 export const getPendingRequests = async (req, res) => {
     try {
         //#region [ Params ]
@@ -406,7 +410,6 @@ export const getPendingRequests = async (req, res) => {
         });
     }
 };
-// [GET] - 'friendships/sent'
 export const getSentRequests = async (req, res) => {
     try {
         //#region [ Params ]
@@ -455,7 +458,6 @@ export const getSentRequests = async (req, res) => {
         });
     }
 };
-// [GET] - 'friendships/status/:userId'
 export const getRelationshipStatus = async (req, res) => {
     try {
         //#region [ Params ]

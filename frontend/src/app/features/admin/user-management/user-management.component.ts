@@ -4,12 +4,20 @@ import { TopWebBarComponent } from '../../../shared/top-web-bar/top-web-bar.comp
 import { BottomWebBarComponent } from '../../../shared/bottom-web-bar/bottom-web-bar.component';
 import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
 import { UserService } from '../../../core/services/user.service';
-import { IUser } from '../../../models/user';
+import { IBannedUser, ISuspendedUser, IUser } from '../../../models/user';
 
 @Component({
     selector: 'app-user-management',
     standalone: true,
-    imports: [NgClass, DatePipe, NgIf, NgFor, TopWebBarComponent, BottomWebBarComponent, NavBarComponent],
+    imports: [
+        NgClass, 
+        DatePipe, 
+        NgIf, 
+        NgFor, 
+        TopWebBarComponent, 
+        BottomWebBarComponent, 
+        NavBarComponent
+    ],
     templateUrl: './user-management.component.html',
     styleUrl: './user-management.component.css'
 })
@@ -19,20 +27,30 @@ export class UserManagementComponent implements OnInit {
         private _userService: UserService,
     ) { }
 
-    //#region [Variables]
+    //#region - [VARIABLES]
+    // States
     successMessage: string = '';
     errorMessage: string = '';
     loadingUsers: boolean = false;
-
-    usersData: IUser[] = [];
+    // For Unique Users (GetById)
     userDataUnique: IUser | null = null;
+    // For Active Users 
+    usersData: IUser[] = [];
     usersCount: number = 0;
+    // For Suspended Users 
+    suspendedUsersData: ISuspendedUser[] = [];
+    suspendedUsersCount: number = 0;
+    // For Banned Users 
+    bannedUsersData: IBannedUser[] = [];
+    bannedUsersCount: number = 0;
     //#endregion
 
-    //#region [On Init Methods]
+    //#region - [INIT - METHODS]
     ngOnInit(): void {
         this.loadUsers();
-    }
+        this.loadSuspendedUsers();
+        this.loadBannedUsers();
+    };
     loadUsers(): void {
         this.loadingUsers = true;
         this._userService.getAllUsers().subscribe({
@@ -45,10 +63,34 @@ export class UserManagementComponent implements OnInit {
                 this.loadingUsers = false;
             }
         });
-    }
+    };
+    loadSuspendedUsers(): void {
+        // Its only a test must be modified later.
+        this._userService.getSuspendedUsers().subscribe({
+            next: (res) => {
+                console.log(res.data);
+                this.setSuspendedUsers(res.data);
+            },
+            error: (error) => {
+                this.setError(error);
+            }
+        });
+    };
+    loadBannedUsers(): void {
+        // Its only a test must be modified later.
+        this._userService.getBannedUsers().subscribe({
+            next: (res) => {
+                console.log(res.data);
+                this.setBannedUsers(res.data);
+            },
+            error: (error) => {
+                this.setError(error);
+            }
+        });
+    };
     //#endregion
 
-    //#region [Function Methods]
+    //#region - [ACTIONS - METHODS]
     sortBy(type: string) {
         switch (type) {
             case 'recent':
@@ -103,22 +145,30 @@ export class UserManagementComponent implements OnInit {
     };
     //#endregion
 
-    //#region [Setting Data]
+    //#region - [SETTERS]
+    private setUser(user: IUser): void {
+        this.userDataUnique = user;
+    };
     private setUsers(users: IUser[]): void {
         this.usersData = users;
         this.usersCount = users.length;
-    }
-    private setUser(user: IUser): void {
-        this.userDataUnique = user;
-    }
+    };
+    private setSuspendedUsers(users: ISuspendedUser[]): void {
+        this.suspendedUsersData = users;
+        this.suspendedUsersCount = users.filter(s => s.status === "Activo").length;
+    };
+    private setBannedUsers(users: IBannedUser[]): void {
+        this.bannedUsersData = users;
+        this.bannedUsersCount = users.filter(s => s.status === "Activo").length;
+    };
     private setSuccess(message: string): void {
         this.successMessage = message;
         setTimeout(() => this.successMessage = '', 3000);
-    }
+    };
     private setError(message: string) {
         this.errorMessage = message;
         setTimeout(() => this.errorMessage = '', 5000);
-    }
+    };
     //#endregion
 
-}
+};

@@ -28,10 +28,28 @@
                 <!-- [Filled] -->
                 <div *ngIf="!loadingUsers" class="flex-grow-1 overflow-auto">
                     <!-- Tablas -->
-                    <div class="bg-white mb-3 p-3 rounded-2 d-flex flex-column w-25">
-                        <p class="bodyMedium fw-semibold mb-1">Usuarios</p>
-                        <p class="fs-1 text-primary fw-bold m-0 text-center">{{ usersCount }}</p>
-                        <p class="bodySmall text-muted text-end m-0">Registrados en total.</p>
+                    <div class="bg-white mb-3 p-3 rounded-2">
+                        <div class="row text-center">
+
+                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                <p class="bodyMedium fw-semibold mb-1">Usuarios Activos</p>
+                                <p class="fs-1 text-primary fw-bold m-0">{{ usersCount }}</p>
+                                <p class="bodySmall text-muted m-0">Registrados en total.</p>
+                            </div>
+
+                            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                <p class="bodyMedium fw-semibold mb-1">Usuarios Suspendidos</p>
+                                <p class="fs-1 text-warning fw-bold m-0">{{ suspendedUsersCount }}</p>
+                                <p class="bodySmall text-muted m-0">Con suspensión activa.</p>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <p class="bodyMedium fw-semibold mb-1">Usuarios Baneados</p>
+                                <p class="fs-1 text-danger fw-bold m-0">{{ bannedUsersCount }}</p>
+                                <p class="bodySmall text-muted m-0">Con ban activo.</p>
+                            </div>
+
+                        </div>
                     </div>
                     <!-- Ordernar Por -->
                     <div class="bg-white mb-3 p-3 rounded-2">
@@ -63,6 +81,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Aca cambiaria a -> ver usuarios activos / suspendidos o baneados de ahi abajo cambiaria -->
                     <!-- Lista de Usuarios -->
                     <div *ngIf="usersData.length > 0" class="d-flex flex-column gap-3">
                         <div class="bg-white p-3 rounded-2" *ngFor="let user of usersData; let i = index">
@@ -72,10 +91,9 @@
                                     <p class="bodyLarge m-0">{{ user.username }}</p>
                                 </div>
                                 <div class="d-flex flex-row gap-2">
-                                    <span class="text-white bodySmall py-1 px-3 rounded-pill"
-                                        [ngClass]="user.state ? 'bg-success' : 'bg-danger'">
-                                        {{ user.state ? 'Activo' : 'Desactivado' }}
-                                    </span>
+                                    <p class="text-white bodySmall bg-secondary mb-0 py-1 px-3 rounded-pill">
+                                        {{ user.status }}
+                                    </p>
                                     <span class="text-white bodySmall py-1 px-3 rounded-pill"
                                         [ngClass]="user.isVerified ? 'bg-primary' : 'bg-danger'">
                                         {{ user.isVerified ? 'Verificado' : 'No Verificado' }}
@@ -89,18 +107,10 @@
                                     data-bs-toggle="modal" data-bs-target="#userDetailsModal" (click)="viewUser(user)">
                                     Ver Detalles
                                 </button>
-                                <!-- <button class="btn btn-outline-warning btn-sm rounded-0"
-                                    (click)="editUser(user)">
-                                    Editar
-                                </button> -->
-                                <button class="bodySmall btn btn-outline-danger btn-sm rounded-2"
+                                <!-- <button class="bodySmall btn btn-outline-danger btn-sm rounded-2"
                                     (click)="deleteUser(user)">
                                     Eliminar
-                                </button>
-                                <button class="bodySmall btn btn-outline-secondary btn-sm rounded-2"
-                                    (click)="deactivateUser(user)">
-                                    {{ user.state ? 'Desactivar' : 'Activar' }}
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

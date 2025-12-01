@@ -21,12 +21,11 @@ export class ProfileService {
         return new HttpHeaders({
             ...(token && { Authorization: `Bearer ${token}` })
         });
-    }
+    };
     private handleError(error: any) {
         console.error('Error en ProfileService:', error);
         return throwError(() => error.error?.message || 'Error desconocido del servidor.');
-    }
-
+    };
 
     /** * MARK: [Handlers] 
      * 
@@ -37,21 +36,21 @@ export class ProfileService {
                 headers: this.getAuthHeaders()
             })
             .pipe(catchError(err => this.handleError(err)));
-    }
+    };
     getSelfProfile(): Observable<IProfileSingleResponse> {
         return this.http
             .get<IProfileSingleResponse>(`${this.PROFILE_BASE_URL}/self`, {
                 headers: this.getAuthHeaders()
             })
             .pipe(catchError(err => this.handleError(err)));
-    }
+    };
     getOtherProfile(idUser: string): Observable<IProfileSingleResponse> {
         return this.http
             .get<IProfileSingleResponse>(`${this.PROFILE_BASE_URL}/${idUser}`, {
                 headers: this.getAuthHeaders()
             })
             .pipe(catchError(err => this.handleError(err)));
-    }
+    };
     updateProfile(formData: FormData): Observable<IProfileSingleResponse> {
         return this.http
             .put<IProfileSingleResponse>(
@@ -59,17 +58,18 @@ export class ProfileService {
                 formData,
                 { headers: this.getAuthHeaders() }
             );
-    }
+    };
     getPhotoUrl(photoPath: string): string {
         if (photoPath && photoPath.startsWith('/uploads')) {
             return `http://localhost:4000${photoPath}`;
         }
         return photoPath || 'assets/img/default_user_photo.png';
-    }
+    };
     getCVUrl(cvPath: string): string | null {
         if (cvPath && cvPath.startsWith('/uploads')) {
             return `http://localhost:4000${cvPath}`;
         }
         return null;
-    }
-}
+    };
+
+};

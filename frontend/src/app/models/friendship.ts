@@ -1,6 +1,7 @@
 import { IProfile } from "./profile";
 import { IUser } from "./user";
 
+// Interfaces for the data sent as a result.
 export interface IFriendshipBase {
     _id: string;
     requester: string;
@@ -9,7 +10,6 @@ export interface IFriendshipBase {
     createdAt: string;
     updatedAt: string;
 };
-
 export interface IFriendshipPopulated {
     _id: string;
     requester: IUser;
@@ -19,7 +19,7 @@ export interface IFriendshipPopulated {
     updatedAt: string;
 };
 
-// Interfaces of json responses.
+// Handler response interfaces.
 export interface IAcceptedRequest {
     friendshipId: string;
     user: {
@@ -30,7 +30,6 @@ export interface IAcceptedRequest {
     profile: IProfile | null;
     since: string;
 };
-
 export interface IPendingRequest {
     friendshipId: string;
     requester: {
@@ -41,7 +40,6 @@ export interface IPendingRequest {
     profile: IProfile | null;
     requestedAt: string;
 };
-
 export interface ISentRequest {
     friendshipId: string;
     recipient: {
@@ -52,7 +50,6 @@ export interface ISentRequest {
     profile: IProfile | null;
     sentAt: string;
 };
-
 export interface IRelationshipStatus {
     status: 'Pendiente' | 'Aceptado' | 'Rechazado' | null;
     isRequester?: boolean;  // Solo presente si status !== null
@@ -63,5 +60,5 @@ export interface IRelationshipStatus {
 };
 
 
-// We mix it using 'type' for each case.
+// We combine both interfaces into one.
 export type IFriendship = IFriendshipBase | IFriendshipPopulated;

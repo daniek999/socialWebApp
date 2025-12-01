@@ -1,5 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 
+/** [USER-SCHEMA]
+ * 
+ * Esquema para los usuarios que se registren en la plataforma.
+ */
+
+// Schema
 const userSchema = new Schema({
     username: {
         type: String,
@@ -24,16 +30,20 @@ const userSchema = new Schema({
     },
     isVerified: {
         type: Boolean,
-        required: true,
-        default: false
+        default: false,
+        required: true
     },
-    state: {
-        type: Boolean,
-        required: true,
-        default: true
-    }
+    status: {
+        type: String,
+        enum: ['Activo', 'Suspendido', 'Baneado'],
+        default: 'Activo',
+        required: true
+    },
 }, { timestamps: true });
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+// Indexes
+userSchema.index({ status: 1 });
 
+// Generating
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;

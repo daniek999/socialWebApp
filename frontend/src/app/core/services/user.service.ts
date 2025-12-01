@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { IUser, IUserListResponse, IUserSingleResponse } from '../../models/user';
+import { IBannedUserListResponse, ISuspendedUserListResponse, IUser, IUserListResponse, IUserSingleResponse } from '../../models/user';
 
 @Injectable({
     providedIn: 'root'
@@ -52,6 +52,24 @@ export class UserService {
         return this.http
             .get<IUserSingleResponse>(url, {headers})
             .pipe(catchError(this.handleError));
+    };
+    getSuspendedUsers(): Observable<ISuspendedUserListResponse> {
+        const headers = this.getAuthHeaders();
+        const url = `${this.USER_BASE_URL}/suspended`;
+
+        return this.http
+            .get<ISuspendedUserListResponse>(url, { headers })
+            .pipe(catchError(this.handleError));
+
+    };
+    getBannedUsers(): Observable<IBannedUserListResponse> {
+        const headers = this.getAuthHeaders();
+        const url = `${this.USER_BASE_URL}/banned`;
+
+        return this.http
+            .get<IBannedUserListResponse>(url, { headers })
+            .pipe(catchError(this.handleError));
+
     };
     deleteUser(idUser: String) {
         const headers = this.getAuthHeaders();

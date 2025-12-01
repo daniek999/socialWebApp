@@ -10,7 +10,12 @@ import { IProfilePopulated } from '../../../models/profile';
 @Component({
     selector: 'app-profile-edit',
     standalone: true,
-    imports: [CommonModule, FormsModule, TopWebBarComponent, BottomWebBarComponent],
+    imports: [
+        CommonModule, 
+        FormsModule, 
+        TopWebBarComponent, 
+        BottomWebBarComponent
+    ],
     templateUrl: './profile-edit.component.html',
     styleUrl: './profile-edit.component.css'
 })
@@ -21,9 +26,7 @@ export class ProfileEditComponent implements OnInit {
         private profileService: ProfileService,
     ) { }
 
-    /* ============================
-    // MARK: [VARIABLES]
-    ============================ */
+    //#region - [VARIABLES]
     profile: IProfilePopulated | null = null;
     editForm = {
         name: '',
@@ -48,10 +51,9 @@ export class ProfileEditComponent implements OnInit {
         'Practicante',
         'Empleado'
     ];
+    //#endregion
 
-    /* ============================
-    // MARK: [INIT - METHODS]
-    ============================ */
+    //#region - [INIT - METHODS]
     ngOnInit(): void {
         this.loadProfile();
     };
@@ -91,10 +93,9 @@ export class ProfileEditComponent implements OnInit {
             }
         });
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [ACTIONS]
-    ============================ */
+    //#region - [ACTIONS - METHODS]
     onUpdateProfile() {
         this.setLoading(true);
 
@@ -131,10 +132,9 @@ export class ProfileEditComponent implements OnInit {
             }
         });
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [GETTERS]
-    ============================ */
+    //#region - [GETTERS]
     getPhotoUrl(): string {
         return this.profile?.photo
             ? `http://localhost:4000${this.profile.photo}`
@@ -154,10 +154,9 @@ export class ProfileEditComponent implements OnInit {
     getUsername(): string {
         return this.profile?.idUser?.username || 'Usuario';
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [SETTERS]
-    ============================ */
+    //#region - [SETTERS]
     private setProfile(profile: IProfilePopulated): void {
         this.profile = profile;
     };
@@ -192,11 +191,9 @@ export class ProfileEditComponent implements OnInit {
     private setLoading(state: boolean): void {
     this.loading = state;
     };
+    //#endregion
 
-
-    /* ============================
-    // MARK: [HELPERS]
-    ============================ */
+    //#region - [HELPERS]
     onPhotoSelected(event: any) {
         const file = event.target.files[0];
         if (!file) return;
@@ -234,11 +231,12 @@ export class ProfileEditComponent implements OnInit {
         this.selectedCV = file;
         this.errorMessage = '';
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [NAVIGATION]
-    ============================ */
+    //#region - [NAVIGATION]
     goToProfile() {
         this.router.navigate(['/profile']);
     };
-}
+    //#endregion
+
+};

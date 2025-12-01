@@ -1,6 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 
+// Schema
 const achievementSchema = new Schema({
+    code: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
     name: {
       type: String,
       required: true,
@@ -16,14 +23,16 @@ const achievementSchema = new Schema({
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     points: {
       type: Number,
       required: true,
       min: 0,
+      max: 100,
     },
 }, {timestamps: true, versionKey: false});
 
-const Achievement = mongoose.models.Achievement || mongoose.model('Achievement', achievementSchema);
 
+const Achievement = mongoose.models.Achievement || mongoose.model('Achievement', achievementSchema);
 export default Achievement;

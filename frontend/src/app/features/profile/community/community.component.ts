@@ -11,7 +11,13 @@ import { FriendshipService } from '../../../core/services/friendship.service';
 @Component({
     selector: 'app-community',
     standalone: true,
-    imports: [NgIf, NgFor, TopWebBarComponent, BottomWebBarComponent, NavBarComponent],
+    imports: [
+        NgIf, 
+        NgFor, 
+        TopWebBarComponent, 
+        BottomWebBarComponent, 
+        NavBarComponent
+    ],
     templateUrl: './community.component.html',
     styleUrl: './community.component.css'
 })
@@ -23,17 +29,14 @@ export class CommunityComponent implements OnInit {
         private friendshipService: FriendshipService
     ) { }
 
-    /* ============================
-    // MARK: [VARIABLES]
-    ============================ */
+    //#region - [VARIABLES]
     profiles: IProfilePopulated[] = [];
     loadingProfiles: boolean = false;
     successMessage: string = '';
     errorMessage: string = '';
+    //#endregion
 
-    /* ============================
-    // MARK: [INIT - METHODS]
-    ============================ */
+    //#region - [INIT - METHODS]
     ngOnInit() {
         this.loadProfiles();
     };
@@ -50,11 +53,9 @@ export class CommunityComponent implements OnInit {
             } 
         });
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [ACTIONS]
-    ============================ */
-    // Enviar solicitud de amistad
+    //#region - [ACTIONS - METHODS]
     sendFriendRequest(userId: string): void {
         this.friendshipService.sendFriendRequest(userId).subscribe({
             next: (response) => {
@@ -65,24 +66,18 @@ export class CommunityComponent implements OnInit {
             }
         });
     };
-    // Visualizar perfil del otro usuario
-    goToSelectedProfile(id: string) {
-        this.router.navigate(['/profile', id]);
-    };
+    //#endregion
 
-    /* ============================
-    // MARK: [GETTERS]
-    ============================ */
+    //#region - [GETTERS]
     getPhotoUrl(profile: IProfilePopulated): string {
         if (profile.photo) {
             return `http://localhost:4000${profile.photo}`;
         }
         return 'assets/img/default_user_photo.png';
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [SETTERS]
-    ============================ */
+    //#region - [SETTERS]
     private setProfiles(profiles: IProfile[]): void { 
         this.profiles = profiles; 
     };
@@ -94,10 +89,9 @@ export class CommunityComponent implements OnInit {
         this.errorMessage = message;
         setTimeout(() => this.errorMessage = '', 3000);
     };
+    //#endregion
 
-    /* ============================
-    // MARK: [HELPERS]
-    ============================ */
+    //#region - [HELPERS]
     isProfilesListFill(): boolean {
         return !this.loadingProfiles && this.profiles && this.profiles.length > 0;
     };
@@ -107,5 +101,12 @@ export class CommunityComponent implements OnInit {
     isLoadingProfilesData(): boolean {
         return this.loadingProfiles;
     };
+    //#endregion
 
-}
+    //#region - [NAVIGATION]
+    goToSelectedProfile(id: string) {
+        this.router.navigate(['/profile', id]);
+    };
+    //#endregion
+
+};

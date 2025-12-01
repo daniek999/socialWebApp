@@ -9,6 +9,7 @@ import postRouter from './routes/post.routes.js';
 import profileRouter from './routes/profile.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import friendshipRouter from './routes/friendship.routes.js';
+import achievementRouter from './routes/achievement.routes.js';
 
 // [Instances]
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +30,7 @@ app.use('/api/users', userRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/profiles', profileRouter);
 app.use('/api/friendships', friendshipRouter);
+app.use('/api/achievements', achievementRouter);
 
 
 // [MIDDLEWARE]

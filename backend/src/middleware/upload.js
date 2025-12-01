@@ -10,7 +10,6 @@ const FILE_SIZE_LIMITS = {
     photo: 2 * 1024 * 1024,        // 2MB para fotos
     curriculumvitae: 2 * 1024 * 1024  // 2MB para CVs
 };
-
 const ALLOWED_MIME_TYPES = {
     photo: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     curriculumvitae: ['application/pdf']

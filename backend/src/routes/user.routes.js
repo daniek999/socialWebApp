@@ -1,33 +1,39 @@
 import { Router } from 'express';
-import { deactivateUser, deleteUser, getOtherUsers, getSelfUser, getUsers } from '../handlers/user.handler.js';
-import { verifyAdmin, verifyToken } from '../middleware/auth.js';
+import { banUser, getBannedUsers, getOtherUsers, getSelfUser, getSuspendedUsers, getUsers, revokeBan, revokeSuspension, suspendUser } from '../handlers/user.handler.js';
+import { verifyAdmin, verifyStatus, verifyToken, verifyVerification } from '../middleware/auth.js';
+
+/**
+ * ---------------------------------------------------------------------------------
+ * HANDLER                  | METHOD    | ACCESS    | ROUTE                           
+ * ---------------------------------------------------------------------------------
+ * getUsers()               | GET       | Admin     | 'api/users/'
+ * getSelfUser()            | GET       | Admin     | 'api/users/self'
+ * getSuspendedUsers()      | GET       | Admin     | 'api/users/suspended'
+ * getBanneddUsers()        | GET       | Admin     | 'api/users/banned'
+ * getOtherUsers()          | GET       | Admin     | 'api/users/:idUser'
+ * suspendUser()            | POST      | Admin     | 'api/users/suspend/:idUser'
+ * revokeSuspension()       | PATCH     | Admin     | 'api/users/revoke/:idSuspension'
+ * banUser()                | POST      | Admin     | 'api/users/ban/:idUser'
+ * revokeBan()              | PATCH     | Admin     | 'api/users/ban/revoke/:idUser'
+ * ---------------------------------------------------------------------------------
+ */
 
 const userRouter = Router();
 
-/* ==========================================================================
- USER ROUTES [4]
-=============================================================================
- - GET      /api/users/                                 -> Listar todos los usuarios
- - GET      /api/users/self                             -> Obtener el perfil propio
- - GET      /api/users/:id                              -> Obtener detalle de un usuario por Id
- - DELETE   /api/users/:id                              -> Eliminar usuario por Id
-========================================================================== */
-
-// [GLOBAL] Middleware of token verification
+// [MIDDLEWARES] 
 userRouter.use(verifyToken);
-// [GLOBAL] Middleware of role verification
+userRouter.use(verifyVerification);
+userRouter.use(verifyStatus);
 userRouter.use(verifyAdmin);
-
-
-// [ADMIN]
+// [ROUTES]
 userRouter.get('/', getUsers);
-// [ADMIN] 
 userRouter.get('/self', getSelfUser);
-// [ADMIN]
+userRouter.get('/suspended', getSuspendedUsers);
+userRouter.get('/banned', getBannedUsers);
 userRouter.get('/:idUser', getOtherUsers);
-// [ADMIN]
-userRouter.patch('/:idUser', deactivateUser)
-// [ADMIN]
-userRouter.delete('/:idUser', deleteUser);
+userRouter.post('/suspend/:idUser', suspendUser);
+userRouter.patch('/revoke/:idSuspension', revokeSuspension);
+userRouter.post('/ban/:idUser', banUser);
+userRouter.patch('/ban/revoke/:idUser', revokeBan);
 
 export default userRouter;

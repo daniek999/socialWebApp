@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
-// Schema / Table
+// Schema
 const friendshipSchema = new Schema({
     requester: {
         type: Types.ObjectId,
@@ -52,7 +52,5 @@ friendshipSchema.statics.getRelationshipStatus = async function(userId1, userId2
     };
 };
 
-
 const Friendship = mongoose.models.Friendship || mongoose.model('Friendship', friendshipSchema);
-
 export default Friendship;

@@ -1,47 +1,41 @@
 import { IUser } from "./user";
 
+// Interfaces for the data sent as a result.
 export interface IProfileBase {
     _id?: string;
-    // Puede venir poblado o solo ID
     idUser: IUser;
-    // Datos básicos
     name?: string;
     surname?: string;
     birthday?: string;
     interests?: string[];
-    // Datos profesionales
     profession?: string;
     situation?: 'Estudiante' | 'Buscando' | 'Practicante' | 'Empleado';
     description?: string;
     about?: string;
     skills?: string[];
-    // Media
     photo?: string;
     curriculumvitae?: string;
-    // Configuración visual
     visible: boolean;
     createdAt?: string;
     updatedAt?: string;
     __v?: number;
 };
+export interface IProfilePopulated extends Omit<IProfileBase, 'idUser'> {
+    idUser: IUser;
+};
 
+// Handler response interfaces.
 export interface IProfileSingleResponse {
     success: boolean;
     message: string;
     data: IProfile;
 };
-
 export interface IProfileListResponse {
     success: boolean;
     message: string;
     data: IProfile[];
 };
 
-// Caso cuando backend hace populate de idUser
-export interface IProfilePopulated extends Omit<IProfileBase, 'idUser'> {
-    idUser: IUser;
-};
-
-// Tipo general que soporta ambos
+// We combine both interfaces into one.
 export type IProfile = IProfileBase | IProfilePopulated;
 

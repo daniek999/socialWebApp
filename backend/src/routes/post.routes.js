@@ -1,25 +1,26 @@
 import { Router } from 'express';
-import { verifyToken } from '../middleware/auth.js';
+import { verifyStatus, verifyToken, verifyVerification } from '../middleware/auth.js';
 import { createPost, deletePost, getPosts } from '../handlers/post.handler.js';
+
+/**
+ * ---------------------------------------------------------------------------------
+ * HANDLER                  | METHOD    | ACCESS    | ROUTE                           
+ * ---------------------------------------------------------------------------------
+ * getPosts()               | GET       | User      | 'api/posts/publications'
+ * createPost()             | POST      | User      | 'api/posts/create-post'
+ * deletePost()             | DELETE    | User      | 'api/posts/delete-post/:_id'
+ * ---------------------------------------------------------------------------------
+ */
 
 const postRouter = Router();
 
-/* ==========================================================================
- POST ROUTES [3]
-=============================================================================
- - GET      /api/posts                                  -> Listar todas las publicaciones
- - POST     /api/posts                                  -> Crear nueva publicación
- - DELETE   /api/posts/:id                              -> Eliminar una publicación por ID
-========================================================================== */
-
-// [GLOBAL] Middleware of token verification for all routes below
+// [MIDDLEWARES] 
 postRouter.use(verifyToken);
-
-// [USER] 
+postRouter.use(verifyVerification);
+postRouter.use(verifyStatus);
+// [ROUTES]
 postRouter.get('/publications', getPosts);
-// [USER]
 postRouter.post('/create-post', createPost);
-// [USER]
 postRouter.delete('/delete-post/:_id', deletePost);
 
 export default postRouter;

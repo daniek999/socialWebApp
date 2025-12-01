@@ -1,21 +1,22 @@
 import { Router } from "express";
-import { login, register, verifyEmail } from "../handlers/auth.handler.js";
+import { login, register, verification } from "../handlers/auth.handler.js";
+import { verifyStatus } from "../middleware/auth.js";
+
+/**
+ * ---------------------------------------------------------------------------------
+ * HANDLER                  | METHOD    | ACCESS    | ROUTE                           
+ * ---------------------------------------------------------------------------------
+ * register()               | POST      | Any       | 'api/auth/register'
+ * login()                  | POST      | Any       | 'api/auth/login'
+ * verification()           | GET       | Any       | 'api/auth/verify/:token'
+ * ---------------------------------------------------------------------------------
+ */
 
 const authRoutes = Router();
 
-/* ==========================================================================
- AUTH ROUTES
-=============================================================================
- - POST     /auth/register                              -> Registrar nuevo usuario
- - POST     /auth/login                                 -> Iniciar sesión
- - GET      /auth/verify/:token                         -> Verificar correo electrónico mediante token
-========================================================================== */
-
-// [PUBLIC]
+// [ROUTES]
 authRoutes.post('/register', register);
-// [PUBLIC]
 authRoutes.post('/login', login);
-// [PUBLIC] 
-authRoutes.get('/verify/:token', verifyEmail)
+authRoutes.get('/verify/:token', verification)
 
 export default authRoutes;
