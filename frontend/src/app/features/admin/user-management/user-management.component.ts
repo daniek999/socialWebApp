@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TopWebBarComponent } from '../../../shared/top-web-bar/top-web-bar.component';
 import { BottomWebBarComponent } from '../../../shared/bottom-web-bar/bottom-web-bar.component';
 import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
@@ -10,13 +11,16 @@ import { IBannedUser, ISuspendedUser, IUser } from '../../../models/user';
     selector: 'app-user-management',
     standalone: true,
     imports: [
-        NgClass, 
-        DatePipe, 
-        NgIf, 
-        NgFor, 
-        TopWebBarComponent, 
-        BottomWebBarComponent, 
-        NavBarComponent
+        NgClass,
+        DatePipe,
+        NgIf,
+        NgFor,
+        TopWebBarComponent,
+        BottomWebBarComponent,
+        NavBarComponent,
+        FormsModule,
+        NgSwitch,
+        NgSwitchCase
     ],
     templateUrl: './user-management.component.html',
     styleUrl: './user-management.component.css'
@@ -27,147 +31,226 @@ export class UserManagementComponent implements OnInit {
         private _userService: UserService,
     ) { }
 
-    //#region - [VARIABLES]
-    // States
-    successMessage: string = '';
-    errorMessage: string = '';
-    loadingUsers: boolean = false;
-    // For Unique Users (GetById)
+    //#region | VARIABLES   |
+    // Forms
+    suspendUserForm = { suspendedTime: 1, reason: '' };
+    revokeSuspendForm = { reason: '' };
+    banUserForm = { reason: '' };
+    revokeBanForm = { reason: '' };
+
+    // Selected users
+    selectedUserToSuspend: IUser | null = null;
+    selectedUserToRevokeSuspend: IUser | null = null;
+    selectedUserToBan: IUser | null = null;
+    selectedUserToRevokeBan: IUser | null = null;
+
+    // Filters & sorting
+    selectedSort = 'old';
+    selectedFilter: string = 'all';
+    filteredUsers: any[] = [];
+
+    // Messages
+    successMessage = '';
+    errorMessage = '';
+
+    // Data
     userDataUnique: IUser | null = null;
-    // For Active Users 
+
     usersData: IUser[] = [];
-    usersCount: number = 0;
-    // For Suspended Users 
+    usersCount = 0;
+    activeUsersCount = 0;
+    loadingActiveUsers = false;
+
     suspendedUsersData: ISuspendedUser[] = [];
-    suspendedUsersCount: number = 0;
-    // For Banned Users 
+    suspendedUsersCount = 0;
+
     bannedUsersData: IBannedUser[] = [];
-    bannedUsersCount: number = 0;
+    bannedUsersCount = 0;
     //#endregion
 
-    //#region - [INIT - METHODS]
+    //#region | INIT        |
     ngOnInit(): void {
+        this.filteredUsers = this.usersData;
         this.loadUsers();
         this.loadSuspendedUsers();
         this.loadBannedUsers();
     };
-    loadUsers(): void {
-        this.loadingUsers = true;
+    private loadUsers(): void {
+        this.loadingActiveUsers = true;
         this._userService.getAllUsers().subscribe({
             next: (res) => {
                 this.setUsers(res.data);
-                this.loadingUsers = false;
+                this.loadingActiveUsers = false;
             },
             error: (error) => {
                 this.setError(error);
-                this.loadingUsers = false;
+                this.loadingActiveUsers = false;
             }
         });
     };
-    loadSuspendedUsers(): void {
-        // Its only a test must be modified later.
+    private loadSuspendedUsers(): void {
         this._userService.getSuspendedUsers().subscribe({
-            next: (res) => {
-                console.log(res.data);
-                this.setSuspendedUsers(res.data);
-            },
-            error: (error) => {
-                this.setError(error);
-            }
+            next: (res) => this.setSuspendedUsers(res.data),
+            error: (error) => this.setError(error),
         });
     };
-    loadBannedUsers(): void {
-        // Its only a test must be modified later.
+    private loadBannedUsers(): void {
         this._userService.getBannedUsers().subscribe({
-            next: (res) => {
-                console.log(res.data);
-                this.setBannedUsers(res.data);
-            },
-            error: (error) => {
-                this.setError(error);
-            }
+            next: (res) => this.setBannedUsers(res.data),
+            error: (error) => this.setError(error),
         });
     };
     //#endregion
 
-    //#region - [ACTIONS - METHODS]
-    sortBy(type: string) {
+    //#region | ACTIONS     |
+    // -------- Sorting --------
+    setFilter(type: string) {
+        this.selectedFilter = type;
+
         switch (type) {
-            case 'recent':
-                this.usersData.sort((a, b) =>
-                    new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-                );
+            case 'active':
+                this.filteredUsers = this.usersData.filter(u => u.status === 'Activo');
                 break;
-            case 'old':
-                this.usersData.sort((a, b) =>
-                    new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime()
-                );
+
+            case 'suspended':
+                this.filteredUsers = this.usersData.filter(u => u.status === 'Suspendido');
                 break;
-            case 'username':
-                this.usersData.sort((a, b) => a.username.localeCompare(b.username));
+
+            case 'banned':
+                this.filteredUsers = this.usersData.filter(u => u.status === 'Baneado');
                 break;
+
+            default:
+                this.filteredUsers = this.usersData;
+                break;
+        };
+    };
+    setSort(type: string) {
+        this.selectedSort = type;
+        this.sortBy(type);
+    };
+    private sortBy(type: string) {
+        const dateSort = (a: IUser, b: IUser) =>
+            new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime();
+
+        switch (type) {
+            case 'recent': this.usersData.sort((a, b) => -dateSort(a, b)); break;
+            case 'old': this.usersData.sort(dateSort); break;
+            case 'usernameASC': this.usersData.sort((a, b) => a.username.localeCompare(b.username)); break;
+            case 'usernameDSC': this.usersData.sort((a, b) => b.username.localeCompare(a.username)); break;
         }
     };
+    // -------- View Details --------
     viewUser(user: IUser) {
         this._userService.getUserById(user._id!).subscribe({
             next: (res) => {
                 this.setUser(res.data);
-                this.setSuccess("Usuario cargado.");
+                this.setSuccess(res.message);
             },
-            error: (error) => this.setError(error),
+            error: (error) => this.setError(error.message)
         });
     };
-    editUser(user: IUser) {
-        console.log('Editar usuario (no implementado aún):', user);
+    // -------- Suspend User --------
+    openSuspendModal(user: IUser) {
+        this.selectedUserToSuspend = user;
+        this.suspendUserForm = { suspendedTime: 5, reason: 'Has sido suspendido.' };
     };
-    deleteUser(user: IUser) {
-        if (!confirm(`¿Eliminar a ${user.username}?`)) return;
+    confirmSuspend(idUser: string) {
+        if (!this.selectedUserToSuspend) return;
 
-        this._userService.deleteUser(user._id!).subscribe({
-            next: () => {
-                this.setSuccess(`Usuario "${user.username}" eliminado.`);
+        const { suspendedTime, reason } = this.suspendUserForm;
+
+        if (!reason.trim()) return this.setError('La razón es obligatoria');
+
+        // if (![1, 5, 10].includes(Number(suspendedTime)))
+        //     return this.setError('Duración inválida');
+
+        this._userService.suspendUser(idUser, { reason, suspendedTime }).subscribe({
+            next: (res) => {
+                this.setSuccess(res.message);
                 this.loadUsers();
-                console.log(user);
+                this.loadSuspendedUsers();
             },
-            error: (error) => this.setError(error),
+            error: (error) => this.setError(error)
         });
     };
-    deactivateUser(user: IUser) {
-        this._userService.deactivateUser(user._id!).subscribe({
-            next: () => {
+    // -------- Revoke Suspension --------
+    openRevokeSuspensionModal(user: IUser) {
+        this.selectedUserToRevokeSuspend = user;
+        this.revokeSuspendForm.reason = 'Tu suspensión ha sido revocada.';
+    };
+    confirmRevokeSuspension(idUser: string) {
+        this._userService.revokeSuspension(idUser, {
+            revokeReason: this.revokeSuspendForm.reason
+        }).subscribe({
+            next: (res) => {
+                this.setSuccess(res.message);
                 this.loadUsers();
-                this.setSuccess(`Estado del usuario "${user.username}" cambiado.`);
+                this.loadSuspendedUsers();
             },
-            error: (err) => {
-                this.setError(err);
-            }
+            error: (error) => this.setError(error)
+        });
+    };
+    // -------- Ban User --------
+    openBanModal(user: IUser) {
+        this.selectedUserToBan = user;
+        this.banUserForm.reason = 'Has sido baneado.';
+    };
+    confirmBan(idUser: string) {
+        this._userService.banUser(idUser, {
+            reason: this.banUserForm.reason
+        }).subscribe({
+            next: (res) => {
+                this.setSuccess(res.message);
+                this.loadUsers();
+                this.loadBannedUsers();
+            },
+            error: (error) => this.setError(error)
+        });
+    };
+    // -------- Revoke Ban --------
+    openRevokeBanModal(user: IUser) {
+        this.selectedUserToRevokeBan = user;
+        this.revokeBanForm.reason = 'Tu baneo ha sido revocado.';
+    };
+    confirmRevokeBan(idUser: string) {
+        this._userService.revokeBan(idUser, {
+            revokeReason: this.revokeBanForm.reason
+        }).subscribe({
+            next: (res) => {
+                this.setSuccess(res.message);
+                this.loadUsers();
+                this.loadBannedUsers();
+            },
+            error: (error) => this.setError(error)
         });
     };
     //#endregion
 
-    //#region - [SETTERS]
-    private setUser(user: IUser): void {
-        this.userDataUnique = user;
+    //#region | SETTERS     |
+    private setUser(user: IUser) { 
+        this.userDataUnique = user; 
     };
-    private setUsers(users: IUser[]): void {
+    private setUsers(users: IUser[]) {
         this.usersData = users;
         this.usersCount = users.length;
+        this.activeUsersCount = users.filter(s => s.status === "Activo").length;
     };
-    private setSuspendedUsers(users: ISuspendedUser[]): void {
+    private setSuspendedUsers(users: ISuspendedUser[]) {
         this.suspendedUsersData = users;
-        this.suspendedUsersCount = users.filter(s => s.status === "Activo").length;
+        this.suspendedUsersCount = users.length;
     };
-    private setBannedUsers(users: IBannedUser[]): void {
+    private setBannedUsers(users: IBannedUser[]) {
         this.bannedUsersData = users;
-        this.bannedUsersCount = users.filter(s => s.status === "Activo").length;
+        this.bannedUsersCount = users.length;
     };
-    private setSuccess(message: string): void {
+    private setSuccess(message: string) {
         this.successMessage = message;
         setTimeout(() => this.successMessage = '', 3000);
     };
     private setError(message: string) {
         this.errorMessage = message;
-        setTimeout(() => this.errorMessage = '', 5000);
+        setTimeout(() => this.errorMessage = '', 3000);
     };
     //#endregion
 

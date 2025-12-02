@@ -1,4 +1,3 @@
-<!-- /user-mangement.component.html -->
 <body class="d-flex flex-column min-vh-100">
 
     <!-- ================= HEADER ================= -->
@@ -21,143 +20,237 @@
             <!-- Content -->
             <div class="d-flex flex-column flex-grow-1 mt-3">
                 <!-- [Loading] -->
-                <div *ngIf="loadingUsers" class="text-center py-4 m-auto">
+                <div *ngIf="loadingActiveUsers" class="text-center py-4 m-auto">
                     <div class="spinner-border text-primary"></div>
                     <p class="small text-muted mt-2 mb-0">Cargando usuarios...</p>
                 </div>
                 <!-- [Filled] -->
-                <div *ngIf="!loadingUsers" class="flex-grow-1 overflow-auto">
-                    <!-- Tablas -->
-                    <div class="bg-white mb-3 p-3 rounded-2">
-                        <div class="row text-center">
-
-                            <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                <p class="bodyMedium fw-semibold mb-1">Usuarios Activos</p>
+                <div *ngIf="!loadingActiveUsers && usersData.length > 0" class="flex-grow-1 overflow-auto">
+                    <!-- Box - SchemaData -->
+                    <div class="row text-center g-3 mb-3">
+                        <div class="col-12 col-md-3">
+                            <div class="bg-white rounded-2 p-3 h-100">
+                                <p class="bodyMedium fw-semibold mb-1">Usuarios</p>
                                 <p class="fs-1 text-primary fw-bold m-0">{{ usersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Registrados en total.</p>
+                                <p class="bodySmall text-muted m-0">Registrados en total</p>
                             </div>
-
-                            <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                <p class="bodyMedium fw-semibold mb-1">Usuarios Suspendidos</p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="bg-white rounded-2 p-3 h-100">
+                                <p class="bodyMedium fw-semibold mb-1">Activos</p>
+                                <p class="fs-1 text-success fw-bold m-0">{{ activeUsersCount }}</p>
+                                <p class="bodySmall text-muted m-0">Con estado 'Activo'</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="bg-white rounded-2 p-3 h-100">
+                                <p class="bodyMedium fw-semibold mb-1">Suspendidos</p>
                                 <p class="fs-1 text-warning fw-bold m-0">{{ suspendedUsersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Con suspensión activa.</p>
+                                <p class="bodySmall text-muted m-0">Con suspension activa</p>
                             </div>
-
-                            <div class="col-12 col-md-4">
-                                <p class="bodyMedium fw-semibold mb-1">Usuarios Baneados</p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="bg-white rounded-2 p-3 h-100">
+                                <p class="bodyMedium fw-semibold mb-1">Baneados</p>
                                 <p class="fs-1 text-danger fw-bold m-0">{{ bannedUsersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Con ban activo.</p>
+                                <p class="bodySmall text-muted m-0">Con baneo activo</p>
                             </div>
+                        </div>
+                    </div>
+                    <!-- Box - Order -->
+                    <div class="d-flex flex-column justify-content-center align-items-start bg-white mb-3 p-3 rounded-2">
+                        <!-- Title -->
+                        <p class="bodyMedium fw-semibold mb-2">Ordenar</p>
+                        <!-- Content -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <input type="radio" class="btn-check" name="sortOption" id="sort-old" autocomplete="off"
+                                [checked]="selectedSort === 'old'" (change)="setSort('old')" />
+                            <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="sort-old">
+                                Más antiguos
+                            </label>
+                            <input type="radio" class="btn-check" name="sortOption" id="sort-recent" autocomplete="off"
+                                [checked]="selectedSort === 'recent'" (change)="setSort('recent')" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-recent">
+                                Más recientes
+                            </label>
+                            <input type="radio" class="btn-check" name="sortOption" id="sort-usernameASC"
+                                autocomplete="off" [checked]="selectedSort === 'usernameASC'"
+                                (change)="setSort('usernameASC')" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameASC">
+                                Nombre de Usuario (A-Z)
+                            </label>
+                            <input type="radio" class="btn-check" name="sortOption" id="sort-usernameDSC"
+                                autocomplete="off" [checked]="selectedSort === 'usernameDSC'"
+                                (change)="setSort('usernameDSC')" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameDSC">
+                                Nombre de Usuario (Z-A)
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Box - Filter -->
+                    <div class="d-flex flex-column justify-content-center align-items-start bg-white mb-3 p-3 rounded-2">
+                        <!-- Title -->
+                        <p class="bodyMedium fw-semibold mb-2">Filtrar *Falta programar</p>
+                        <!-- Content -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <input type="radio" class="btn-check" name="filterOption" id="filter-none"
+                                autocomplete="off" [checked]="selectedFilter === 'all'" />
+                            <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="filter-none">
+                                Todos
+                            </label>
+                            <!--  -->
+                            <input type="radio" class="btn-check" name="filterOption" id="filter-active"
+                                autocomplete="off" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-active">
+                                Activos
+                            </label>
+                            <!--  -->
+                            <input type="radio" class="btn-check" name="filterOption" id="filter-suspended"
+                                autocomplete="off" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-suspended">
+                                Suspendidos
+                            </label>
+                            <!--  -->
+                            <input type="radio" class="btn-check" name="filterOption" id="filter-banned"
+                                autocomplete="off" />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-banned">
+                                Baneados
+                            </label>
 
                         </div>
                     </div>
-                    <!-- Ordernar Por -->
-                    <div class="bg-white mb-3 p-3 rounded-2">
-                        <p class="bodyMedium fw-semibold mb-1">Ordenar Por</p>
-                        <div class="d-flex flex-wrap gap-4">
-                            <!-- Más antiguos -->
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" name="sortOption" id="old" checked
-                                    (change)="sortBy('old')" />
-                                <label class="form-check-label" for="old">
-                                    Más antiguos
-                                </label>
-                            </div>
-                            <!-- Más recientes -->
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" name="sortOption" id="recent"
-                                    (change)="sortBy('recent')" />
-                                <label class="form-check-label" for="recent">
-                                    Más recientes
-                                </label>
-                            </div>
-                            <!-- Usuarios A-Z -->
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" name="sortOption" id="usernameASC"
-                                    (change)="sortBy('username')" />
-                                <label class="form-check-label" for="usernameASC">
-                                    Orden alfabético (Nombre de Usuario)
-                                </label>
-                            </div>
-                        </div>
+                    <!-- Box - Table -->
+                    <div class="bg-white p-3 rounded-2 mb-3">
+                        <!-- Table of All Users -->
+                        <table class="table table-borderless align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="bodyMedium fw-semibold">Usuario</th>
+                                    <th class="bodyMedium fw-semibold">Estado</th>
+                                    <th class="bodyMedium fw-semibold">Rol</th>
+                                    <th class="bodyMedium fw-semibold">Verificado</th>
+                                    <th class="bodyMedium fw-semibold">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of usersData; let i = index">
+                                    <!-- @username -->
+                                    <td class="bodySmall">
+                                        {{ user.username }}
+                                    </td>
+                                    <!-- @status -->
+                                    <td class="bodySmall" [ngClass]="{
+                                            'text-dark': user.status === 'Activo',
+                                            'text-danger': user.status === 'Baneado',
+                                            'text-primary': user.status === 'Suspendido'
+                                        }">
+                                        {{ user.status }}
+                                    </td>
+                                    <!-- @role -->
+                                    <td class="bodySmall">
+                                        {{ user.role === 'admin' ? 'Administrador' : 'Usuario' }}
+                                    </td>
+                                    <!-- @isVerified -->
+                                    <td class="bodySmall">
+                                        {{ user.isVerified ? 'Sí' : 'No' }}
+                                    </td>
+                                    <!-- ACCIONES -->
+                                    <td [ngSwitch]="user.status">
+                                        <!-- Detalles (Siempre visible) -->
+                                        <button class="btn btn-sm btn-outline-secondary rounded-2 me-2"
+                                            data-bs-toggle="modal" data-bs-target="#userDetailsModal"
+                                            (click)="viewUser(user)">
+                                            <i class="bi bi-person-circle me-1"></i> Detalles
+                                        </button>
+                                        <!-- ACTIVO -->
+                                        <ng-container *ngSwitchCase="'Activo'">
+                                            <button class="btn btn-sm btn-outline-primary rounded-2 me-2"
+                                                data-bs-toggle="modal" data-bs-target="#userSuspendFormModal"
+                                                (click)="openSuspendModal(user)">
+                                                <i class="bi bi-clock me-1"></i> Suspender
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger rounded-2"
+                                                data-bs-toggle="modal" data-bs-target="#userBanFormModal"
+                                                (click)="openBanModal(user)">
+                                                <i class="bi bi-slash-circle me-1"></i> Banear
+                                            </button>
+                                        </ng-container>
+                                        <!-- SUSPENDIDO -->
+                                        <ng-container *ngSwitchCase="'Suspendido'">
+                                            <button class="btn btn-sm btn-outline-success rounded-2 me-2"
+                                                data-bs-toggle="modal" data-bs-target="#revokeSuspendFormModal"
+                                                (click)="openRevokeSuspensionModal(user)">
+                                                <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Suspensión
+                                            </button>
+                                        </ng-container>
+                                        <!-- BANEADO -->
+                                        <ng-container *ngSwitchCase="'Baneado'">
+                                            <button class="btn btn-sm btn-outline-success rounded-2"
+                                                data-bs-toggle="modal" data-bs-target="#revokeBanFormModal"
+                                                (click)="openRevokeBanModal(user)">
+                                                <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Baneo
+                                            </button>
+                                        </ng-container>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <!-- Aca cambiaria a -> ver usuarios activos / suspendidos o baneados de ahi abajo cambiaria -->
-                    <!-- Lista de Usuarios -->
-                    <div *ngIf="usersData.length > 0" class="d-flex flex-column gap-3">
-                        <div class="bg-white p-3 rounded-2" *ngFor="let user of usersData; let i = index">
-                            <!-- Title -->
-                            <div class="d-flex justify-content-between align-items-start flex-wrap">
-                                <div>
-                                    <p class="bodyLarge m-0">{{ user.username }}</p>
+                    <!-- Registro de los usuarios suspendidos. -->
+                    <section *ngFor="let user of suspendedUsersData; let i = index">
+                        <div class="bg-white p-3 mb-3 rounded-2">
+                            <!-- Enunciado Principal -->
+                            <div class="mb-3">
+                                <p class="bodyMedium fw-semibold mb-1">
+                                    El usuario 
+                                    <span class="text-primary">{{ user.idUser.username }}</span>
+                                    fue suspendido por 
+                                    <span class="text-primary">{{ user.suspendedBy.username }}</span>
+                                    durante 
+                                    <span class="text-primary">{{ user.suspendedTime }} minutos</span>.
+                                </p>
+                            </div>
+                            <!-- Duracion -->
+                            <div class="mb-3">
+                                <p class="bodySmall mb-1 fw-semibold">Duración</p>
+                                <p class="bodyMedium mb-0 text-muted">
+                                    La duración de la suspensión abarca desde el 
+                                    <span class="fw-semibold">{{ user.suspendedAt | date:'d MMMM' }}</span>
+                                    a las
+                                    <span class="fw-semibold">{{ user.suspendedAt | date:'h:mm:ss' }}</span>
+                                    hasta el 
+                                    <span class="fw-semibold">{{ user.suspendedUntil | date:'d MMMM' }}</span>
+                                    a las
+                                    <span class="fw-semibold">{{ user.suspendedUntil | date:'h:mm:ss' }}</span>.
+                                </p>
+                            </div>
+                            <!-- Razones y Estado -->
+                            <div class="row mb-0">
+                                <div class="col-12 col-md-4 mb-0">
+                                    <p class="bodySmall mb-1 fw-semibold">Razón de Suspensión</p>
+                                    <p class="bodyMedium mb-0 text-muted">
+                                        {{ user.reason }}
+                                    </p>
                                 </div>
-                                <div class="d-flex flex-row gap-2">
-                                    <p class="text-white bodySmall bg-secondary mb-0 py-1 px-3 rounded-pill">
+                                <div class="col-12 col-md-4 mb-0">
+                                    <p class="bodySmall mb-1 fw-semibold">Razón de Revocación</p>
+                                    <p class="bodyMedium mb-0 text-muted">
+                                        {{ user.revokeReason || '—' }}
+                                    </p>
+                                </div>
+                                <div class="col-12 col-md-4 mb-0">
+                                    <p class="bodySmall mb-1 fw-semibold">Estado</p>
+                                    <p class="bodyMedium mb-0 text-muted">
                                         {{ user.status }}
                                     </p>
-                                    <span class="text-white bodySmall py-1 px-3 rounded-pill"
-                                        [ngClass]="user.isVerified ? 'bg-primary' : 'bg-danger'">
-                                        {{ user.isVerified ? 'Verificado' : 'No Verificado' }}
-                                    </span>
                                 </div>
                             </div>
-                            <hr class="my-3">
-                            <!-- Actions -->
-                            <div class="d-flex flex-wrap gap-2">
-                                <button class="bodySmall btn btn-outline-primary btn-sm rounded-2"
-                                    data-bs-toggle="modal" data-bs-target="#userDetailsModal" (click)="viewUser(user)">
-                                    Ver Detalles
-                                </button>
-                                <!-- <button class="bodySmall btn btn-outline-danger btn-sm rounded-2"
-                                    (click)="deleteUser(user)">
-                                    Eliminar
-                                </button> -->
-                            </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>
     </main>
-
-    <!-- ================= MODAL - USER_DETAILS ================= -->
-    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-2 p-3" *ngIf="userDataUnique">
-                <!-- Header -->
-                <div class="d-flex flex-row align-items-center justify-content-between">
-                    <p class="bodyLarge modal-title m-0">{{userDataUnique.username}}</p>
-                    <button type="button" class="btn btn-outline-secondary px-3 py-1 rounded-2" data-bs-dismiss="modal">
-                        Cerrar
-                    </button>
-                </div>
-                <hr class="my-3">
-                <!-- Body -->
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex flex-column">
-                        <p class="bodySmall text-muted m-0">ID</p>
-                        <p class="bodyMedium m-0">{{ userDataUnique._id }}</p>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <p class="bodySmall text-muted m-0">Correo</p>
-                        <p class="bodyMedium m-0">{{ userDataUnique.email }}</p>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <p class="bodySmall text-muted m-0">Rol</p>
-                        <p class="bodyMedium m-0">{{ userDataUnique.role }}</p>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <p class="bodySmall text-muted m-0">Registrado</p>
-                        <p class="bodyMedium m-0">{{ userDataUnique.createdAt | date:'medium' }}</p>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <p class="bodySmall text-muted m-0">Modificado</p>
-                        <p class="bodyMedium m-0">{{ userDataUnique.updatedAt | date:'medium' }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- ================= FOOTER ================= -->
     <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
@@ -165,3 +258,212 @@
 
 
 </body>
+
+<!-- ================= MODAL - DetailUser ================= -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="userDataUnique">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">{{userDataUnique.username}}</p>
+            </div>
+            <!-- Body -->
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex flex-column">
+                    <p class="bodySmall text-muted m-0">ID</p>
+                    <p class="bodyMedium m-0">{{ userDataUnique._id }}</p>
+                </div>
+                <div class="d-flex flex-column">
+                    <p class="bodySmall text-muted m-0">Correo</p>
+                    <p class="bodyMedium m-0">{{ userDataUnique.email }}</p>
+                </div>
+                <div class="d-flex flex-column">
+                    <p class="bodySmall text-muted m-0">Rol</p>
+                    <p class="bodyMedium m-0">{{ userDataUnique.role }}</p>
+                </div>
+                <div class="d-flex flex-column">
+                    <p class="bodySmall text-muted m-0">Registrado</p>
+                    <p class="bodyMedium m-0">{{ userDataUnique.createdAt | date:'medium' }}</p>
+                </div>
+                <div class="d-flex flex-column">
+                    <p class="bodySmall text-muted m-0">Modificado</p>
+                    <p class="bodyMedium m-0">{{ userDataUnique.updatedAt | date:'medium' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ================= MODAL - SuspendUser ================= -->
+<div class="modal fade" id="userSuspendFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToSuspend">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">Suspender a un usuario</p>
+            </div>
+            <!-- Body -->
+            <form (ngSubmit)="confirmSuspend(selectedUserToSuspend._id)" class="d-flex flex-column gap-3">
+                <!-- @suspendedTime -->
+                <div>
+                    <label for="suspendTime" class="bodySmall fw-semibold mb-1">Tiempo de suspensión</label>
+                    <select id="suspendTime" class="form-select" name="suspendedTime"
+                        [(ngModel)]="suspendUserForm.suspendedTime" required>
+                        <option [value]='1'>1 minuto</option>
+                        <option [value]='5'>5 minutos</option>
+                        <option [value]='10'>10 minutos</option>
+                    </select>
+                </div>
+                <!-- @suspendedReason -->
+                <div>
+                    <label for="suspendReason" class="bodySmall fw-semibold mb-1">Razón de la suspensión</label>
+                    <textarea id="suspendReason" class="form-control" rows="4" name="reason"
+                        [(ngModel)]="suspendUserForm.reason" placeholder="Describe la razón de la suspensión..."
+                        required></textarea>
+                </div>
+                <!-- Resumen -->
+                <div class="bg-light p-3 rounded-2">
+                    <p class="bodySmall mb-0">
+                        Estás a punto de suspender a
+                        <span class="fw-bold text-primary">{{ selectedUserToSuspend.username }}</span>
+                        por <span class="fw-bold">{{ suspendUserForm.suspendedTime }} minutos</span>.
+                    </p>
+                </div>
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary px-3 py-1"
+                        [disabled]="!suspendUserForm.reason.trim()">
+                        Suspender
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ================= MODAL - RevokeSuspension ================= -->
+<div class="modal fade" id="revokeSuspendFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToRevokeSuspend">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">Revocar suspensión</p>
+            </div>
+            <!-- Body -->
+            <form (ngSubmit)="confirmRevokeSuspension(selectedUserToRevokeSuspend._id)"
+                class="d-flex flex-column gap-3">
+                <!-- @reason -->
+                <div>
+                    <label for="revokeSuspendReason" class="bodySmall fw-semibold mb-1">Razón de la
+                        revocación</label>
+                    <textarea id="revokeSuspendReason" class="form-control" rows="4" name="reason"
+                        [(ngModel)]="revokeSuspendForm.reason"
+                        placeholder="Describe por qué se revoca la suspensión..." required></textarea>
+                </div>
+                <!-- Info -->
+                <div class="bg-light p-3 rounded-2">
+                    <p class="bodySmall mb-0">
+                        Estás a punto de revocar la suspensión de
+                        <span class="fw-bold text-primary">{{ selectedUserToRevokeSuspend.username }}</span>.
+                    </p>
+                </div>
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success px-3 py-1"
+                        [disabled]="!revokeSuspendForm.reason.trim()">
+                        Revocar suspensión
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ================= MODAL - BanUser ================= -->
+<div class="modal fade" id="userBanFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToBan">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">Banear a un usuario</p>
+            </div>
+            <!-- Body -->
+            <form (ngSubmit)="confirmBan(selectedUserToBan._id)" class="d-flex flex-column gap-3">
+                <!-- @reason -->
+                <div>
+                    <label for="banReason" class="bodySmall fw-semibold mb-1">Razón del baneo</label>
+                    <textarea id="banReason" class="form-control" rows="4" name="reason"
+                        [(ngModel)]="banUserForm.reason" placeholder="Describe la razón del baneo..."
+                        required></textarea>
+                </div>
+                <!-- Info -->
+                <div class="bg-light p-3 rounded-2">
+                    <p class="bodySmall mb-0">
+                        Atención, estás a punto de banear al usuario
+                        <span class="fw-bold text-primary">{{ selectedUserToBan.username }}</span>.
+                        Esta acción es permanente y no puede ser revocada.
+                    </p>
+                </div>
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-outline-danger px-3 py-1">
+                        Banear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ================= MODAL - RevokeBan ================= -->
+<div class="modal fade" id="revokeBanFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToRevokeBan">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">Revocar baneo</p>
+            </div>
+            <!-- Body -->
+            <form (ngSubmit)="confirmRevokeBan(selectedUserToRevokeBan._id)" class="d-flex flex-column gap-3">
+                <!-- @reason -->
+                <div>
+                    <label for="revokeBanReason" class="bodySmall fw-semibold mb-1">Razón de la revocación</label>
+                    <textarea id="revokeBanReason"
+                            class="form-control"
+                            rows="4"
+                            name="reason"
+                            [(ngModel)]="revokeBanForm.reason"
+                            placeholder="Describe por qué se revoca el baneo..."
+                            required></textarea>
+                </div>
+                <!-- Info -->
+                <div class="bg-light p-3 rounded-2">
+                    <p class="bodySmall mb-0">
+                        Estás a punto de revocar el baneo de
+                        <span class="fw-bold text-primary">{{ selectedUserToRevokeBan.username }}</span>.
+                        El usuario volverá a estar <span class="fw-bold">Activo</span>.
+                    </p>
+                </div>
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-success px-3 py-1"
+                            [disabled]="!revokeBanForm.reason.trim()">
+                        Revocar baneo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

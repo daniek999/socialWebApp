@@ -46,7 +46,6 @@ const UserSuspendedSchema = new Schema({
     revokedBy: {
         type: Types.ObjectId,
         ref: 'User',
-        default: null
     },
     revokeReason: {
         type: String,

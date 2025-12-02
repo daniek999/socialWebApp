@@ -79,10 +79,13 @@ export const getSelfUser = async (req, res) => {
 };
 export const getSuspendedUsers = async (req, res) => {
     try {
-        // (3) - Busca a todos los usuarios suspendidos. 
-        const suspendedUsers = await UserSuspended.find();
+        // (1) - Busca a todos los usuarios suspendidos. 
+        const suspendedUsers = await UserSuspended.find()
+            .populate("idUser", "username")
+            .populate("suspendedBy", "username")
+            .populate("revokedBy", "username")
 
-        // (4) - Retorna un estado y mensaje de exito y los datos de usuarios suspendidos
+        // (2) - Retorna un estado y mensaje de exito y los datos de usuarios suspendidos
         return res.status(200).json({
             success: true,
             message: 'Se ha cargado la lista de los usuarios suspendidos correctamente.',
@@ -99,10 +102,13 @@ export const getSuspendedUsers = async (req, res) => {
 };
 export const getBannedUsers = async (req, res) => {
     try {
-        // (3) - Busca a todos los usuarios baneados. 
-        const bannedUsers = await UserBanned.find();
+        // (1) - Busca a todos los usuarios baneados. 
+        const bannedUsers = await UserBanned.find()
+            .populate("idUser", "username")
+            .populate("bannedBy", "username")
+            .populate("revokedBy", "username");
 
-        // (4) - Retorna un estado y mensaje de exito y los datos de usuarios baneados.
+        // (2) - Retorna un estado y mensaje de exito y los datos de usuarios baneados.
         return res.status(200).json({
             success: true,
             message: 'Se ha cargado la lista de los usuarios baneados correctamente.',
@@ -153,92 +159,157 @@ export const getOtherUsers = async (req, res) => {
 };
 export const suspendUser = async (req, res) => {
     try {
-        // (1) - Se requiere de idUser, razon y tiempo de suspension (minutos).
+        //#region [ PARAMS ]
         const { idUser } = req.params;
         const { reason, suspendedTime } = req.body;
-
-        // (2) - Verifica que el usuario exista.
+        const idAdmin = req.user.id;
+        //#endregion
+        
+        //#region [ VALIDATIONS ]
+        // (1) - Validar campos requeridos.
+        if (!reason || !reason.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'La razón de la suspensión es obligatoria.',
+            });
+        };
+        // (2) -  Validar duración
+        // const validDurations = [1, 5, 10];
+        // if (!validDurations.includes(suspendedTime)) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Duración inválida. Opciones: 1, 5 o 10 minutos. Usted ingreso: ' + suspendedTime,
+        //     });
+        // };
+        // (3) -  Verifica que el usuario exista.
         const user = await User.findById(idUser);
         if (!user) {
             return res.status(404).json({ 
                 message: 'Usuario no encontrado' 
             });
         };
-        // (2) - Verifica que el usuario no se encuentre ya suspendido.
+        // (4) -  No permitir suspender admins
+        if (user.role === 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'No se puede suspender a un administrador.',
+            });
+        }
+        // (5) -  Verifica que el usuario no se encuentre ya suspendido.
         if (user.status === "Suspendido") {
             return res.status(404).json({ 
                 message: 'El usuario ' + user.username + ' ya se encuentra en una suspension.'  
             });
         };
-
-        // (3) - Capta la fecha de la suspension y la fecha de reanudación.
+        // (6) -  Verificar si está baneado
+        if (user.status === 'Baneado') {
+            return res.status(409).json({
+                success: false,
+                message: 'El usuario ' + user.username + ' está baneado permanentemente.',
+            });
+        }
+        //#endregion
+        
+        //#region [ PROCESS ]
+        // (1) - Capta la fecha de la suspension y la fecha de reanudación.
         const now = new Date();
         const until = new Date(now.getTime() + suspendedTime * 60000);
-        // (3) - Registra la accion en 'UserSuspended'
+
+        // (2) - Registrar la suspensión
         await UserSuspended.create({
             idUser,
             reason,
-            suspendedBy: req.user.id,
+            suspendedBy: idAdmin,
             suspendedTime,
             suspendedAt: now,
             suspendedUntil: until
         });
-        // (3) - Cambia el estado del usuario a 'Suspendido'.
+
+        // (3) - Actualizar estado del usuario
         user.status = 'Suspendido';
         await user.save();
 
-        // (4) - Retorna un mensaje de exito y la fecha de reanudación.
+        // (4) - Ocultar perfil durante suspensión
+        await Profile.findOneAndUpdate(
+            { idUser },
+            { visible: false }
+        );
+
+        // (5) - Enviar email al usuario (implementar después)
+        /* try {
+            await sendSuspensionEmail(
+                user.email,
+                user.username,
+                reason,
+                suspendedUntil,
+                suspendedTime
+            );
+        } catch (emailError) {
+            console.error('Error enviando email:', emailError);
+        } */
+        //#endregion
+        
+        //#region [ RESULT ]
         return res.status(200).json({
             success: true,
-            message: 'El usuario (' + user.username + ') ha sido suspendido durante ' + suspendedTime + ' minutos.',
-            data: UserSuspended
+            message: `El usuario "${user.username}" ha sido suspendido por ${suspendedTime} minuto(s).`,
         });
-
+        //#endregion
+    
     } catch (error) {
+        //#region [ ERROR ]
         return res.status(500).json({
             success: false,
             message: 'Error al suspender usuario.',
             error: error.message,
         });
+        //#endregion
     };
 };
 export const revokeSuspension = async (req, res) => {
     try {
-        // (1) - Se envia el 'idSuspension' del registro de la suspension y la 'reason' de esta revocacion.
-        const { idSuspension } = req.params;
-        const { reason } = req.body;
-
-        // (2) - Verifica que la suspension exista.
-        const suspension = await UserSuspended.findById(idSuspension);
+        //#region [ PARAMS ]
+        const { idUser } = req.params;
+        const { revokeReason } = req.body;
+        //#endregion
+        
+        //#region [ VALIDATIONS ]
+        // (1) - Busca la suspensión activa.
+        const suspension = await UserSuspended.findOne({
+            idUser,
+            status: 'Activo'
+        });
+        // (2) - Si el no encuentra.
         if (!suspension) {
             return res.status(404).json({ 
                 success: false,
-                message: 'Suspensión no encontrada' 
+                message: 'El usuario no presenta una suspension activa. Es probable que haya expirado o haya sido revocado.' 
             });
-        };
-
-        // (3) - Actualiza el registro de [userSuspended].
+        }
+        //#endregion
+        
+        //#region [ PROCESS ]
+        // (1) - Registra la revocacion del usuario suspendido.
         suspension.status = 'Revocado';
         suspension.revokedAt = new Date();
-        suspension.revokedBy = req.user._id;
-        suspension.revokeReason = reason;
+        suspension.revokedBy = req.user.id;
+        suspension.revokeReason = revokeReason;
         await suspension.save();
 
-        // (3) - Se reactiva al usuario.
-        await User.findByIdAndUpdate(suspension.idUser, { status: 'Activo' });
-
-        // (4) - Retorna un estado y mensaje de exito.
+        // (2) - Reactiva al usuario.
+        await User.findByIdAndUpdate(idUser, { status: 'Activo' });
+        //#endregion
+        
+        //#region [ RESULT ]
         return res.status(200).json({
             success: true,
             message: `La suspensión ha sido revocada.`,
         });
-
+        //#endregion
+    
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Error al revocar suspensión.',
-            error: error.message,
-        });
+        //#region [ ERROR ]
+        //#endregion
     };
 };
 export const banUser = async (req, res) => {
@@ -286,7 +357,6 @@ export const banUser = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Usuario baneado correctamente.',
-            banRecord
         });
 
     } catch (error) {
@@ -352,7 +422,6 @@ export const revokeBan = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'El baneo ha sido revocado.',
-            banRecord
         });
 
     } catch (error) {

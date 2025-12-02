@@ -12,7 +12,7 @@ import { verifyAdmin, verifyStatus, verifyToken, verifyVerification } from '../m
  * getBanneddUsers()        | GET       | Admin     | 'api/users/banned'
  * getOtherUsers()          | GET       | Admin     | 'api/users/:idUser'
  * suspendUser()            | POST      | Admin     | 'api/users/suspend/:idUser'
- * revokeSuspension()       | PATCH     | Admin     | 'api/users/revoke/:idSuspension'
+ * revokeSuspension()       | PATCH     | Admin     | 'api/users/suspend/revoke/:idUser'
  * banUser()                | POST      | Admin     | 'api/users/ban/:idUser'
  * revokeBan()              | PATCH     | Admin     | 'api/users/ban/revoke/:idUser'
  * ---------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ userRouter.get('/suspended', getSuspendedUsers);
 userRouter.get('/banned', getBannedUsers);
 userRouter.get('/:idUser', getOtherUsers);
 userRouter.post('/suspend/:idUser', suspendUser);
-userRouter.patch('/revoke/:idSuspension', revokeSuspension);
+userRouter.patch('/suspend/revoke/:idUser', revokeSuspension);
 userRouter.post('/ban/:idUser', banUser);
 userRouter.patch('/ban/revoke/:idUser', revokeBan);
 

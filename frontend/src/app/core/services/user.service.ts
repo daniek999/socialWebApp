@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { IBannedUserListResponse, ISuspendedUserListResponse, IUser, IUserListResponse, IUserSingleResponse } from '../../models/user';
+import { IActionResponse, IBannedUserListResponse, ISuspendedUserListResponse, IUser, IUserListResponse, IUserSingleResponse } from '../../models/user';
 
 @Injectable({
     providedIn: 'root'
@@ -27,7 +27,7 @@ export class UserService {
         });
     };
     private handleError(error: any) {
-        console.error('Error en ProfilesService:', error);
+        console.error('Error en UserService:', error);
         return throwError(() => error.error?.message || 'Error desconocido del servidor.');
     };
 
@@ -71,21 +71,37 @@ export class UserService {
             .pipe(catchError(this.handleError));
 
     };
-    deleteUser(idUser: String) {
+    suspendUser(idUser: string, payload: { reason: string; suspendedTime: number }): Observable<IActionResponse> {
         const headers = this.getAuthHeaders();
-        const url = `${this.USER_BASE_URL}/${idUser}`;
-    
+        const url = `${this.USER_BASE_URL}/suspend/${idUser}`;
+
         return this.http
-            .delete(url, {headers})
+            .post<IActionResponse>(url, payload, { headers })
             .pipe(catchError(this.handleError));
     };
-    deactivateUser(idUser: String) {
+    revokeSuspension(idSuspension: string, payload: { revokeReason: string }): Observable<IActionResponse> {
         const headers = this.getAuthHeaders();
-        const url = `${this.USER_BASE_URL}/${idUser}`;
-    
+        const url = `${this.USER_BASE_URL}/suspend/revoke/${idSuspension}`;
+
         return this.http
-            .patch(url, {}, {headers})
+            .patch<IActionResponse>(url, payload, { headers })
+            .pipe(catchError(this.handleError));
+    };
+    banUser(idUser: string, payload: { reason: string }): Observable<IActionResponse> {
+        const headers = this.getAuthHeaders();
+        const url = `${this.USER_BASE_URL}/ban/${idUser}`;
+
+        return this.http
+            .post<IActionResponse>(url, payload, { headers })
+            .pipe(catchError(this.handleError));
+    };
+    revokeBan(idUser: string, payload: { revokeReason: string }): Observable<IActionResponse> {
+        const headers = this.getAuthHeaders();
+        const url = `${this.USER_BASE_URL}/ban/revoke/${idUser}`;
+
+        return this.http
+            .patch<IActionResponse>(url, payload, { headers })
             .pipe(catchError(this.handleError));
     };
 
-}
+};

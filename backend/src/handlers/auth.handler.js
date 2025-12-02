@@ -150,7 +150,7 @@ export const login = async (req, res) => {
         if (isSuspended.isSuspended) {
             return res.status(403).json({
                 message: 'Tu cuenta está suspendida temporalmente.',
-                suspendedUntil: result.suspendedUntil
+                suspendedUntil: isSuspended.suspendedUntil
             });
         };
 

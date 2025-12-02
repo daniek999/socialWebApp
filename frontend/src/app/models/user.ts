@@ -11,15 +11,15 @@ export interface IUser {
 };
 export interface ISuspendedUser {
     _id: string;
-    idUser: string;
+    idUser: IUser;
     reason: string;
     status: "Activo" | "Revocado" | "Expirado";
-    suspendedBy: string;
+    suspendedBy: IUser;
     suspendedTime: number | null;
     suspendedAt: string;
     suspendedUntil: string;
     revokedAt: string | null;
-    revokedBy: string | null;
+    revokedBy: IUser | null;
     revokeReason: string | null;
     createdAt: string;
     updatedAt: string;
@@ -27,12 +27,12 @@ export interface ISuspendedUser {
 };
 export interface IBannedUser {
     _id: string;
-    idUser: string;
+    idUser: IUser;
     reason: string;
     status: "Activo" | "Revocado";
-    bannedBy: string;
+    bannedBy: IUser;
     revokedAt: string | null;
-    revokedBy: string | null;
+    revokedBy: IUser | null;
     revokeReason: string | null;
     createdAt: string;
     updatedAt: string;
@@ -59,4 +59,8 @@ export interface IBannedUserListResponse {
     success: boolean;
     message: string;
     data: IBannedUser[];
+};
+export interface IActionResponse {
+    success: boolean;
+    message: string;
 };
