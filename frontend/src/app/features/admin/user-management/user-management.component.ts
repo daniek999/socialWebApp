@@ -6,6 +6,7 @@ import { BottomWebBarComponent } from '../../../shared/bottom-web-bar/bottom-web
 import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
 import { UserService } from '../../../core/services/user.service';
 import { IBannedUser, ISuspendedUser, IUser } from '../../../models/user';
+import { ViewTitleComponent } from "../../../shared/view-title/view-title.component";
 
 @Component({
     selector: 'app-user-management',
@@ -20,7 +21,8 @@ import { IBannedUser, ISuspendedUser, IUser } from '../../../models/user';
         NavBarComponent,
         FormsModule,
         NgSwitch,
-        NgSwitchCase
+        NgSwitchCase,
+        ViewTitleComponent
     ],
     templateUrl: './user-management.component.html',
     styleUrl: './user-management.component.css'
@@ -45,46 +47,51 @@ export class UserManagementComponent implements OnInit {
     selectedUserToRevokeBan: IUser | null = null;
 
     // Filters & sorting
-    selectedSort = 'old';
-    selectedFilter: string = 'all';
-    filteredUsers: any[] = [];
+    selectedSort: string = 'old';
+    selectedFilter: 'all' | 'suspended' | 'banned' = 'all';
 
     // Messages
     successMessage = '';
     errorMessage = '';
 
-    // Data
+    // Unique User Data
     userDataUnique: IUser | null = null;
 
-    usersData: IUser[] = [];
-    usersCount = 0;
+    // Statistics
+    generalUsersCount = 0;
     activeUsersCount = 0;
-    loadingActiveUsers = false;
-
-    suspendedUsersData: ISuspendedUser[] = [];
     suspendedUsersCount = 0;
-
-    bannedUsersData: IBannedUser[] = [];
     bannedUsersCount = 0;
+
+    // General/Active Users Data 
+    loadingUsers = false;
+    usersData: IUser[] = [];
+
+    // Suspended Users Data
+    loadingSuspendedUsers = false;
+    suspendedUsersData: ISuspendedUser[] = [];
+
+    // Banned Users Data
+    loadingBannedUsers = false;
+    bannedUsersData: IBannedUser[] = [];
     //#endregion
 
     //#region | INIT        |
     ngOnInit(): void {
-        this.filteredUsers = this.usersData;
         this.loadUsers();
         this.loadSuspendedUsers();
         this.loadBannedUsers();
     };
     private loadUsers(): void {
-        this.loadingActiveUsers = true;
+        this.loadingUsers = true;
         this._userService.getAllUsers().subscribe({
             next: (res) => {
                 this.setUsers(res.data);
-                this.loadingActiveUsers = false;
+                this.loadingUsers = false;
             },
             error: (error) => {
                 this.setError(error);
-                this.loadingActiveUsers = false;
+                this.loadingUsers = false;
             }
         });
     };
@@ -104,26 +111,8 @@ export class UserManagementComponent implements OnInit {
 
     //#region | ACTIONS     |
     // -------- Sorting --------
-    setFilter(type: string) {
-        this.selectedFilter = type;
-
-        switch (type) {
-            case 'active':
-                this.filteredUsers = this.usersData.filter(u => u.status === 'Activo');
-                break;
-
-            case 'suspended':
-                this.filteredUsers = this.usersData.filter(u => u.status === 'Suspendido');
-                break;
-
-            case 'banned':
-                this.filteredUsers = this.usersData.filter(u => u.status === 'Baneado');
-                break;
-
-            default:
-                this.filteredUsers = this.usersData;
-                break;
-        };
+    onFilterChange(option: 'all' | 'suspended' | 'banned') {
+        this.selectedFilter = option;
     };
     setSort(type: string) {
         this.selectedSort = type;
@@ -228,22 +217,25 @@ export class UserManagementComponent implements OnInit {
     //#endregion
 
     //#region | SETTERS     |
-    private setUser(user: IUser) { 
-        this.userDataUnique = user; 
+    // Arrays
+    private setUser(user: IUser) {
+        this.userDataUnique = user;
     };
+    // Lists
     private setUsers(users: IUser[]) {
         this.usersData = users;
-        this.usersCount = users.length;
+        this.generalUsersCount = users.length;
         this.activeUsersCount = users.filter(s => s.status === "Activo").length;
+        this.suspendedUsersCount = users.filter(s => s.status === "Suspendido").length;
+        this.bannedUsersCount = users.filter(s => s.status === "Baneado").length;
     };
     private setSuspendedUsers(users: ISuspendedUser[]) {
         this.suspendedUsersData = users;
-        this.suspendedUsersCount = users.length;
     };
     private setBannedUsers(users: IBannedUser[]) {
         this.bannedUsersData = users;
-        this.bannedUsersCount = users.length;
     };
+    // States
     private setSuccess(message: string) {
         this.successMessage = message;
         setTimeout(() => this.successMessage = '', 3000);

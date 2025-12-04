@@ -12,15 +12,20 @@ body {
 .bg-custom-background {
     background: #f3f5f7;
 }
-::-webkit-scrollbar { display: none; }
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
-    -webkit-text-fill-color: #000000 !important;
-    font-family: "Red Hat Text", sans-serif !important;
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f3f5f7;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #535c66;
+}
+::-webkit-scrollbar-thumb {
+    background: #212529;
+    border-radius: 0px;
+    transition: background 0.3s ease;
 }
 
 
@@ -36,9 +41,10 @@ input:-webkit-autofill:active {
     --tertiary: #f2777a;
     --action: #3DA5D9;
     /* Typography */
-    --bodyLarge: normal normal bold 20px "Red Hat Text", sans-serif;
-    --bodyMedium: italic normal normal 16px "Red Hat Text", sans-serif;
-    --bodySmall: normal normal normal 13px "Red Hat Text", sans-serif;
+    --titleSmall: normal normal bold 25px "Red Hat Text", sans-serif;
+    --bodyLarge: normal normal bold 19px "Red Hat Text", sans-serif;
+    --bodyMedium: normal normal normal 16px "Red Hat Text", sans-serif;
+    --bodySmall: italic normal normal 13px "Red Hat Text", sans-serif;
     /* Icons */
     --iconDefault: 24px;
 }
@@ -50,6 +56,9 @@ input:-webkit-autofill:active {
 }
 .bodyLarge {
     font: var(--bodyLarge);
+}
+.titleSmall {
+    font: var(--titleSmall);
 }
 
 /* MARK: Login & Register */

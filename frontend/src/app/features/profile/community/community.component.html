@@ -5,30 +5,19 @@
 
     <!-- ================== MAIN ================== -->
     <main class="content-wrapper d-flex">
-        <!-- View Navigation -->
+        <!-- Navigation -->
         <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
-
-        <!-- View Content -->
+        <!-- View -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
-
             <!-- Title -->
-            <div class="d-flex align-items-center justify-content-start px-0">
-                <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                    style="width: 40px; height: 40px;">
-                    <i class="bi bi-globe-americas fs-5"></i>
-                </div>
-                <p class="bodyLarge m-0 fw-bold text-dark">Comunidad</p>
-            </div>
-
+            <view-title title="Comunidad" icon="bi bi-globe-americas" />
             <!-- Content -->
             <div class="d-flex flex-column flex-grow-1 mt-3">
-
                 <!-- [Loading] -->
                 <div *ngIf="isLoadingProfilesData()" class="text-center py-4 m-auto">
                     <div class="spinner-border text-primary"></div>
                     <p class="small text-muted mt-2 mb-0">Cargando perfiles...</p>
                 </div>
-
                 <!-- [Filled] -->
                 <div *ngIf="!isLoadingProfilesData()">
                     <div class="d-flex flex-column gap-3">
@@ -52,12 +41,12 @@
                                         <i class="bi bi-briefcase-fill me-1"></i>
                                         {{ profile.profession || 'Sin profesión' }}
                                     </span>
-                                        <i class="bi bi-dot"></i>
+                                    <i class="bi bi-dot"></i>
                                     <span>
                                         <i class="bi bi-person-arms-up me-1"></i>
                                         {{ profile.situation || 'Sin situación' }}
                                     </span>
-                                        <i class="bi bi-dot"></i>
+                                    <i class="bi bi-dot"></i>
                                     <span>
                                         <i class="bi bi-chat-left-quote-fill me-1"></i>
                                         {{ profile.description || 'Sin situación' }}
@@ -80,15 +69,14 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- [Empty] -->
-                <div *ngIf="isProfilesListEmpty()"
-                    class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0">
-                    <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
-                    <p class="bodyMedium fw-semibold m-0">No hay perfiles públicos.</p>
-                    <p class="bodySmall text-muted m-0">Vamos, no sean tímidos y compartan su perfil con los demás.</p>
+                <div *ngIf="isProfilesListEmpty()" class="flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+                    <div class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0 text-center">
+                        <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
+                        <p class="bodyMedium fw-semibold m-0">No hay perfiles públicos.</p>
+                        <p class="bodySmall text-muted m-0">Vamos, no sean tímidos y compartan su perfil con los demás.</p>
+                    </div>
                 </div>
-
             </div>
         </div>
     </main>

@@ -5,248 +5,316 @@
 
     <!-- ================== MAIN ================== -->
     <main class="content-wrapper d-flex">
-        <!-- View Navigation -->
+        <!-- Navigation -->
         <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
-        <!-- View Content -->
+        <!-- View -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
             <!-- Title -->
-            <div class="d-flex align-items-center justify-content-start px-0">
-                <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                    style="width: 40px; height: 40px;">
-                    <i class="bi bi-person-vcard fs-5"></i>
-                </div>
-                <p class="bodyLarge m-0 fw-bold text-dark">Panel Administrativo</p>
-            </div>
+            <view-title title="Panel Administrativo" icon="bi-grid-1x2-fill" />
             <!-- Content -->
             <div class="d-flex flex-column flex-grow-1 mt-3">
                 <!-- [Loading] -->
-                <div *ngIf="loadingActiveUsers" class="text-center py-4 m-auto">
+                <div *ngIf="loadingUsers" class="text-center py-4 m-auto">
                     <div class="spinner-border text-primary"></div>
                     <p class="small text-muted mt-2 mb-0">Cargando usuarios...</p>
                 </div>
                 <!-- [Filled] -->
-                <div *ngIf="!loadingActiveUsers && usersData.length > 0" class="flex-grow-1 overflow-auto">
-                    <!-- Box - SchemaData -->
-                    <div class="row text-center g-3 mb-3">
-                        <div class="col-12 col-md-3">
-                            <div class="bg-white rounded-2 p-3 h-100">
-                                <p class="bodyMedium fw-semibold mb-1">Usuarios</p>
-                                <p class="fs-1 text-primary fw-bold m-0">{{ usersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Registrados en total</p>
-                            </div>
+                <div *ngIf="!loadingUsers && usersData.length > 0" class="flex-grow-1 overflow-auto">
+                    <!-- Box - Counts -->
+                    <div class="d-flex flex-row flex-wrap justify-content-between gap-3 mb-3 text-center">
+                        <div class="bg-white rounded-2 p-3 h-100 flex-grow-1">
+                            <p class="bodyMedium fw-semibold mb-1">Usuarios Totales</p>
+                            <p class="fs-1 text-primary fw-bold m-0">{{ generalUsersCount }}</p>
+                            <p class="bodySmall text-muted m-0">Cantidad de usuarios registrados en la plataforma.</p>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="bg-white rounded-2 p-3 h-100">
-                                <p class="bodyMedium fw-semibold mb-1">Activos</p>
-                                <p class="fs-1 text-success fw-bold m-0">{{ activeUsersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Con estado 'Activo'</p>
-                            </div>
+                        <div class="bg-white rounded-2 p-3 h-100 flex-grow-1">
+                            <p class="bodyMedium fw-semibold mb-1">Usuarios Activos</p>
+                            <p class="fs-1 text-success fw-bold m-0">{{ activeUsersCount }}</p>
+                            <p class="bodySmall text-muted m-0">Recuento de usuarios 'Activos' actualmente.</p>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="bg-white rounded-2 p-3 h-100">
-                                <p class="bodyMedium fw-semibold mb-1">Suspendidos</p>
-                                <p class="fs-1 text-warning fw-bold m-0">{{ suspendedUsersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Con suspension activa</p>
-                            </div>
+                        <div class="bg-white rounded-2 p-3 h-100 flex-grow-1">
+                            <p class="bodyMedium fw-semibold mb-1">Usuarios Suspendidos</p>
+                            <p class="fs-1 text-warning fw-bold m-0">{{ suspendedUsersCount }}</p>
+                            <p class="bodySmall text-muted m-0">Recuento de usuarios 'Suspendidos' actualmente.</p>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <div class="bg-white rounded-2 p-3 h-100">
-                                <p class="bodyMedium fw-semibold mb-1">Baneados</p>
-                                <p class="fs-1 text-danger fw-bold m-0">{{ bannedUsersCount }}</p>
-                                <p class="bodySmall text-muted m-0">Con baneo activo</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Box - Order -->
-                    <div class="d-flex flex-column justify-content-center align-items-start bg-white mb-3 p-3 rounded-2">
-                        <!-- Title -->
-                        <p class="bodyMedium fw-semibold mb-2">Ordenar</p>
-                        <!-- Content -->
-                        <div class="d-flex flex-wrap gap-2">
-                            <input type="radio" class="btn-check" name="sortOption" id="sort-old" autocomplete="off"
-                                [checked]="selectedSort === 'old'" (change)="setSort('old')" />
-                            <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="sort-old">
-                                Más antiguos
-                            </label>
-                            <input type="radio" class="btn-check" name="sortOption" id="sort-recent" autocomplete="off"
-                                [checked]="selectedSort === 'recent'" (change)="setSort('recent')" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-recent">
-                                Más recientes
-                            </label>
-                            <input type="radio" class="btn-check" name="sortOption" id="sort-usernameASC"
-                                autocomplete="off" [checked]="selectedSort === 'usernameASC'"
-                                (change)="setSort('usernameASC')" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameASC">
-                                Nombre de Usuario (A-Z)
-                            </label>
-                            <input type="radio" class="btn-check" name="sortOption" id="sort-usernameDSC"
-                                autocomplete="off" [checked]="selectedSort === 'usernameDSC'"
-                                (change)="setSort('usernameDSC')" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameDSC">
-                                Nombre de Usuario (Z-A)
-                            </label>
+                        <div class="bg-white rounded-2 p-3 h-100 flex-grow-1">
+                            <p class="bodyMedium fw-semibold mb-1">Usuarios Baneados</p>
+                            <p class="fs-1 text-danger fw-bold m-0">{{ bannedUsersCount }}</p>
+                            <p class="bodySmall text-muted m-0">Recuento de usuarios 'Baneados' actualmente.</p>
                         </div>
                     </div>
                     <!-- Box - Filter -->
                     <div class="d-flex flex-column justify-content-center align-items-start bg-white mb-3 p-3 rounded-2">
                         <!-- Title -->
-                        <p class="bodyMedium fw-semibold mb-2">Filtrar *Falta programar</p>
+                        <p class="bodyMedium fw-semibold mb-2">Filtrar</p>
                         <!-- Content -->
-                        <div class="d-flex flex-wrap gap-2">
-                            <input type="radio" class="btn-check" name="filterOption" id="filter-none"
-                                autocomplete="off" [checked]="selectedFilter === 'all'" />
-                            <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="filter-none">
-                                Todos
+                        <div class="d-flex flex-row flex-wrap gap-2">
+                            <input type="radio"
+                                class="btn-check"
+                                name="filterOption"
+                                id="filter-users-all"
+                                autocomplete="off"
+                                [checked]="selectedFilter === 'all'"
+                                (change)="onFilterChange('all')"
+                            />
+                            <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="filter-users-all">
+                            Todos los Usuarios
                             </label>
-                            <!--  -->
-                            <input type="radio" class="btn-check" name="filterOption" id="filter-active"
-                                autocomplete="off" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-active">
-                                Activos
+                            <input type="radio"
+                                class="btn-check"
+                                name="filterOption"
+                                id="filter-users-suspended"
+                                autocomplete="off"
+                                [checked]="selectedFilter === 'suspended'"
+                                (change)="onFilterChange('suspended')"
+                            />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-users-suspended">
+                            Registro de Suspendidos
                             </label>
-                            <!--  -->
-                            <input type="radio" class="btn-check" name="filterOption" id="filter-suspended"
-                                autocomplete="off" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-suspended">
-                                Suspendidos
+                            <input type="radio"
+                                class="btn-check"
+                                name="filterOption"
+                                id="filter-users-banned"
+                                autocomplete="off"
+                                [checked]="selectedFilter === 'banned'"
+                                (change)="onFilterChange('banned')"
+                            />
+                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-users-banned">
+                            Registro de Baneados
                             </label>
-                            <!--  -->
-                            <input type="radio" class="btn-check" name="filterOption" id="filter-banned"
-                                autocomplete="off" />
-                            <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="filter-banned">
-                                Baneados
-                            </label>
-
                         </div>
                     </div>
-                    <!-- Box - Table -->
-                    <div class="bg-white p-3 rounded-2 mb-3">
-                        <!-- Table of All Users -->
-                        <table class="table table-borderless align-middle">
-                            <thead>
-                                <tr>
-                                    <th class="bodyMedium fw-semibold">Usuario</th>
-                                    <th class="bodyMedium fw-semibold">Estado</th>
-                                    <th class="bodyMedium fw-semibold">Rol</th>
-                                    <th class="bodyMedium fw-semibold">Verificado</th>
-                                    <th class="bodyMedium fw-semibold">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let user of usersData; let i = index">
-                                    <!-- @username -->
-                                    <td class="bodySmall">
-                                        {{ user.username }}
-                                    </td>
-                                    <!-- @status -->
-                                    <td class="bodySmall" [ngClass]="{
-                                            'text-dark': user.status === 'Activo',
-                                            'text-danger': user.status === 'Baneado',
-                                            'text-primary': user.status === 'Suspendido'
-                                        }">
-                                        {{ user.status }}
-                                    </td>
-                                    <!-- @role -->
-                                    <td class="bodySmall">
-                                        {{ user.role === 'admin' ? 'Administrador' : 'Usuario' }}
-                                    </td>
-                                    <!-- @isVerified -->
-                                    <td class="bodySmall">
-                                        {{ user.isVerified ? 'Sí' : 'No' }}
-                                    </td>
-                                    <!-- ACCIONES -->
-                                    <td [ngSwitch]="user.status">
-                                        <!-- Detalles (Siempre visible) -->
-                                        <button class="btn btn-sm btn-outline-secondary rounded-2 me-2"
-                                            data-bs-toggle="modal" data-bs-target="#userDetailsModal"
-                                            (click)="viewUser(user)">
-                                            <i class="bi bi-person-circle me-1"></i> Detalles
-                                        </button>
-                                        <!-- ACTIVO -->
-                                        <ng-container *ngSwitchCase="'Activo'">
-                                            <button class="btn btn-sm btn-outline-primary rounded-2 me-2"
-                                                data-bs-toggle="modal" data-bs-target="#userSuspendFormModal"
-                                                (click)="openSuspendModal(user)">
-                                                <i class="bi bi-clock me-1"></i> Suspender
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger rounded-2"
-                                                data-bs-toggle="modal" data-bs-target="#userBanFormModal"
-                                                (click)="openBanModal(user)">
-                                                <i class="bi bi-slash-circle me-1"></i> Banear
-                                            </button>
-                                        </ng-container>
-                                        <!-- SUSPENDIDO -->
-                                        <ng-container *ngSwitchCase="'Suspendido'">
-                                            <button class="btn btn-sm btn-outline-success rounded-2 me-2"
-                                                data-bs-toggle="modal" data-bs-target="#revokeSuspendFormModal"
-                                                (click)="openRevokeSuspensionModal(user)">
-                                                <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Suspensión
-                                            </button>
-                                        </ng-container>
-                                        <!-- BANEADO -->
-                                        <ng-container *ngSwitchCase="'Baneado'">
-                                            <button class="btn btn-sm btn-outline-success rounded-2"
-                                                data-bs-toggle="modal" data-bs-target="#revokeBanFormModal"
-                                                (click)="openRevokeBanModal(user)">
-                                                <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Baneo
-                                            </button>
-                                        </ng-container>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <!-- [1] - Tabla de Usuarios -->
+                    <div *ngIf="selectedFilter === 'all'">
+                        <div class="d-flex flex-column justify-content-center align-items-start bg-white mb-3 p-3 rounded-2">
+                            <!-- Content -->
+                            <div class="d-flex flex-row flex-wrap gap-2 mb-0">
+                                <input type="radio" class="btn-check" name="sortOption" id="sort-old" autocomplete="off"
+                                    [checked]="selectedSort === 'old'" (change)="setSort('old')" />
+                                <label class="bodySmall py-1 px-3 rounded-2 btn btn-outline-dark" for="sort-old">
+                                    Más antiguos
+                                </label>
+                                <input type="radio" class="btn-check" name="sortOption" id="sort-recent" autocomplete="off"
+                                    [checked]="selectedSort === 'recent'" (change)="setSort('recent')" />
+                                <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-recent">
+                                    Más recientes
+                                </label>
+                                <input type="radio" class="btn-check" name="sortOption" id="sort-usernameASC"
+                                    autocomplete="off" [checked]="selectedSort === 'usernameASC'"
+                                    (change)="setSort('usernameASC')" />
+                                <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameASC">
+                                    Nombre de Usuario (A-Z)
+                                </label>
+                                <input type="radio" class="btn-check" name="sortOption" id="sort-usernameDSC"
+                                    autocomplete="off" [checked]="selectedSort === 'usernameDSC'"
+                                    (change)="setSort('usernameDSC')" />
+                                <label class="bodySmall py-1 px-3 btn btn-outline-dark" for="sort-usernameDSC">
+                                    Nombre de Usuario (Z-A)
+                                </label>
+                            </div>
+                            <hr class="my-3 border-dark w-100">
+                            <!-- Table -->
+                            <div class="w-100 table-responsive">
+                                <table class="table table-borderless align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="bodyMedium fw-semibold">Usuario</th>
+                                            <th class="bodyMedium fw-semibold">Estado</th>
+                                            <th class="bodyMedium fw-semibold">Rol</th>
+                                            <th class="bodyMedium fw-semibold">Verificado</th>
+                                            <th class="bodyMedium fw-semibold">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let user of usersData; let i = index">
+                                            <!-- @username -->
+                                            <td class="bodySmall">
+                                                {{ user.username }}
+                                            </td>
+                                            <!-- @status -->
+                                            <td class="bodySmall" [ngClass]="{
+                                                    'text-dark': user.status === 'Activo',
+                                                    'text-danger': user.status === 'Baneado',
+                                                    'text-primary': user.status === 'Suspendido'
+                                                }">
+                                                {{ user.status }}
+                                            </td>
+                                            <!-- @role -->
+                                            <td class="bodySmall">
+                                                {{ user.role === 'admin' ? 'Administrador' : 'Usuario' }}
+                                            </td>
+                                            <!-- @isVerified -->
+                                            <td class="bodySmall">
+                                                {{ user.isVerified ? 'Sí' : 'No' }}
+                                            </td>
+                                            <!-- ACCIONES -->
+                                            <td [ngSwitch]="user.status">
+                                                <!-- Detalles (Siempre visible) -->
+                                                <button class="bodySmall btn btn-sm btn-outline-secondary rounded-2 me-2"
+                                                    data-bs-toggle="modal" data-bs-target="#userDetailsModal"
+                                                    (click)="viewUser(user)">
+                                                    <i class="bi bi-person-circle me-1"></i> Detalles
+                                                </button>
+                                                <!-- ACTIVO -->
+                                                <ng-container *ngSwitchCase="'Activo'">
+                                                    <button class="bodySmall btn btn-sm btn-outline-primary rounded-2 me-2"
+                                                        data-bs-toggle="modal" data-bs-target="#userSuspendFormModal"
+                                                        (click)="openSuspendModal(user)">
+                                                        <i class="bi bi-clock me-1"></i> Suspender
+                                                    </button>
+                                                    <button class="bodySmall btn btn-sm btn-outline-danger rounded-2"
+                                                        data-bs-toggle="modal" data-bs-target="#userBanFormModal"
+                                                        (click)="openBanModal(user)">
+                                                        <i class="bi bi-slash-circle me-1"></i> Banear
+                                                    </button>
+                                                </ng-container>
+                                                <!-- SUSPENDIDO -->
+                                                <ng-container *ngSwitchCase="'Suspendido'">
+                                                    <button class="bodySmall btn btn-sm btn-outline-success rounded-2 me-2"
+                                                        data-bs-toggle="modal" data-bs-target="#revokeSuspendFormModal"
+                                                        (click)="openRevokeSuspensionModal(user)">
+                                                        <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Suspensión
+                                                    </button>
+                                                </ng-container>
+                                                <!-- BANEADO -->
+                                                <ng-container *ngSwitchCase="'Baneado'">
+                                                    <button class="bodySmall btn btn-sm btn-outline-success rounded-2"
+                                                        data-bs-toggle="modal" data-bs-target="#revokeBanFormModal"
+                                                        (click)="openRevokeBanModal(user)">
+                                                        <i class="bi bi-wrench-adjustable-circle me-1"></i> Revocar Baneo
+                                                    </button>
+                                                </ng-container>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Registro de los usuarios suspendidos. -->
-                    <section *ngFor="let user of suspendedUsersData; let i = index">
-                        <div class="bg-white p-3 mb-3 rounded-2">
-                            <!-- Enunciado Principal -->
-                            <div class="mb-3">
-                                <p class="bodyMedium fw-semibold mb-1">
-                                    El usuario 
-                                    <span class="text-primary">{{ user.idUser.username }}</span>
-                                    fue suspendido por 
-                                    <span class="text-primary">{{ user.suspendedBy.username }}</span>
-                                    durante 
-                                    <span class="text-primary">{{ user.suspendedTime }} minutos</span>.
+                    <!-- [2] - Registro de suspensiones -->
+                    <div *ngIf="selectedFilter === 'suspended'" class="d-flex flex-column gap-3">
+                        <div class="bg-white p-3 rounded-2" *ngFor="let suspendedRecord of suspendedUsersData; let i = index">
+                            <!-- Header -->
+                            <div class="d-flex flex-row flex-wrap align-items-center justify-content-between mb-3">
+                                <p class="bodySmall fw-semibold mb-0 text-truncate">#{{ suspendedRecord._id }}</p>
+                                <p class="bodySmall text-white px-3 py-1 rounded-2 mb-0" [ngClass]="{
+                                        'bg-success': suspendedRecord.status === 'En Curso',
+                                        'bg-dark': suspendedRecord.status === 'Revocada',
+                                        'bg-primary': suspendedRecord.status === 'Expirada'
+                                    }">
+                                    {{ suspendedRecord.status }}
                                 </p>
                             </div>
-                            <!-- Duracion -->
-                            <div class="mb-3">
-                                <p class="bodySmall mb-1 fw-semibold">Duración</p>
-                                <p class="bodyMedium mb-0 text-muted">
-                                    La duración de la suspensión abarca desde el 
-                                    <span class="fw-semibold">{{ user.suspendedAt | date:'d MMMM' }}</span>
-                                    a las
-                                    <span class="fw-semibold">{{ user.suspendedAt | date:'h:mm:ss' }}</span>
-                                    hasta el 
-                                    <span class="fw-semibold">{{ user.suspendedUntil | date:'d MMMM' }}</span>
-                                    a las
-                                    <span class="fw-semibold">{{ user.suspendedUntil | date:'h:mm:ss' }}</span>.
-                                </p>
-                            </div>
-                            <!-- Razones y Estado -->
-                            <div class="row mb-0">
-                                <div class="col-12 col-md-4 mb-0">
-                                    <p class="bodySmall mb-1 fw-semibold">Razón de Suspensión</p>
-                                    <p class="bodyMedium mb-0 text-muted">
-                                        {{ user.reason }}
+                            <!-- Body -->
+                            <div class="d-flex flex-column gap-3">
+                                <div>
+                                    <p class="bodyMedium mb-0">
+                                        El usuario
+                                        <span class="text-primary">{{ suspendedRecord.idUser.username }}</span>
+                                        fue suspendido por
+                                        <span class="text-primary">{{ suspendedRecord.suspendedBy.username }}</span>
+                                        durante
+                                        <span class="text-primary">{{ suspendedRecord.suspendedTime }} minutos</span>.
+                                        La suspensión inició el
+                                        <span class="text-primary">{{ suspendedRecord.suspendedAt | date:'d MMMM' }}</span>
+                                        a las
+                                        <span class="text-primary">{{ suspendedRecord.suspendedAt | date:'h:mm:ss' }}</span>
+                                        y finaliza el
+                                        <span class="text-primary">{{ suspendedRecord.suspendedUntil | date:'d MMMM' }}</span>
+                                        a las
+                                        <span class="text-primary">{{ suspendedRecord.suspendedUntil | date:'h:mm:ss' }}</span>.
+                                    </p>
+                                    <p class="bodySmall mb-0">
+                                        Revocada el
+                                        <span class="text-primary">
+                                            {{ suspendedRecord.revokedAt | date:'d MMMM' }}
+                                        </span>
+                                        a las
+                                        <span class="text-primary">
+                                            {{ suspendedRecord.revokedAt | date:'h:mm:ss a' }}
+                                        </span>
+                                        por
+                                        <span class="text-primary">
+                                            {{ suspendedRecord.revokedBy?.username }}
+                                        </span>
                                     </p>
                                 </div>
-                                <div class="col-12 col-md-4 mb-0">
-                                    <p class="bodySmall mb-1 fw-semibold">Razón de Revocación</p>
-                                    <p class="bodyMedium mb-0 text-muted">
-                                        {{ user.revokeReason || '—' }}
-                                    </p>
+                                <!-- Sub-bloques: Razones -->
+                                <div>
+                                    <p class="bodySmall mb-0 text-muted">Razón de suspensión</p>
+                                    <p class="bodyMedium mb-0">{{ suspendedRecord.reason }}</p>
                                 </div>
-                                <div class="col-12 col-md-4 mb-0">
-                                    <p class="bodySmall mb-1 fw-semibold">Estado</p>
-                                    <p class="bodyMedium mb-0 text-muted">
-                                        {{ user.status }}
-                                    </p>
+                                <div>
+                                    <p class="bodySmall mb-0 text-muted">Razón de revocación</p>
+                                    <p class="bodyMedium mb-0">{{ suspendedRecord.revokeReason || '—' }}</p>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </div>
+                    <!-- [3] - Registro de baneos -->
+                    <div *ngIf="selectedFilter === 'banned'" class="d-flex flex-column gap-3">
+                        <div class="bg-white p-3 rounded-2" *ngFor="let bannedRecord of bannedUsersData; let i = index">
+                            <!-- Header -->
+                            <div class="d-flex flex-row flex-wrap align-items-center justify-content-between mb-3">
+                                <p class="bodySmall fw-semibold mb-0 text-truncate">
+                                    #{{ bannedRecord._id }}
+                                </p>
+                                <p class="bodySmall text-white px-3 py-1 rounded-2 mb-0"
+                                [ngClass]="{
+                                        'bg-danger': bannedRecord.status === 'Vigente',
+                                        'bg-dark': bannedRecord.status === 'Revocado'
+                                }">
+                                {{ bannedRecord.status }}
+                                </p>
+                            </div>
+                            <!-- Body -->
+                            <div class="d-flex flex-column gap-3">
+                                <!-- Resumen -->
+                                <div>
+                                    <p class="bodyMedium mb-0">
+                                        El usuario
+                                        <span class="text-primary">{{ bannedRecord.idUser.username }}</span>
+                                        fue baneado por
+                                        <span class="text-primary">{{ bannedRecord.bannedBy.username }}</span>
+                                        el día
+                                        <span class="text-primary">{{ bannedRecord.createdAt | date:'d MMMM' }}</span>
+                                        a las
+                                        <span class="text-primary">{{ bannedRecord.createdAt | date:'h:mm:ss' }}</span>
+                                    </p>
+                                    <p class="bodySmall mb-0" *ngIf="bannedRecord.revokedAt">
+                                        Revocado el
+                                        <span class="text-primary">
+                                            {{ bannedRecord.revokedAt | date:'d MMMM' }}
+                                        </span>
+                                        a las
+                                        <span class="text-primary">
+                                            {{ bannedRecord.revokedAt | date:'h:mm:ss a' }}
+                                        </span>
+                                        por
+                                        <span class="text-primary">
+                                            {{ bannedRecord.revokedBy?.username }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <!-- Razón -->
+                                <div>
+                                    <p class="bodySmall mb-0 text-muted">Razón del baneo</p>
+                                    <p class="bodyMedium mb-0">{{ bannedRecord.reason }}</p>
+                                </div>
+                                <!-- Revocación -->
+                                <div *ngIf="bannedRecord.revokedAt">
+                                    <p class="bodySmall mb-0 text-muted">Razón de revocación</p>
+                                    <p class="bodyMedium mb-0">
+                                        {{ bannedRecord.revokeReason || '—' }}
+                                    </p>
+                                </div>
+                                <!-- Si no existe revocación -->
+                                <div *ngIf="!bannedRecord.revokedAt">
+                                    <p class="bodySmall text-muted mb-0">Este baneo no ha sido revocado.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -255,7 +323,6 @@
     <!-- ================= FOOTER ================= -->
     <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
         [message]="errorMessage || successMessage" />
-
 
 </body>
 
@@ -334,8 +401,7 @@
                         Cancelar
                     </button>
 
-                    <button type="submit" class="btn btn-primary px-3 py-1"
-                        [disabled]="!suspendUserForm.reason.trim()">
+                    <button type="submit" class="btn btn-primary px-3 py-1" [disabled]="!suspendUserForm.reason.trim()">
                         Suspender
                     </button>
                 </div>
@@ -359,8 +425,8 @@
                     <label for="revokeSuspendReason" class="bodySmall fw-semibold mb-1">Razón de la
                         revocación</label>
                     <textarea id="revokeSuspendReason" class="form-control" rows="4" name="reason"
-                        [(ngModel)]="revokeSuspendForm.reason"
-                        placeholder="Describe por qué se revoca la suspensión..." required></textarea>
+                        [(ngModel)]="revokeSuspendForm.reason" placeholder="Describe por qué se revoca la suspensión..."
+                        required></textarea>
                 </div>
                 <!-- Info -->
                 <div class="bg-light p-3 rounded-2">
@@ -435,13 +501,9 @@
                 <!-- @reason -->
                 <div>
                     <label for="revokeBanReason" class="bodySmall fw-semibold mb-1">Razón de la revocación</label>
-                    <textarea id="revokeBanReason"
-                            class="form-control"
-                            rows="4"
-                            name="reason"
-                            [(ngModel)]="revokeBanForm.reason"
-                            placeholder="Describe por qué se revoca el baneo..."
-                            required></textarea>
+                    <textarea id="revokeBanReason" class="form-control" rows="4" name="reason"
+                        [(ngModel)]="revokeBanForm.reason" placeholder="Describe por qué se revoca el baneo..."
+                        required></textarea>
                 </div>
                 <!-- Info -->
                 <div class="bg-light p-3 rounded-2">
@@ -457,9 +519,7 @@
                         Cancelar
                     </button>
 
-                    <button type="submit"
-                            class="btn btn-success px-3 py-1"
-                            [disabled]="!revokeBanForm.reason.trim()">
+                    <button type="submit" class="btn btn-success px-3 py-1" [disabled]="!revokeBanForm.reason.trim()">
                         Revocar baneo
                     </button>
                 </div>

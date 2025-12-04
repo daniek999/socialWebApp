@@ -13,7 +13,7 @@ export interface ISuspendedUser {
     _id: string;
     idUser: IUser;
     reason: string;
-    status: "Activo" | "Revocado" | "Expirado";
+    status: "En Curso" | "Revocada" | "Expirada";
     suspendedBy: IUser;
     suspendedTime: number | null;
     suspendedAt: string;
@@ -29,7 +29,7 @@ export interface IBannedUser {
     _id: string;
     idUser: IUser;
     reason: string;
-    status: "Activo" | "Revocado";
+    status: "Vigente" | "Revocado";
     bannedBy: IUser;
     revokedAt: string | null;
     revokedBy: IUser | null;

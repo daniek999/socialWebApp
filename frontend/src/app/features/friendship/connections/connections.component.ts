@@ -6,16 +6,18 @@ import { BottomWebBarComponent } from '../../../shared/bottom-web-bar/bottom-web
 import { IAcceptedRequest, IPendingRequest, ISentRequest } from '../../../models/friendship';
 import { FriendshipService } from '../../../core/services/friendship.service';
 import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
+import { ViewTitleComponent } from "../../../shared/view-title/view-title.component";
 
 @Component({
     selector: 'app-connections',
     standalone: true,
     imports: [
-        TopWebBarComponent, 
-        BottomWebBarComponent, 
-        NgIf, 
-        NgFor, 
-        NavBarComponent
+        TopWebBarComponent,
+        BottomWebBarComponent,
+        NgIf,
+        NgFor,
+        NavBarComponent,
+        ViewTitleComponent
     ],
     templateUrl: './connections.component.html',
     styleUrl: './connections.component.css'
@@ -27,7 +29,7 @@ export class ConnectionsComponent implements OnInit {
         private friendshipService: FriendshipService
     ) { }
 
-    //#region - [VARIABLES]
+    //#region | VARIABLES   |
     successMessage: string = '';
     errorMessage: string = '';
     // Accepted Requests (Confirmed)
@@ -44,7 +46,7 @@ export class ConnectionsComponent implements OnInit {
     sentCount: number = 0;
     //#endregion
 
-    //#region - [INIT - METHODS]
+    //#region | INIT        |
     ngOnInit() {
         this.loadFriends();
         this.loadPendingRequests();
@@ -56,13 +58,10 @@ export class ConnectionsComponent implements OnInit {
         this.friendshipService.getFriends().subscribe({
             next: (response) => {
                 this.acceptedRequests = response.friends;
-                console.log(this.acceptedRequests);
-                
                 this.acceptedCount = response.count;
                 this.acceptedLoading = false;
             },
             error: (error) => {
-                console.error('Error al cargar amigos:', error.message);
                 this.acceptedLoading = false;
             }
         });
@@ -73,7 +72,6 @@ export class ConnectionsComponent implements OnInit {
                 this.pendingLoading = false;
             },
             error: (error) => {
-                console.error('Error al cargar pendientes:', error.message);
                 this.pendingLoading = false;
             }
         })
@@ -108,7 +106,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [ACTIONS - METHODS]
+    //#region | ACTIONS     |
     acceptRequest(friendshipId: string): void {
         this.friendshipService.acceptFriendRequest(friendshipId).subscribe({
             next: (response) => {
@@ -169,7 +167,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [GETTERS]
+    //#region | GETTERS     |
     // 'Aceptado'
     getFriendFullName(friend: IAcceptedRequest): string | null {
         return this.setNameFromProfile(friend.profile?.name, friend.profile?.surname);
@@ -193,7 +191,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [SETTERS]
+    //#region | SETTERS     |
     private setNameFromProfile(name?: string, surname?: string): string | null {
         if (name && surname) {
             return name + ' ' + surname;
@@ -217,7 +215,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [HELPERS]
+    //#region | HELPERS     |
     // Friendship
     isFriendsListEmpty(): boolean {
         const noAccepted = !this.acceptedRequests || this.acceptedRequests.length === 0;
@@ -241,7 +239,7 @@ export class ConnectionsComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [NAVIGATION]
+    //#region | NAVIGATION  |
     goToSelectedProfile(id: string) {
         this.router.navigate(['/profile', id]);
     };

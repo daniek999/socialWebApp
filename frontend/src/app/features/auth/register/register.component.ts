@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    standalone: true,
+    imports: [
+        ReactiveFormsModule
+    ],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
 
     constructor(
         private fb: FormBuilder,
@@ -18,29 +20,27 @@ export class RegisterComponent implements OnInit {
         private router: Router,
     ) { }
 
-    ngOnInit(): void {
-        console.log('RUTA: /auth/register');
-    }
-    // 1. req. Data
+    //#region | VARIABLES   |
     form = this.fb.group({
         username: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required],
         confirmPassword: ['', Validators.required]
     });
+    //#endregion
 
-    // 2. onSubmit Button
+    //#region | ACTIONS     |
     submit() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
-        }
+        };
 
         // Validar que coincidan las contraseñas
         if (this.form.value.password !== this.form.value.confirmPassword) {
             alert('Las contraseñas no coinciden');
             return;
-        }
+        };
 
         this.auth.register(this.form.value).subscribe({
             next: (res) => {
@@ -49,10 +49,13 @@ export class RegisterComponent implements OnInit {
             },
             error: (err) => alert(err.error?.message || 'Error en el registro')
         });
-    }
+    };
+    //#endregion
 
+    //#region | NAVIGATION  |
     toLogin() {
         this.router.navigate(['/login'])
-    }
+    };
+    //#endregion
 
-}
+};

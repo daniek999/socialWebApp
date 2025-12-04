@@ -5,18 +5,12 @@
 
     <!-- ================== MAIN ================== -->
     <main class="content-wrapper d-flex">
-        <!-- View Navigation -->
+        <!-- Navigation -->
         <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
-        <!-- View Content -->
+        <!-- View -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
             <!-- Title -->
-            <div class="d-flex align-items-center justify-content-start px-0">
-                <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                    style="width: 40px; height: 40px;">
-                    <i class="bi bi-people-fill fs-5"></i>
-                </div>
-                <p class="bodyLarge m-0 fw-bold text-dark">Conexiones</p>
-            </div>
+            <view-title title="Conexiones" icon="bi bi-plug-fill" />
             <!-- Content -->
             <div class="d-flex flex-column flex-grow-1 mt-3">
                 <!-- [Loading] -->
@@ -200,17 +194,19 @@
                     </div>
                 </div>
                 <!-- [Empty] -->
-                <div *ngIf="isFriendsListEmpty()"
-                    class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0">
-                    <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
-                    <p class="bodyMedium fw-semibold m-0">Sin conexiones todavía.</p>
-                    <p class="bodySmall text-muted m-0">Explora la comunidad y envía solicitudes de amistad.</p>
+                <div *ngIf="isFriendsListEmpty()" class="flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+                    <div class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0 text-center">
+                        <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
+                        <p class="bodyMedium fw-semibold m-0">Sin conexiones todavía.</p>
+                        <p class="bodySmall text-muted m-0">Explora la comunidad y envía solicitudes de amistad.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- ================= FOOTER ================= -->
-    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null" [message]="errorMessage || successMessage" />
+    <app-BottomBar [type]="errorMessage ? 'error' : successMessage ? 'success' : null"
+        [message]="errorMessage || successMessage" />
 
 </body>

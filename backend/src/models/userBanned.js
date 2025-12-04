@@ -17,8 +17,8 @@ const UserBannedSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['Activo', 'Revocado'],
-        default: 'Activo'
+        enum: ['Vigente', 'Revocado'],
+        default: 'Vigente'
     },
     // If user got Banned
     bannedBy: {

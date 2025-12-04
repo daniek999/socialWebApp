@@ -56,12 +56,6 @@ const profileSchema = new Schema({
         type: String,
         default: ""
     },
-    // Redes sociales
-    socialLinks: {
-        github: {type: String},
-        youtube: {type: String},
-        twitch: {type: String},
-    },
     // Estado Visual del Perfil
     visible: {
         type: Boolean,

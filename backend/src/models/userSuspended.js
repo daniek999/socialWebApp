@@ -17,8 +17,8 @@ const UserSuspendedSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['Activo', 'Revocado', 'Expirado'],
-        default: 'Activo'
+        enum: ['En Curso', 'Revocada', 'Expirada'],
+        default: 'En Curso'
     },
     // If user got Suspended
     suspendedBy: {

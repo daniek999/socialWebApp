@@ -1,44 +1,44 @@
 <nav>
     <ul class="h-100 nav flex-column p-3 gap-2">
         <!-- [User Destinations] -->
-        <!-- Inicio -->
         <li class="nav-item">
-            <a class="px-3 d-flex flex-row align-items-center btn btn-outline-dark rounded-pill w-100 border-0"
-                (click)="goToHome()">
-                <i class="bi bi-house-door-fill fs-6 me-2"></i>
+            <a routerLink="/home"
+                routerLinkActive="onActive-User"
+                class="px-3 d-flex flex-row align-items-center btn rounded-pill w-100 border-0">
+                <i class="bi bi-rss-fill fs-6 me-2"></i>
                 <span class="fs-6">Inicio</span>
             </a>
         </li>
-        <!-- Perfil -->
         <li class="nav-item">
-            <a class="px-3 d-flex flex-row align-items-center btn btn-outline-dark rounded-pill w-100 border-0"
-                (click)="goToProfile()">
-                <i class="bi bi-person-bounding-box fs-6 me-2"></i>
+            <a routerLink="/profile"
+                routerLinkActive="onActive-User"
+                class="px-3 d-flex flex-row align-items-center btn rounded-pill w-100 border-0">
+                <i class="bi bi-person-lines-fill fs-6 me-2"></i>
                 <span class="fs-6">Perfil</span>
             </a>
         </li>
-        <!-- Comunidad -->
         <li class="nav-item">
-            <a class="px-3 d-flex flex-row align-items-center btn btn-outline-dark rounded-pill w-100 border-0"
-                (click)="goToCommunity()">
+            <a routerLink="/list-profile"
+                routerLinkActive="onActive-User"
+                class="px-3 d-flex flex-row align-items-center btn rounded-pill w-100 border-0">
                 <i class="bi bi-globe-americas fs-6 me-2"></i>
                 <span class="fs-6">Comunidad</span>
             </a>
         </li>
-        <!-- Conexiones -->
         <li class="nav-item">
-            <a class="px-3 d-flex flex-row align-items-center btn btn-outline-dark rounded-pill w-100 border-0"
-                (click)="goToConnections()">
-                <i class="bi bi-people-fill fs-6 me-2"></i>
+            <a routerLink="/connections"
+                routerLinkActive="onActive-User"
+                class="px-3 d-flex flex-row align-items-center btn rounded-pill w-100 border-0">
+                <i class="bi bi-plug-fill fs-6 me-2"></i>
                 <span class="fs-6">Conexiones</span>
             </a>
         </li>
         <!-- [Admin Destinations] -->
-        <!-- Gestionamiento de Usuarios -->
         <li class="nav-item" *ngIf="isAdmin">
-            <a class="px-3 d-flex flex-row align-items-center btn btn-outline-primary rounded-pill w-100 border-0"
-                (click)="goToAdminPanel()">
-                <i class="bi bi-shield-lock-fill fs-6 me-2"></i>
+            <a routerLink="/admin"
+                routerLinkActive="onActive-Admin"
+                class="px-3 d-flex flex-row align-items-center btn rounded-pill w-100 border-0">
+                <i class="bi bi-grid-1x2-fill fs-6 me-2"></i>
                 <span class="fs-6">Panel Administrativo</span>
             </a>
         </li>

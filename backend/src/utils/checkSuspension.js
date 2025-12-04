@@ -37,7 +37,7 @@ export const checkSuspension = async (userId) => {
 
     // (5) - Si la suspension expiro naturalmente.
     if (now >= end) {
-        suspended.status = "Expirado";
+        suspended.status = "Expirada";
         await suspended.save();
         user.status = "Activo";
         await user.save();

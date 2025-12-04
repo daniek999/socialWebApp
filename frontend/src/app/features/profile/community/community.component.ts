@@ -7,16 +7,18 @@ import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
 import { ProfileService } from '../../../core/services/profile.service';
 import { IProfile, IProfilePopulated } from '../../../models/profile';
 import { FriendshipService } from '../../../core/services/friendship.service';
+import { ViewTitleComponent } from "../../../shared/view-title/view-title.component";
 
 @Component({
     selector: 'app-community',
     standalone: true,
     imports: [
-        NgIf, 
-        NgFor, 
-        TopWebBarComponent, 
-        BottomWebBarComponent, 
-        NavBarComponent
+        NgIf,
+        NgFor,
+        TopWebBarComponent,
+        BottomWebBarComponent,
+        NavBarComponent,
+        ViewTitleComponent
     ],
     templateUrl: './community.component.html',
     styleUrl: './community.component.css'
@@ -29,14 +31,14 @@ export class CommunityComponent implements OnInit {
         private friendshipService: FriendshipService
     ) { }
 
-    //#region - [VARIABLES]
+    //#region | VARIABLES   |
     profiles: IProfilePopulated[] = [];
     loadingProfiles: boolean = false;
     successMessage: string = '';
     errorMessage: string = '';
     //#endregion
 
-    //#region - [INIT - METHODS]
+    //#region | INIT        |
     ngOnInit() {
         this.loadProfiles();
     };
@@ -46,7 +48,6 @@ export class CommunityComponent implements OnInit {
             next: (res) => { 
                 this.setProfiles(res.data); 
                 this.loadingProfiles = false; 
-                console.log(res.data) 
             }, 
             error: (error) => { 
                 this.setError(error.error?.message ?? 'Error al cargar perfiles') 
@@ -55,7 +56,7 @@ export class CommunityComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [ACTIONS - METHODS]
+    //#region | ACTIONS     |
     sendFriendRequest(userId: string): void {
         this.friendshipService.sendFriendRequest(userId).subscribe({
             next: (response) => {
@@ -68,7 +69,7 @@ export class CommunityComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [GETTERS]
+    //#region | GETTERS     |
     getPhotoUrl(profile: IProfilePopulated): string {
         if (profile.photo) {
             return `http://localhost:4000${profile.photo}`;
@@ -77,7 +78,7 @@ export class CommunityComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [SETTERS]
+    //#region | SETTERS     |
     private setProfiles(profiles: IProfile[]): void { 
         this.profiles = profiles; 
     };
@@ -91,7 +92,7 @@ export class CommunityComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [HELPERS]
+    //#region | HELPERS     |
     isProfilesListFill(): boolean {
         return !this.loadingProfiles && this.profiles && this.profiles.length > 0;
     };
@@ -103,7 +104,7 @@ export class CommunityComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [NAVIGATION]
+    //#region | NAVIGATION  |
     goToSelectedProfile(id: string) {
         this.router.navigate(['/profile', id]);
     };

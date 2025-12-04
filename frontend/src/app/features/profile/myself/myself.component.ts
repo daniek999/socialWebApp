@@ -10,20 +10,22 @@ import { IProfilePopulated } from '../../../models/profile';
 import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
 import { IAchievementPopulated } from '../../../models/achievement';
 import { AchievementService } from '../../../core/services/achievement.service';
+import { ViewTitleComponent } from "../../../shared/view-title/view-title.component";
 
 @Component({
     selector: 'app-myself',
     standalone: true,
     imports: [
-        FormsModule, 
-        HttpClientModule, 
-        NgIf, 
-        NgClass, 
-        TopWebBarComponent, 
-        BottomWebBarComponent, 
-        NavBarComponent, 
+        FormsModule,
+        HttpClientModule,
+        NgIf,
+        NgClass,
+        TopWebBarComponent,
+        BottomWebBarComponent,
+        NavBarComponent,
         NgForOf,
-        DatePipe
+        DatePipe,
+        ViewTitleComponent
     ],
     templateUrl: './myself.component.html',
     styleUrl: './myself.component.css'
@@ -37,7 +39,7 @@ export class MyselfComponent implements OnInit {
         private achievementService: AchievementService
     ) { }
 
-    //#region - [VARIABLES]
+    //#region | VARIABLES   |
     // Profile Vars
     profile: IProfilePopulated | null = null;
     loadingProfile: boolean = false;
@@ -50,7 +52,7 @@ export class MyselfComponent implements OnInit {
     errorMessage: string = '';
     //#endregion
 
-    //#region - [INIT - METHODS]
+    //#region | INIT        |
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
@@ -63,25 +65,33 @@ export class MyselfComponent implements OnInit {
     };
     loadSelfProfile(): void {
         this.isOwnProfile = true;
+        this.loadingProfile = true;
+        
         this.profileService.getSelfProfile().subscribe({
             next: (response) => {
                 this.setProfile(response.data);
                 this.loadUserAchievements(response.data.idUser._id);
+                this.loadingProfile = false;
             },
             error: (error) => {
                 this.setError(error.error?.message ?? 'Error al cargar tu perfil.');
+                this.loadingProfile = false;
             }
         });
     };
     loadOtherProfile(id: string): void {
         this.isOwnProfile = false;
+        this.loadingProfile = true;
+
         this.profileService.getOtherProfile(id).subscribe({
             next: (response) => {
                 this.setProfile(response.data);
                 this.loadUserAchievements(response.data.idUser._id);
+                this.loadingProfile = false;
             },
             error: (error) => {
                 this.setError(error.error?.message ?? 'Error al cargar el perfil.');
+                this.loadingProfile = false;    
             }
         });
     };
@@ -100,7 +110,7 @@ export class MyselfComponent implements OnInit {
     };
     //#endregion
     
-    //#region - [ACTIONS - METHODS]
+    //#region | ACTIONS     |
     downloadCV() {
         const cvUrl = this.getCVUrl();
         if (cvUrl) {
@@ -109,7 +119,7 @@ export class MyselfComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [GETTERS]
+    //#region | GETTERS     |
     getUserRole(): string {
         if (!this.profile) return '';
         return this.profile.idUser.role === 'user'
@@ -142,40 +152,20 @@ export class MyselfComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [SETTERS]
+    //#region | SETTERS     |
     private setProfile(profile: IProfilePopulated) {
         this.profile = profile;
-        console.log('Perfil cargado:', profile);
     };
     private setAchievement(achievement: IAchievementPopulated[]) {
         this.achievement = achievement;
-        console.log('Logros cargados:', achievement);
-    }
+    };
     private setError(message: string) {
         this.errorMessage = message;
-        setTimeout(() => this.errorMessage = '', 5000);
-    };
-    formatBirthdayShort(dateString?: string): string {
-        if (!dateString) return '';
-
-        const date = new Date(dateString);
-
-        // Ajustar timezone igual que antes
-        date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-
-        const meses = [
-            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-        ];
-
-        const dia = date.getDate();
-        const mes = meses[date.getMonth()];
-
-        return `${dia} de ${mes}`;
+        setTimeout(() => this.errorMessage = '', 3000);
     };
     //#endregion
 
-    //#region - [NAVIGATION]
+    //#region | NAVIGATION  |
     goToEditProfile() {
         this.router.navigate(['/edit-profile']);
     };

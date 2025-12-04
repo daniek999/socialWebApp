@@ -73,7 +73,7 @@ export const register = async (req, res) => {
             idUser: newUser._id,
             name: 'Tus Nombres',
             surname: 'Tus Apellidos',
-            birthday: null,
+            birthday: Date.now(),
             interests: [],
             profession: 'Tu Profesión',
             situation: 'Estudiante',
@@ -82,11 +82,6 @@ export const register = async (req, res) => {
             skills: [],
             photo: "",
             curriculumvitae: "",
-            socialLinks: {
-                github: "",
-                youtube: "",
-                twitch: ""
-            },
             visible: false,
         });
         await newProfile.save();

@@ -5,173 +5,178 @@
 
     <!-- ================== MAIN ================== -->
     <main class="content-wrapper d-flex">
-        <!-- View Navigation -->
+        <!-- Navigation -->
         <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
-        <!-- View Content -->
+        <!-- View -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
             <!-- Profile Data -->
-            <div>
+            <div class="mb-3">
                 <!-- Title -->
-                <div class="d-flex align-items-center justify-content-start px-0">
-                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                        style="width: 40px; height: 40px;">
-                        <i class="bi bi-person-bounding-box fs-5"></i>
-                    </div>
-                    <p class="bodyLarge m-0 fw-bold text-dark">Perfil</p>
+                <view-title title="Perfil" icon="bi bi-person-lines-fill" />
+                <!-- [Loading] -->
+                <div *ngIf="loadingProfile" class="text-center py-4 m-auto"> <!--Agregar aca una fuicion helper-->
+                    <div class="spinner-border text-primary"></div>
+                    <p class="small text-muted mt-2 mb-0">Cargando perfil...</p>
                 </div>
-                <!-- Content -->
-                <div *ngIf="profile" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-                    <!-- @photo, @name, @surname, @profession, @situation, @description -->
-                    <div class="d-flex flex-column flex-md-row gap-3 p-0">
-                        <img [src]="getPhotoUrl()" alt="Foto" width="200" height="200" class="rounded-2"
-                            style="object-fit: cover;" />
-                        <div class="flex-grow-1">
-                            <p class="bodyLarge mb-0">{{ profile.name }} {{ profile.surname }}</p>
-                            <p class="bodyMedium mb-3">{{ profile.description || 'No definido' }}</p>
-                            <p class="text-secondary bodySmall mb-0">Profesión</p>
-                            <p class="bodyMedium mb-3">{{ profile.profession || 'Sin especificar' }}</p>
-                            <p class="text-secondary bodySmall mb-0">Profesión</p>
-                            <p class="bodyMedium mb-3">{{ profile.situation || 'No definida' }}</p>
+                <!-- [Filled] -->
+                <div *ngIf="!loadingProfile">
+                    <div *ngIf="profile" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
+                        <!-- @photo, @name, @surname, @profession, @situation, @description -->
+                        <div class="d-flex flex-column flex-md-row gap-3 p-0">
+                            <img [src]="getPhotoUrl()" alt="Foto" width="200" height="200" class="rounded-2"
+                                style="object-fit: cover;" />
+                            <div class="flex-grow-1">
+                                <p class="bodyLarge mb-0">{{ profile.name }} {{ profile.surname }}</p>
+                                <p class="bodyMedium mb-3">{{ profile.description || 'No definido' }}</p>
+                                <p class="text-secondary bodySmall mb-0">Profesión</p>
+                                <p class="bodyMedium mb-3">{{ profile.profession || 'Sin especificar' }}</p>
+                                <p class="text-secondary bodySmall mb-0">Profesión</p>
+                                <p class="bodyMedium mb-3">{{ profile.situation || 'No definida' }}</p>
+                            </div>
                         </div>
-                    </div>
-                    <!-- @about -->
-                    <div class="bg-light mt-3 p-2 rounded-2">
-                        <p class="text-secondary bodySmall mb-0">Sobre mí</p>
-                        <p class="bodyMedium text-dark mb-0" style="white-space: pre-line;">
-                            {{ profile.about || 'Sin descripción disponible.' }}
-                        </p>
-                    </div>
-                    <!-- @interests -->
-                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length === 0">
-                        <p class="text-secondary bodySmall mb-0">Intereses</p>
-                        <p class="bodyMedium text-dark m-0">Sin intereses añadidos.</p>
-                    </div>
-                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length > 0">
-                        <p class="text-secondary bodySmall mb-0">Intereses</p>
-                        <ul class="bodyMedium text-dark ps-3 m-0">
-                            <li *ngFor="let item of profile.interests || []">
-                                {{ item }}
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- @skills -->
-                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length === 0">
-                        <p class="text-secondary bodySmall mb-0">Habilidades</p>
-                        <p class="bodyMedium text-dark m-0">Sin habilidades añadidas.</p>
-                    </div>
-                    <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length > 0">
-                        <p class="text-secondary bodySmall mb-0">Habilidades</p>
-                        <ul class="bodyMedium text-dark ps-3 m-0">
-                            <li *ngFor="let item of profile.skills || []">
-                                {{ item }}
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- @birthday -->
-                    <div class="bg-light mt-3 p-2 rounded-2">
-                        <p class="text-secondary bodySmall mb-0">Cumpleaños</p>
-                        <p class="bodyMedium mb-0">
-                            {{ formatBirthdayShort(profile.birthday) }}
-                        </p>
-                    </div>
-                    <!-- @visible -->
-                    <div class="bg-light mt-3 p-2 rounded-2">
-                        <p class="text-secondary bodySmall mb-0">Estado del Perfil</p>
-                        <p class="bodyMedium mb-0">
-                            {{ profile.visible ? 'Público' : 'Oculto' }}
-                        </p>
-                    </div>
-                    <!-- @curriculumvitae + Actions -->
-                    <div class="d-flex gap-3 mt-3">
-                        <button class="bodyMedium btn flex-fill fw-bold rounded-2"
-                            [ngClass]="hasCurriculum() ? 'btn-outline-primary' : 'btn-outline-secondary'"
-                            [disabled]="!hasCurriculum()" (click)="downloadCV()">
-                            <i class="bi bi-download me-1"></i>
-                            {{ hasCurriculum() ? 'Ver CV' : 'CV no disponible' }}
-                        </button>
-                        <button *ngIf="isOwnProfile" class="bodyMedium btn btn-outline-dark rounded-0 fw-bold rounded-2"
-                            (click)="goToEditProfile()">
-                            <i class="bi bi-pencil-square me-1"></i> Editar perfil
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- Achievements Data -->
-            <div class="my-3">
-                <!-- Title -->
-                <div class="d-flex align-items-center justify-content-start px-0">
-                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                        style="width: 40px; height: 40px;">
-                        <i class="bi bi-bookmark-star-fill fs-5"></i>
-                    </div>
-                    <p class="bodyLarge m-0 fw-bold text-dark">Logros</p>
-                </div>
-                <!-- Content -->
-                <div *ngFor="let item of achievement" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-                    <div class="achievement-card d-flex align-items-center gap-3 mb-0">
-                        <!-- @icon -->
-                        <div class="d-flex justify-content-center align-items-center rounded-2 m-0"
-                            style="width: 40px; height: 40px;">
-                            <i class="text-dark" style="font-size: 40px;" [ngClass]="item.idAchievement.icon"></i>
-                        </div>
-                        <!-- @name, @description, @createdAt -->
-                        <div class="flex-grow-1 m-auto">
-                            <p class="bodyMedium fw-semibold m-0">{{ item.idAchievement.name }}</p>
-                            <p class="bodySmall mb-3">{{ item.idAchievement.description }}</p>
-                            <p class="bodySmall text-muted m-0">Obtenido el {{ item.createdAt | date:'EEEE d MMM, y, h:mm a' }}</p>
-                        </div>
-                        <!-- @points -->
-                        <div class="d-flex justify-content-start align-items-start rounded-2 m-auto">
-                            <p class=" bodySmall text-muted m-auto">
-                                <span class="bg-dark text-white py-1 px-2 rounded-pill">{{ item.idAchievement.points }} pts.</span>
+                        <!-- @about -->
+                        <div class="bg-light mt-3 p-2 rounded-2">
+                            <p class="text-secondary bodySmall mb-0">Sobre mí</p>
+                            <p class="bodyMedium text-dark mb-0" style="white-space: pre-line;">
+                                {{ profile.about || 'Sin descripción disponible.' }}
                             </p>
+                        </div>
+                        <!-- @interests -->
+                        <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length === 0">
+                            <p class="text-secondary bodySmall mb-0">Intereses</p>
+                            <p class="bodyMedium text-dark m-0">Sin intereses añadidos.</p>
+                        </div>
+                        <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.interests || []).length > 0">
+                            <p class="text-secondary bodySmall mb-0">Intereses</p>
+                            <ul class="bodyMedium text-dark ps-3 m-0">
+                                <li *ngFor="let item of profile.interests || []">
+                                    {{ item }}
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- @skills -->
+                        <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length === 0">
+                            <p class="text-secondary bodySmall mb-0">Habilidades</p>
+                            <p class="bodyMedium text-dark m-0">Sin habilidades añadidas.</p>
+                        </div>
+                        <div class="bg-light mt-3 p-2 rounded-2" *ngIf="(profile.skills || []).length > 0">
+                            <p class="text-secondary bodySmall mb-0">Habilidades</p>
+                            <ul class="bodyMedium text-dark ps-3 m-0">
+                                <li *ngFor="let item of profile.skills || []">
+                                    {{ item }}
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- @birthday -->
+                        <div class="bg-light mt-3 p-2 rounded-2">
+                            <p class="text-secondary bodySmall mb-0">Cumpleaños</p>
+                            <p class="bodyMedium mb-0">
+                                {{ profile.birthday | date:"d 'de' MMMM" }}
+                            </p>
+                        </div>
+                        <!-- @visible -->
+                        <div class="bg-light mt-3 p-2 rounded-2">
+                            <p class="text-secondary bodySmall mb-0">Estado del Perfil</p>
+                            <p class="bodyMedium mb-0">
+                                {{ profile.visible ? 'Público' : 'Oculto' }}
+                            </p>
+                        </div>
+                        <!-- @curriculumvitae + Actions -->
+                        <div class="d-flex gap-3 mt-3">
+                            <button class="bodyMedium btn flex-fill fw-bold rounded-2"
+                                [ngClass]="hasCurriculum() ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                                [disabled]="!hasCurriculum()" (click)="downloadCV()">
+                                <i class="bi bi-download me-1"></i>
+                                {{ hasCurriculum() ? 'Ver CV' : 'CV no disponible' }}
+                            </button>
+                            <button *ngIf="isOwnProfile" class="bodyMedium btn btn-outline-dark rounded-0 fw-bold rounded-2"
+                                (click)="goToEditProfile()">
+                                <i class="bi bi-pencil-square me-1"></i> Editar perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Content -->
+            </div>
+            <!-- Achievements Data --> 
+            <div class="mb-3">
+                <!-- Title -->
+                <view-title title="Logros" icon="bi bi-bookmark-star-fill" />
+                <!-- [Loading] -->
+                <div *ngIf="loadingAchievement" class="text-center py-4 m-auto"> <!--Agregar aca una fuicion helper-->
+                    <div class="spinner-border text-primary"></div>
+                    <p class="small text-muted mt-2 mb-0">Cargando logros...</p>
+                </div>
+                <!-- [Filled] -->
+                <div *ngIf="!loadingAchievement">
+                    <div *ngFor="let item of achievement" class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
+                        <div class="achievement-card d-flex align-items-center gap-3 mb-0">
+                            <!-- @icon -->
+                            <div class="bg-dark  d-flex justify-content-center align-items-center rounded-circle m-0"
+                                style="width: 80px; height: 80px;">
+                                <i class="text-white fs-1" [ngClass]="item.idAchievement.icon"></i>
+                            </div>
+                            <!-- @name, @description, @createdAt -->
+                            <div class="flex-grow-1 m-auto">
+                                <p class="bodyMedium fw-semibold m-0">{{ item.idAchievement.name }}</p>
+                                <p class="bodySmall mb-3">{{ item.idAchievement.description }}</p>
+                                <p class="bodySmall text-muted m-0">Obtenido el {{ item.createdAt | date:'EEEE d MMM, y, h:mm a' }}</p>
+                            </div>
+                            <!-- @points -->
+                            <div class="d-flex justify-content-start align-items-start rounded-2 m-auto">
+                                <p class=" bodySmall text-muted m-auto">
+                                    <span class="bg-dark text-white py-1 px-2 rounded-pill">{{ item.idAchievement.points }} pts.</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- User Data -->
-            <div *ngIf="isOwnProfile">
+            <div>
                 <!-- Title -->
-                <div class="d-flex align-items-center justify-content-start px-0">
-                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                        style="width: 40px; height: 40px;">
-                        <i class="bi bi-file-earmark-lock2-fill fs-5"></i>
-                    </div>
-                    <p class="bodyLarge m-0 fw-bold text-dark">Usuario</p>
-                </div>
+                <view-title title="Usuario" icon="bi bi-file-earmark-lock2-fill" />
+
                 <!-- Content -->
                 <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
+
                     <!-- Si NO es mi perfil -->
-                    <div *ngIf="!isOwnProfile">
+                    <ng-container *ngIf="!isOwnProfile; else ownProfile">
                         <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold w-100 mb-3"
                             (click)="goToCommunity()">
                             <i class="bi bi-arrow-left"></i> Regresar
                         </button>
+
                         <button class="btn btn-outline-primary rounded-0 btn-sm fw-bold w-100">
                             <i class="bi bi-person-plus"></i> Agregar
                         </button>
-                    </div>
+                    </ng-container>
+
                     <!-- Si es mi perfil -->
-                    <div *ngIf="isOwnProfile">
-                        <div class="d-flex flex-row gap-2">
-                            <div class="col flex-fill">
+                    <ng-template #ownProfile>
+                        <div class="row g-3">
+                            <div class="col">
                                 <p class="text-primary bodySmall mb-0">Usuario</p>
                                 <p class="bodyMedium mb-0">{{ profile?.idUser?.username }}</p>
                             </div>
-                            <div class="col flex-fill">
+
+                            <div class="col">
                                 <p class="text-primary bodySmall mb-0">Email</p>
                                 <p class="bodyMedium mb-0">{{ profile?.idUser?.email }}</p>
                             </div>
-                            <div class="col flex-fill">
+
+                            <div class="col">
                                 <p class="text-primary bodySmall mb-0">Rol</p>
                                 <p class="bodyMedium mb-0">{{ getUserRole() }}</p>
                             </div>
-                            <div class="col flex-fill">
+
+                            <div class="col">
                                 <p class="text-primary bodySmall mb-0">Registrado El</p>
                                 <p class="bodyMedium mb-0">{{ getUserCreatedAt() }}</p>
                             </div>
                         </div>
-                    </div>
+                    </ng-template>
+
                 </div>
             </div>
         </div>

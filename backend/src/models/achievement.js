@@ -23,7 +23,6 @@ const achievementSchema = new Schema({
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     points: {
       type: Number,

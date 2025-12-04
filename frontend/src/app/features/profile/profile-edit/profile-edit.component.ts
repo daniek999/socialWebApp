@@ -26,7 +26,7 @@ export class ProfileEditComponent implements OnInit {
         private profileService: ProfileService,
     ) { }
 
-    //#region - [VARIABLES]
+    //#region | VARIABLES   |
     profile: IProfilePopulated | null = null;
     editForm = {
         name: '',
@@ -53,7 +53,7 @@ export class ProfileEditComponent implements OnInit {
     ];
     //#endregion
 
-    //#region - [INIT - METHODS]
+    //#region | INIT        |
     ngOnInit(): void {
         this.loadProfile();
     };
@@ -95,7 +95,7 @@ export class ProfileEditComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [ACTIONS - METHODS]
+    //#region | ACTIONS     |
     onUpdateProfile() {
         this.setLoading(true);
 
@@ -134,7 +134,7 @@ export class ProfileEditComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [GETTERS]
+    //#region | GETTERS     |
     getPhotoUrl(): string {
         return this.profile?.photo
             ? `http://localhost:4000${this.profile.photo}`
@@ -156,7 +156,7 @@ export class ProfileEditComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [SETTERS]
+    //#region | SETTERS     |
     private setProfile(profile: IProfilePopulated): void {
         this.profile = profile;
     };
@@ -193,7 +193,7 @@ export class ProfileEditComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [HELPERS]
+    //#region | HELPERS     |
     onPhotoSelected(event: any) {
         const file = event.target.files[0];
         if (!file) return;
@@ -233,7 +233,7 @@ export class ProfileEditComponent implements OnInit {
     };
     //#endregion
 
-    //#region - [NAVIGATION]
+    //#region | NAVIGATION  |
     goToProfile() {
         this.router.navigate(['/profile']);
     };

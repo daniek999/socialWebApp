@@ -5,11 +5,14 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+    selector: 'app-login',
+    standalone: true,
+    imports: [
+        ReactiveFormsModule, 
+        CommonModule
+    ],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
 
@@ -20,23 +23,26 @@ export class LoginComponent implements OnInit {
         private actRoute: ActivatedRoute
     ) { }
 
-    // 1. Params
+    //#region | VARIABLES   |
     errorMsg: string | null = null;
     successMsg: string | null = null;
     loginForm = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required]
     });
+    //#endregion
 
-    // 2. Functions
+    //#region | INIT        |
     ngOnInit() {
-        console.log('RUTA: /auth/login');
         this.actRoute.queryParams.subscribe(params => {
             if (params['verified'] === 'true') {
                 this.successMsg = 'Cuenta verificada. Ya puedes iniciar sesión.';
             }
         });
-    }
+    };
+    //#endregion
+
+    //#region | ACTIONS     |
     onSubmit() {
         if (this.loginForm.invalid) {
             this.loginForm.markAllAsTouched();
@@ -52,14 +58,16 @@ export class LoginComponent implements OnInit {
             error: (err) => 
                 this.onError(err.error?.message || 'Error')
         });
-    }
+    };
     onError(message: string) {
         this.errorMsg = message
-    }
+    };
+    //#endregion
 
-    // 3. Extra
+    //#region | NAVIGATION  |
     toRegister() {
         this.router.navigate(['/register'])
-    }
+    };
+    //#endregion
 
-}
+};

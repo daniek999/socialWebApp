@@ -10,54 +10,43 @@
         <!-- View Content -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
             <!-- Post Form -->
+            <!-- 
             <div class="mb-3">
-                <!-- Title -->
-                <div class="d-flex align-items-center justify-content-start px-0">
-                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                        style="width: 40px; height: 40px;">
-                        <i class="bi bi-pencil-square fs-5"></i>
-                    </div>
-                    <p class="bodyLarge m-0 fw-bold text-dark">Crear Nuevo Post</p>
-                </div>
-                <!-- Content -->
+                <view-title
+                    title="Crear Nuevo Post"
+                    icon="bi bi-pencil-square"
+                />
                 <div class="d-flex flex-column flex-grow-1 mt-3">
                     <form class="bg-white p-3 d-flex flex-column rounded-2">
-                        <!-- @title -->
                         <div class="mb-3">
                             <label for="title" class="bodyMedium fw-semibold">Título</label>
                             <input type="text" class="form-control rounded-2" name="title" id="title"
                                 placeholder="Ej. Mi nuevo proyecto" required disabled />
                         </div>
-                        <!-- @content -->
                         <div class="mb-3">
                             <label class="bodyMedium fw-semibold">Contenido</label>
                             <textarea class="form-control rounded-2" rows="3" name="content"
                                 placeholder="¿En qué estás pensando?" required disabled></textarea>
                         </div>
-                        <!-- [Action] -->
                         <button type="submit" class="bodyMedium btn btn-outline-dark rounded-0 fw-bold rounded-2"
                             disabled>
                             <i class="bi bi-send-fill me-1"></i> Publicar
                         </button>
                     </form>
                 </div>
-            </div>
+            </div> 
+            -->
+
             <!-- Post Data[] -->
             <div class="flex-grow-1 d-flex flex-column">
                 <!-- Title -->
-                <div class="d-flex align-items-center justify-content-start px-0">
-                    <div class="bg-dark text-white d-flex justify-content-center align-items-center me-2 rounded-circle"
-                        style="width: 40px; height: 40px;">
-                        <i class="bi bi-collection fs-5"></i>
-                    </div>
-                    <p class="bodyLarge m-0 fw-bold text-dark">Publicaciones</p>
-                </div>
+                <view-title title="Publicaciones" icon="bi bi-rss-fill" />
                 <!-- Content -->
-                <div class="flex-grow-1 overflow-auto">
-                    <div class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0">
+                <div class="flex-grow-1 overflow-auto d-flex justify-content-center align-items-center mt-3">
+                    <div class="p-3 d-flex flex-column justify-content-center align-items-center rounded-0 text-center">
                         <i class="bi bi-emoji-neutral text-dark fs-2 m-0"></i>
                         <p class="bodyMedium fw-semibold m-0">No hay publicaciones.</p>
-                        <p class="bodySmall text-muted m-0">Wow, este mensaje se llego a mostrar.</p>
+                        <p class="bodySmall text-muted m-0">Wow, este mensaje se llegó a mostrar.</p>
                     </div>
                 </div>
             </div>
