@@ -1,5 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
+// Schema
 const profileSchema = new Schema({
     idUser: {
         type: Types.ObjectId,
@@ -64,5 +65,6 @@ const profileSchema = new Schema({
     }
 }, {timestamps: true});
 
+// Generating
 const Profile = mongoose.models.Profile || mongoose.model('Profile', profileSchema);
 export default Profile;

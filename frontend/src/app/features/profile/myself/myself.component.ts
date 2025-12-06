@@ -11,6 +11,7 @@ import { NavBarComponent } from "../../../shared/nav-bar/nav-bar.component";
 import { IAchievementPopulated } from '../../../models/achievement';
 import { AchievementService } from '../../../core/services/achievement.service';
 import { ViewTitleComponent } from "../../../shared/view-title/view-title.component";
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
     selector: 'app-myself',
@@ -111,7 +112,7 @@ export class MyselfComponent implements OnInit {
     //#endregion
     
     //#region | ACTIONS     |
-    downloadCV() {
+    openCV() {
         const cvUrl = this.getCVUrl();
         if (cvUrl) {
             window.open(cvUrl, '_blank');
@@ -139,13 +140,11 @@ export class MyselfComponent implements OnInit {
     };
     getPhotoUrl(): string {
         return this.profile?.photo
-            ? `http://localhost:4000${this.profile.photo}`
+            ? this.profile.photo
             : 'assets/img/default_user_photo.png';
     };
     getCVUrl(): string | null {
-        return this.profile?.curriculumvitae
-            ? `http://localhost:4000${this.profile.curriculumvitae}`
-            : null;
+        return this.profile?.curriculumvitae || null;
     };
     hasCurriculum(): boolean {
         return !!this.profile?.curriculumvitae;

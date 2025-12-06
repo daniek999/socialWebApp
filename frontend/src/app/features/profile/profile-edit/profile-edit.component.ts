@@ -6,6 +6,7 @@ import { ProfileService } from '../../../core/services/profile.service';
 import { TopWebBarComponent } from "../../../shared/top-web-bar/top-web-bar.component";
 import { BottomWebBarComponent } from "../../../shared/bottom-web-bar/bottom-web-bar.component";
 import { IProfilePopulated } from '../../../models/profile';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
     selector: 'app-profile-edit',
@@ -137,13 +138,11 @@ export class ProfileEditComponent implements OnInit {
     //#region | GETTERS     |
     getPhotoUrl(): string {
         return this.profile?.photo
-            ? `http://localhost:4000${this.profile.photo}`
+            ? this.profile.photo
             : 'assets/img/default_user_photo.png';
     };
     getCVUrl(): string | null {
-        return this.profile?.curriculumvitae
-            ? `http://localhost:4000${this.profile.curriculumvitae}`
-            : null;
+        return this.profile?.curriculumvitae || null;
     };
     hasPhoto(): boolean {
         return !!this.profile?.photo;

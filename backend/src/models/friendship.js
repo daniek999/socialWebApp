@@ -52,5 +52,6 @@ friendshipSchema.statics.getRelationshipStatus = async function(userId1, userId2
     };
 };
 
+// Generating
 const Friendship = mongoose.models.Friendship || mongoose.model('Friendship', friendshipSchema);
 export default Friendship;

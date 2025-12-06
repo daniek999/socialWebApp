@@ -1,5 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
+// Schema
 const postSchema = new Schema({
     idUser: {
         type: Types.ObjectId,
@@ -16,5 +17,6 @@ const postSchema = new Schema({
     },
 }, {timestamps: true});
 
+// Generating
 const Post = mongoose.models.Post || mongoose.model('Post', postSchema);
 export default Post;

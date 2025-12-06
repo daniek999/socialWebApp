@@ -115,7 +115,7 @@
                             <hr class="my-3 border-dark w-100">
                             <!-- Table -->
                             <div class="w-100 table-responsive">
-                                <table class="table table-borderless align-middle">
+                                <table class="table table-borderless align-middle mb-0">
                                     <thead>
                                         <tr>
                                             <th class="bodyMedium fw-semibold">Usuario</th>
@@ -207,7 +207,9 @@
                             </div>
                             <!-- Body -->
                             <div class="d-flex flex-column gap-3">
+                                <!-- Titulo -->
                                 <div>
+                                    <!-- Explicacion de suspension -->
                                     <p class="bodyMedium mb-0">
                                         El usuario
                                         <span class="text-primary">{{ suspendedRecord.idUser.username }}</span>
@@ -224,29 +226,31 @@
                                         a las
                                         <span class="text-primary">{{ suspendedRecord.suspendedUntil | date:'h:mm:ss' }}</span>.
                                     </p>
-                                    <p class="bodySmall mb-0">
-                                        Revocada el
-                                        <span class="text-primary">
-                                            {{ suspendedRecord.revokedAt | date:'d MMMM' }}
-                                        </span>
+                                    <!-- Si la suspension expiro -->
+                                    <p class="bodySmall mb-0 text-muted" *ngIf="suspendedRecord.revokedAt">
+                                        Suspensión revocada el
+                                        {{ suspendedRecord.revokedAt | date:'d MMMM' }}
                                         a las
-                                        <span class="text-primary">
-                                            {{ suspendedRecord.revokedAt | date:'h:mm:ss a' }}
-                                        </span>
+                                        {{ suspendedRecord.revokedAt | date:'h:mm:ss a' }}
                                         por
-                                        <span class="text-primary">
-                                            {{ suspendedRecord.revokedBy?.username }}
-                                        </span>
+                                        {{ suspendedRecord.revokedBy?.username }}
                                     </p>
+                                    <!-- Si la suspension no fue revocada -->
+                                    <div *ngIf="!suspendedRecord.revokedAt">
+                                        <p class="bodySmall text-muted mb-0">Esta suspensión no ha sido revocada.</p>
+                                    </div>
                                 </div>
-                                <!-- Sub-bloques: Razones -->
+                                <!-- Razón de Suspension -->
                                 <div>
                                     <p class="bodySmall mb-0 text-muted">Razón de suspensión</p>
                                     <p class="bodyMedium mb-0">{{ suspendedRecord.reason }}</p>
                                 </div>
-                                <div>
+                                <!-- Razón de Revocacion de Suspension -->
+                                <div *ngIf="suspendedRecord.revokedAt">
                                     <p class="bodySmall mb-0 text-muted">Razón de revocación</p>
-                                    <p class="bodyMedium mb-0">{{ suspendedRecord.revokeReason || '—' }}</p>
+                                    <p class="bodyMedium mb-0">
+                                        {{ suspendedRecord.revokeReason || '—' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -269,8 +273,9 @@
                             </div>
                             <!-- Body -->
                             <div class="d-flex flex-column gap-3">
-                                <!-- Resumen -->
+                                <!-- Titulo -->
                                 <div>
+                                    <!-- Explicacion de baneo -->
                                     <p class="bodyMedium mb-0">
                                         El usuario
                                         <span class="text-primary">{{ bannedRecord.idUser.username }}</span>
@@ -281,36 +286,31 @@
                                         a las
                                         <span class="text-primary">{{ bannedRecord.createdAt | date:'h:mm:ss' }}</span>
                                     </p>
-                                    <p class="bodySmall mb-0" *ngIf="bannedRecord.revokedAt">
+                                    <!-- Si el baneo fue revocado -->
+                                    <p class="bodySmall mb-0 text-muted" *ngIf="bannedRecord.revokedAt">
                                         Revocado el
-                                        <span class="text-primary">
-                                            {{ bannedRecord.revokedAt | date:'d MMMM' }}
-                                        </span>
+                                        {{ bannedRecord.revokedAt | date:'d MMMM' }}
                                         a las
-                                        <span class="text-primary">
-                                            {{ bannedRecord.revokedAt | date:'h:mm:ss a' }}
-                                        </span>
+                                        {{ bannedRecord.revokedAt | date:'h:mm:ss a' }}
                                         por
-                                        <span class="text-primary">
-                                            {{ bannedRecord.revokedBy?.username }}
-                                        </span>
+                                        {{ bannedRecord.revokedBy?.username }}
                                     </p>
+                                    <!-- Si el baneo no fue revocado -->
+                                    <div class="bodySmall mb-0 text-muted" *ngIf="!bannedRecord.revokedAt">
+                                        <p class="bodySmall text-muted mb-0">Esta suspensión no ha sido revocada.</p>
+                                    </div>
                                 </div>
-                                <!-- Razón -->
+                                <!-- Razón de Baneo -->
                                 <div>
                                     <p class="bodySmall mb-0 text-muted">Razón del baneo</p>
                                     <p class="bodyMedium mb-0">{{ bannedRecord.reason }}</p>
                                 </div>
-                                <!-- Revocación -->
+                                <!-- Razón de Revocacion de Baneo -->
                                 <div *ngIf="bannedRecord.revokedAt">
                                     <p class="bodySmall mb-0 text-muted">Razón de revocación</p>
                                     <p class="bodyMedium mb-0">
                                         {{ bannedRecord.revokeReason || '—' }}
                                     </p>
-                                </div>
-                                <!-- Si no existe revocación -->
-                                <div *ngIf="!bannedRecord.revokedAt">
-                                    <p class="bodySmall text-muted mb-0">Este baneo no ha sido revocado.</p>
                                 </div>
                             </div>
                         </div>
@@ -400,9 +400,48 @@
                     <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
                         Cancelar
                     </button>
-
-                    <button type="submit" class="btn btn-primary px-3 py-1" [disabled]="!suspendUserForm.reason.trim()">
-                        Suspender
+                    <button type="submit" class="btn btn-primary px-3 py-1"
+                        [disabled]="!suspendUserForm.reason.trim() || suspendingUser">
+                        {{ suspendingUser ? 'Procesando...' : 'Suspender' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ================= MODAL - BanUser ================= -->
+<div class="modal fade" id="userBanFormModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToBan">
+            <!-- Header -->
+            <div class="mb-3">
+                <p class="bodyLarge modal-title m-0">Banear a un usuario</p>
+            </div>
+            <!-- Body -->
+            <form (ngSubmit)="confirmBan(selectedUserToBan._id)" class="d-flex flex-column gap-3">
+                <!-- @reason -->
+                <div>
+                    <label for="banReason" class="bodySmall fw-semibold mb-1">Razón del baneo</label>
+                    <textarea id="banReason" class="form-control" rows="4" name="reason"
+                        [(ngModel)]="banUserForm.reason" placeholder="Describe la razón del baneo..."
+                        required></textarea>
+                </div>
+                <!-- Info -->
+                <div class="bg-light p-3 rounded-2">
+                    <p class="bodySmall mb-0">
+                        Atención, estás a punto de banear al usuario
+                        <span class="fw-bold text-primary">{{ selectedUserToBan.username }}</span>.
+                        Esta acción es permanente y no puede ser revocada.
+                    </p>
+                </div>
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-outline-danger px-3 py-1"
+                        [disabled]="banningUser">
+                        {{ banningUser ? 'Procesando...' : 'Banear' }}
                     </button>
                 </div>
             </form>
@@ -443,45 +482,6 @@
                     <button type="submit" class="btn btn-success px-3 py-1"
                         [disabled]="!revokeSuspendForm.reason.trim()">
                         Revocar suspensión
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- ================= MODAL - BanUser ================= -->
-<div class="modal fade" id="userBanFormModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-2 p-3" *ngIf="selectedUserToBan">
-            <!-- Header -->
-            <div class="mb-3">
-                <p class="bodyLarge modal-title m-0">Banear a un usuario</p>
-            </div>
-            <!-- Body -->
-            <form (ngSubmit)="confirmBan(selectedUserToBan._id)" class="d-flex flex-column gap-3">
-                <!-- @reason -->
-                <div>
-                    <label for="banReason" class="bodySmall fw-semibold mb-1">Razón del baneo</label>
-                    <textarea id="banReason" class="form-control" rows="4" name="reason"
-                        [(ngModel)]="banUserForm.reason" placeholder="Describe la razón del baneo..."
-                        required></textarea>
-                </div>
-                <!-- Info -->
-                <div class="bg-light p-3 rounded-2">
-                    <p class="bodySmall mb-0">
-                        Atención, estás a punto de banear al usuario
-                        <span class="fw-bold text-primary">{{ selectedUserToBan.username }}</span>.
-                        Esta acción es permanente y no puede ser revocada.
-                    </p>
-                </div>
-                <!-- Acciones -->
-                <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-dark px-3 py-1" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-
-                    <button type="submit" class="btn btn-outline-danger px-3 py-1">
-                        Banear
                     </button>
                 </div>
             </form>

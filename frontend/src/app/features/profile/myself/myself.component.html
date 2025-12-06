@@ -85,7 +85,7 @@
                         <div class="d-flex gap-3 mt-3">
                             <button class="bodyMedium btn flex-fill fw-bold rounded-2"
                                 [ngClass]="hasCurriculum() ? 'btn-outline-primary' : 'btn-outline-secondary'"
-                                [disabled]="!hasCurriculum()" (click)="downloadCV()">
+                                [disabled]="!hasCurriculum()" (click)="openCV()">
                                 <i class="bi bi-download me-1"></i>
                                 {{ hasCurriculum() ? 'Ver CV' : 'CV no disponible' }}
                             </button>

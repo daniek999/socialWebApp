@@ -71,10 +71,9 @@ export class CommunityComponent implements OnInit {
 
     //#region | GETTERS     |
     getPhotoUrl(profile: IProfilePopulated): string {
-        if (profile.photo) {
-            return `http://localhost:4000${profile.photo}`;
-        }
-        return 'assets/img/default_user_photo.png';
+        return profile?.photo
+            ? profile.photo
+            : 'assets/img/default_user_photo.png';
     };
     //#endregion
 

@@ -199,7 +199,9 @@ export class ConnectionsComponent implements OnInit {
         return null;
     };
     private setPhotoFromProfile(photo?: string): string {
-        return photo ? `http://localhost:4000${photo}` : 'assets/img/default_user_photo.png';
+        return photo
+            ? photo
+            : 'assets/img/default_user_photo.png';
     };
     private setSuccess(message: string): void {
         this.successMessage = message;

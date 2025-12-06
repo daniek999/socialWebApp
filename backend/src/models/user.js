@@ -1,10 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 
-/** [USER-SCHEMA]
- * 
- * Esquema para los usuarios que se registren en la plataforma.
- */
-
 // Schema
 const userSchema = new Schema({
     username: {

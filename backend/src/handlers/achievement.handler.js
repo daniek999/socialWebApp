@@ -6,31 +6,23 @@ import UserRewarded from "../models/userRewarded.js";
  *  -------------------------------------------------------------------------
  *  FUNCTION                | DESCRIPTION
  *  -------------------------------------------------------------------------
- *  getUserAchievements()   | Obtiene todos los logros alcanzados por un usuario
- *                          | específico, incluyendo detalles del logro y fecha
- *                          | de obtención. Los retorna en orden descendente.
- *  -------------------------------------------------------------------------
- *  getGlobalAchievements() | Obtiene estadísticas globales de todos los logros
- *                          | del sistema, incluyendo cuántos usuarios obtuvieron
- *                          | cada logro y el porcentaje relativo al total.
- *  -------------------------------------------------------------------------
- *  createAchievement()     | Crea un nuevo logro en la plataforma validando que
- *                          | los datos requeridos estén completos antes de
- *                          | registrarlo en la base de datos.
- *  -------------------------------------------------------------------------
- *  deleteAchievement()     | Elimina un logro existente según su ID, validando
- *                          | primero que dicho logro exista.
- *  -------------------------------------------------------------------------
+ *  getUserAchievements()   | Obtiene todos los logros obtenidos de un usuario.
+ *  getGlobalAchievements() | Obtiene estadísticas globales de todos los logros del sistema.
+ *  createAchievement()     | Crea un nuevo logro.
+ *  deleteAchievement()     | Elimina un logro existente según su ID.
  */
 
 
 //* [HANDLER ACTIONS]
 export const getUserAchievements = async (req, res) => {
     try {
-        // (1) - Se solicita el 'idUser', del usuario.
+        //#region - | PARAMS        |
+        // (1) - Obtiene el ID del usuario desde los parámetros de la ruta
         const { idUser } = req.params;
+        //#endregion
 
-        // (2) - Valida si el usuario existe.
+        //#region - | VERIFICATIONS |
+        // (2) - Verifica si el usuario existe en la base de datos
         const userExists = await User.findById(idUser);
         if (!userExists) {
             return res.status(404).json({
@@ -38,36 +30,44 @@ export const getUserAchievements = async (req, res) => {
                 message: 'Usuario no encontrado.',
             });
         };
+        //#endregion
 
-        // (3) - Consulta los logrtos del usuario.
+        //#region - | PROCESS       |
+        // (3) - Obtiene todos los logros del usuario,
+        //       incluyendo información del logro relacionado y ordenado por fecha descendente
         const userAchievementsToGet = await UserRewarded.find({ idUser })
             .populate("idAchievement")
             .sort({ createdAt: -1 });
+        //#endregion
 
-        // (4) - Retorna un estado y mensaje de exito. Ademas, de los datos relacionados.
+        //#region - | RESULT        |
+        // (4) - Retorna los logros del usuario junto con un mensaje de éxito
         return res.status(200).json({
             success: true,
             message: `Tienes un total de '${userAchievementsToGet.length}' logros.`,
             data: userAchievementsToGet
         });
+        //#endregion
 
     } catch (error) {
-        console.error('Error en el handler [getUserAchievements]: ' + error);
+        //#region - | ERROR         |
         return res.status(500).json({
             success: false,
             message: 'Error al obtener los logros de un usuario.',
             error: error.message
         });
+        //#endregion
     };
 };
 export const getGlobalAchievements = async (req, res) => {
     try {
-        // (1) - Obtiene la cantidad de usuarios totales.
+        //#region - | PROCESS       |
+        // (1) - Obtiene la cantidad total de usuarios únicos que han recibido al menos un logro
         const totalUsers = await UserRewarded.distinct("idUser").then(
             (users) => users.length
         );
 
-        // (2) - Busca y filtra los registros de logros y a los usuarios que obtuvieron esos logros.
+        // (2) - Obtiene todos los logros junto con la cantidad de usuarios que obtuvo cada uno
         const achievements = await Achievement.aggregate([
             {
                 $lookup: {
@@ -89,7 +89,7 @@ export const getGlobalAchievements = async (req, res) => {
             },
         ]);
 
-        // (3) - Procesa los resultados.
+        // (3) - Calcula el porcentaje de usuarios que han obtenido cada logro
         const result = achievements.map((ach) => ({
             ...ach,
             percentage:
@@ -97,34 +97,46 @@ export const getGlobalAchievements = async (req, res) => {
                     ? 0
                     : Number(((ach.totalUsersGotIt / totalUsers) * 100).toFixed(2)),
         }));
+        //#endregion
 
-        // (4) - Retorna un estado y mensaje de exito. Ademas, de los datos relacionados.
+        //#region - | RESULT        |
+        // (4) - Retorna los resultados globales con el porcentaje correspondiente
         return res.status(200).json({
             success: true,
             message: 'De todos los usuarios (' + totalUsers + ').',
             achievements: result,
         });
+        //#endregion
+
     } catch (error) {
-        console.error('Error en el handler [getGlobalAchievements]: ' + error);
+        //#region - | ERROR         |
         return res.status(500).json({
             success: false,
             message: 'Error al obtener estadísticas globales.',
             error: error.message
         });
+        //#endregion
     };
 };
 export const createAchievement = async (req, res) => {
     try {
-        /* [PARAMS]_________________________________________________________________ */
+        //#region - | PARAMS        |
+        // (1) - Obtiene los datos enviados en el cuerpo del request
         const { code, name, description, icon, points } = req.body;
-        /* [VALIDATIONS]____________________________________________________________ */
+        //#endregion
+
+        //#region - | VALIDATIONS   |
+        // (2) - Valida que todos los campos requeridos hayan sido enviados
         if (!code || !name || !description || !icon || !points) {
             return res.status(400).json({
                 success: false,
                 message: 'Todos los campos deben ser llenados.',
             });
         };
-        /* [PROCESS]________________________________________________________________ */
+        //#endregion
+
+        //#region - | PROCESS       |
+        // (3) - Crea un nuevo logro en la base de datos
         const achievementToCreate = await Achievement.create({
             code,
             name,
@@ -132,26 +144,36 @@ export const createAchievement = async (req, res) => {
             icon,
             points
         });
-        /* [RESULT]_________________________________________________________________ */
+        //#endregion
+
+        //#region - | RESULT        |
+        // (4) - Retorna la respuesta exitosa con el logro creado
         return res.status(201).json({
             success: true,
             message: 'Logro creado correctamente.',
             data: achievementToCreate
         });
+        //#endregion
+
     } catch (error) {
-        console.error('Error en el handler [createAchievement]: ' + error);
+        //#region - | ERROR         |
         return res.status(500).json({
             success: false,
             message: 'Error al crear el nuevo logro.',
             error: error.message
         });
+        //#endregion
     };
 };
 export const deleteAchievement = async (req, res) => {
     try {
-        /* [PARAMS]_________________________________________________________________ */
+        //#region - | PARAMS        |
+        // (1) - Obtiene el ID del logro desde los parámetros del request
         const { idAchievement } = req.params;
-        /* [VALIDATIONS]____________________________________________________________ */
+        //#endregion
+
+        //#region - | VERIFICATIONS |
+        // (2) - Busca el logro por ID para verificar que exista
         const achievementToDelete = await Achievement.findById(idAchievement);
         if (!achievementToDelete) {
             return res.status(404).json({
@@ -159,19 +181,28 @@ export const deleteAchievement = async (req, res) => {
                 message: 'Logro no encontrado.',
             });
         };
-        /* [PROCESS]________________________________________________________________ */
+        //#endregion
+
+        //#region - | PROCESS       |
+        // (3) - Elimina el logro de la base de datos
         await Achievement.findByIdAndDelete(idAchievement);
-        /* [RESULT]_________________________________________________________________ */
+        //#endregion
+
+        //#region - | RESULT        |
+        // (4) - Retorna la respuesta exitosa
         return res.status(200).json({
             success: true,
             message: `El logro '${achievementToDelete.name}' fue eliminado correctamente.`,
         });
+        //#endregion
+
     } catch (error) {
-        console.error('Error en el handler [deleteAchievement]: ' + error);
+        //#region - | ERROR         |
         return res.status(500).json({
             success: false,
             message: 'Error al eliminar el logro.',
             error: error.message
         });
+        //#endregion
     };
 };

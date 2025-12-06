@@ -4,7 +4,7 @@ import UserSuspended from '../models/userSuspended.js';
 import Profile from '../models/profile.js';
 import Friendship from '../models/friendship.js';
 import Post from '../models/post.js';
-import UserRewarded from '../models/userRewarded.js';
+import { sendBanEmail, sendSuspensionEmail } from '../utils/emailSenders.js';
 
 /** [ USER HANDLER ]
  *  -------------------------------------------------------------------------
@@ -25,50 +25,64 @@ import UserRewarded from '../models/userRewarded.js';
 //* [HANDLER ACTIONS]
 export const getUsers = async (req, res) => {
     try {
-        // (3) - Busca a todos los usuarios. 
+        //#region - | PROCESS       |
+        // (1) - Busca todos los registros de usuarios existentes en la base de datos.
         const users = await User.find();
+        //#endregion
 
-        // (4) - Retorna un estado y mensaje de exito y la informacion de los usuarios
+        //#region - | RESULT        |
+        // (2) - Retorna un estado de éxito junto con la lista de usuarios.
         return res.status(200).json({
             success: true,
             message: 'Usuarios obtenidos correctamente.',
             data: users,
         });
+        //#endregion
 
     } catch (error) {
-        res.status(500).json({
+        //#region - | ERROR         |
+        return res.status(500).json({
             success: false,
             message: 'Error al obtener los usuarios.',
             error: error.message,
         });
-    }
+        //#endregion
+    };
 };
 export const getSelfUser = async (req, res) => {
     try {
-        // (1) - Se utiliza el 'idUser' del payload.
+        //#region - | PARAMS        |
+        // (1) - Obtiene el 'idUser' desde el token (payload del usuario autenticado).
         const idUser = req.user.id;
+        //#endregion
 
-        // (3) - Busca al usuario.
+        //#region - | PROCESS       |
+        // (2) - Busca al usuario correspondiente al 'idUser'.
         const userData = await User.findById(idUser);
+        //#endregion
 
-        // (2) - Valida que el usuario exista.
+        //#region - | VERIFICATIONS |
+        // (3) - Verifica si el usuario existe.
         if (!userData) {
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado.',
             });
         }
+        //#endregion
 
-        // (4) - Retorna un estado y mensaje de exito. Ademas de enviar la data de este usuario.
-        res.status(200).json({
+        //#region - | RESULT        |
+        // (4) - Retorna la información del usuario autenticado.
+        return res.status(200).json({
             success: true,
             message: 'Usuario obtenido correctamente.',
             data: userData,
         });
+        //#endregion
 
     } catch (error) {
-        //#region [ Error ]
-        res.status(500).json({
+        //#region - | ERROR         |
+        return res.status(500).json({
             success: false,
             message: 'Error al obtener el usuario autenticado.',
             error: error.message,
@@ -78,49 +92,61 @@ export const getSelfUser = async (req, res) => {
 };
 export const getSuspendedUsers = async (req, res) => {
     try {
-        // (1) - Busca a todos los usuarios suspendidos. 
+        //#region - | PROCESS       |
+        // (1) - Busca a todos los usuarios suspendidos.
         const suspendedUsers = await UserSuspended.find()
             .populate("idUser", "username")
             .populate("suspendedBy", "username")
-            .populate("revokedBy", "username")
+            .populate("revokedBy", "username");
+        //#endregion
 
-        // (2) - Retorna un estado y mensaje de exito y los datos de usuarios suspendidos
+        //#region - | RESULT        |
+        // (2) - Retorna un estado de éxito junto con la lista de usuarios suspendidos.
         return res.status(200).json({
             success: true,
             message: 'Se ha cargado la lista de los usuarios suspendidos correctamente.',
             data: suspendedUsers,
         });
+        //#endregion
 
     } catch (error) {
-        res.status(500).json({
+        //#region - | ERROR         |
+        return res.status(500).json({
             success: false,
             message: 'No se ha podido cargar la lista de los usuarios suspendidos correctamente.',
             error: error.message,
         });
-    }  
+        //#endregion
+    };
 };
 export const getBannedUsers = async (req, res) => {
     try {
-        // (1) - Busca a todos los usuarios baneados. 
+        //#region - | PROCESS       |
+        // (1) - Busca a todos los usuarios baneados.
         const bannedUsers = await UserBanned.find()
             .populate("idUser", "username")
             .populate("bannedBy", "username")
             .populate("revokedBy", "username");
+        //#endregion
 
-        // (2) - Retorna un estado y mensaje de exito y los datos de usuarios baneados.
+        //#region - | RESULT        |
+        // (2) - Retorna un estado de éxito junto con la lista de usuarios baneados.
         return res.status(200).json({
             success: true,
             message: 'Se ha cargado la lista de los usuarios baneados correctamente.',
             data: bannedUsers,
         });
+        //#endregion
 
     } catch (error) {
-        res.status(500).json({
+        //#region - | ERROR         |
+        return res.status(500).json({
             success: false,
             message: 'No se ha podido cargar la lista de los usuarios baneados correctamente.',
             error: error.message,
         });
-    }  
+        //#endregion
+    };
 };
 export const getOtherUsers = async (req, res) => {
     try {
@@ -243,18 +269,18 @@ export const suspendUser = async (req, res) => {
             { visible: false }
         );
 
-        // (5) - Enviar email al usuario (implementar después)
-        /* try {
+        // (5) - Enviar email al usuario
+        try {
             await sendSuspensionEmail(
                 user.email,
                 user.username,
                 reason,
-                suspendedUntil,
+                until,
                 suspendedTime
             );
         } catch (emailError) {
             console.error('Error enviando email:', emailError);
-        } */
+        }
         //#endregion
         
         //#region - | RESULT        |
@@ -263,7 +289,6 @@ export const suspendUser = async (req, res) => {
             message: `El usuario "${user.username}" ha sido suspendido por ${suspendedTime} minuto(s).`,
         });
         //#endregion
-    
     } catch (error) {
         //#region - | ERROR         |
         return res.status(500).json({
@@ -396,6 +421,17 @@ export const banUser = async (req, res) => {
             status: 'Vigente'
         });
         await banRecord.save();
+
+        // (11) - Enviar email al usuario.
+        try {
+            await sendBanEmail(
+                user.email,
+                user.username,
+                reason
+            );
+        } catch (emailError) {
+            console.error('Error enviando email:', emailError);
+        }
         //#endregion
 
         //#region - | RESULT        |
@@ -405,7 +441,6 @@ export const banUser = async (req, res) => {
             message: 'Usuario baneado correctamente.',
         });
         //#endregion
-
     } catch (error) {
         //#region - | ERROR         |
         return res.status(500).json({
@@ -491,3 +526,4 @@ export const revokeBan = async (req, res) => {
         //#endregion
     };
 };
+

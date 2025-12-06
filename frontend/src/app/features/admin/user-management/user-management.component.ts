@@ -35,8 +35,10 @@ export class UserManagementComponent implements OnInit {
 
     //#region | VARIABLES   |
     // Forms
+    suspendingUser = false;
     suspendUserForm = { suspendedTime: 1, reason: '' };
     revokeSuspendForm = { reason: '' };
+    banningUser = false;
     banUserForm = { reason: '' };
     revokeBanForm = { reason: '' };
 
@@ -142,25 +144,27 @@ export class UserManagementComponent implements OnInit {
     // -------- Suspend User --------
     openSuspendModal(user: IUser) {
         this.selectedUserToSuspend = user;
-        this.suspendUserForm = { suspendedTime: 5, reason: 'Has sido suspendido.' };
+        this.suspendUserForm = { suspendedTime: 5, reason: 'Infraccion.' };
     };
     confirmSuspend(idUser: string) {
         if (!this.selectedUserToSuspend) return;
 
         const { suspendedTime, reason } = this.suspendUserForm;
-
         if (!reason.trim()) return this.setError('La razón es obligatoria');
 
-        // if (![1, 5, 10].includes(Number(suspendedTime)))
-        //     return this.setError('Duración inválida');
+        this.suspendingUser = true;
 
         this._userService.suspendUser(idUser, { reason, suspendedTime }).subscribe({
             next: (res) => {
                 this.setSuccess(res.message);
                 this.loadUsers();
                 this.loadSuspendedUsers();
+                this.suspendingUser = false;
             },
-            error: (error) => this.setError(error)
+            error: (error) => {
+                this.setError(error);
+                this.suspendingUser = false;
+            }
         });
     };
     // -------- Revoke Suspension --------
@@ -186,15 +190,24 @@ export class UserManagementComponent implements OnInit {
         this.banUserForm.reason = 'Has sido baneado.';
     };
     confirmBan(idUser: string) {
-        this._userService.banUser(idUser, {
-            reason: this.banUserForm.reason
-        }).subscribe({
+        if (!this.selectedUserToBan) return;
+
+        const { reason } = this.banUserForm;
+        if (!reason.trim()) return this.setError('La razón es obligatoria');
+
+        this.banningUser = true; 
+
+        this._userService.banUser(idUser, { reason }).subscribe({
             next: (res) => {
                 this.setSuccess(res.message);
                 this.loadUsers();
                 this.loadBannedUsers();
+                this.banningUser = false;
             },
-            error: (error) => this.setError(error)
+            error: (error) => {
+                this.setError(error);
+                this.banningUser = false;
+            }
         });
     };
     // -------- Revoke Ban --------

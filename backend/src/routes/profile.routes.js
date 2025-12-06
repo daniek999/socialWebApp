@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { verifyAdmin, verifyStatus, verifyToken, verifyVerification } from '../middleware/auth.js';
-import { getAllProfiles, getCustomProfiles, getOtherProfiles, getSelfProfile, updateProfile } from '../handlers/profile.handler.js';
-import { upload, validateFileSize } from '../middleware/upload.js';
+import { getAllProfiles, getCustomProfiles, getOtherProfiles, getSelfProfile, updateProfile, uploadProfileFiles } from '../handlers/profile.handler.js';
 
 /**
  * ---------------------------------------------------------------------------------
@@ -25,11 +24,7 @@ profileRouter.use(verifyStatus);
 profileRouter.get('/', getCustomProfiles);
 profileRouter.get('/self', getSelfProfile);
 profileRouter.get('/all', verifyAdmin, getAllProfiles);
-profileRouter.put('/self-update', 
-    upload.fields([ { name: 'photo', maxCount: 1 }, { name: 'curriculumvitae', maxCount: 1}]), 
-    validateFileSize, 
-    updateProfile
-);
+profileRouter.put('/self-update', uploadProfileFiles, updateProfile);
 profileRouter.get('/:idUser', getOtherProfiles);
 
 export default profileRouter;

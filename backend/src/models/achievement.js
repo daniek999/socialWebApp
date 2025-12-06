@@ -32,6 +32,6 @@ const achievementSchema = new Schema({
     },
 }, {timestamps: true, versionKey: false});
 
-
+// Generating
 const Achievement = mongoose.models.Achievement || mongoose.model('Achievement', achievementSchema);
 export default Achievement;
