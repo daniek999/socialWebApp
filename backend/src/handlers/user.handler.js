@@ -206,14 +206,6 @@ export const suspendUser = async (req, res) => {
                 message: 'La razón de la suspensión es obligatoria.',
             });
         };
-        // (2) -  Validar duración
-            // const validDurations = [1, 5, 10];
-            // if (!validDurations.includes(suspendedTime)) {
-            //     return res.status(400).json({
-            //         success: false,
-            //         message: 'Duración inválida. Opciones: 1, 5 o 10 minutos. Usted ingreso: ' + suspendedTime,
-            //     });
-            // };
         // (3) -  Verifica que el usuario exista.
         const user = await User.findById(idUser);
         if (!user) {
@@ -264,23 +256,19 @@ export const suspendUser = async (req, res) => {
         await user.save();
 
         // (4) - Ocultar perfil durante suspensión
-        await Profile.findOneAndUpdate(
+        Profile.findOneAndUpdate(
             { idUser },
             { visible: false }
-        );
+        ).catch(err => console.log(err));
 
         // (5) - Enviar email al usuario
-        try {
-            await sendSuspensionEmail(
-                user.email,
-                user.username,
-                reason,
-                until,
-                suspendedTime
-            );
-        } catch (emailError) {
-            console.error('Error enviando email:', emailError);
-        }
+        sendSuspensionEmail(
+            user.email,
+            user.username,
+            reason,
+            until,
+            suspendedTime
+        ).catch(err => console.log(err));
         //#endregion
         
         //#region - | RESULT        |
@@ -394,10 +382,10 @@ export const banUser = async (req, res) => {
         //#endregion
 
         //#region - | PROCESS       |
-        await Post.deleteMany({ idUser });
+        Post.deleteMany({ idUser });
 
         // (7) - Eliminar TODAS las amistades donde participe el usuario
-        await Friendship.deleteMany({
+        Friendship.deleteMany({
             $or: [
                 { requester: idUser },
                 { recipient: idUser }
@@ -405,7 +393,7 @@ export const banUser = async (req, res) => {
         });
 
         // (8) - Forzar el perfil a modo privado (no se elimina)
-        await Profile.findOneAndUpdate(
+        Profile.findOneAndUpdate(
             { idUser },
             { visible: false }
         );
@@ -423,15 +411,11 @@ export const banUser = async (req, res) => {
         await banRecord.save();
 
         // (11) - Enviar email al usuario.
-        try {
-            await sendBanEmail(
-                user.email,
-                user.username,
-                reason
-            );
-        } catch (emailError) {
-            console.error('Error enviando email:', emailError);
-        }
+        sendBanEmail(
+            user.email,
+            user.username,
+            reason
+        ).catch(err => console.log(err));
         //#endregion
 
         //#region - | RESULT        |
