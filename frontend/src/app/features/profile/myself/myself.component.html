@@ -9,6 +9,13 @@
         <navigationBar class="bg-white nav-panel border-end border-subtle-dark" />
         <!-- View -->
         <div class="bg-custom-background d-flex flex-column flex-grow-1 overflow-y-auto py-3 px-5">
+            <!-- Actions -->
+            <div *ngIf="!isOwnProfile">
+                <button class="btn btn-dark rounded-2 btn-sm fw-bold w-100 mb-3"
+                    (click)="goToCommunity()">
+                    <i class="bi bi-arrow-left"></i> Regresar
+                </button>
+            </div>
             <!-- Profile Data -->
             <div class="mb-3">
                 <!-- Title -->
@@ -96,7 +103,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Content -->
             </div>
             <!-- Achievements Data --> 
             <div class="mb-3">
@@ -133,50 +139,33 @@
                 </div>
             </div>
             <!-- User Data -->
-            <div>
+            <div *ngIf="isOwnProfile">
                 <!-- Title -->
                 <view-title title="Usuario" icon="bi bi-file-earmark-lock2-fill" />
 
                 <!-- Content -->
                 <div class="bg-white d-flex flex-column flex-grow-1 mt-3 p-3 rounded-2">
-
-                    <!-- Si NO es mi perfil -->
-                    <ng-container *ngIf="!isOwnProfile; else ownProfile">
-                        <button class="btn btn-outline-dark rounded-0 btn-sm fw-bold w-100 mb-3"
-                            (click)="goToCommunity()">
-                            <i class="bi bi-arrow-left"></i> Regresar
-                        </button>
-
-                        <button class="btn btn-outline-primary rounded-0 btn-sm fw-bold w-100">
-                            <i class="bi bi-person-plus"></i> Agregar
-                        </button>
-                    </ng-container>
-
-                    <!-- Si es mi perfil -->
-                    <ng-template #ownProfile>
-                        <div class="row g-3">
-                            <div class="col">
-                                <p class="text-primary bodySmall mb-0">Usuario</p>
-                                <p class="bodyMedium mb-0">{{ profile?.idUser?.username }}</p>
-                            </div>
-
-                            <div class="col">
-                                <p class="text-primary bodySmall mb-0">Email</p>
-                                <p class="bodyMedium mb-0">{{ profile?.idUser?.email }}</p>
-                            </div>
-
-                            <div class="col">
-                                <p class="text-primary bodySmall mb-0">Rol</p>
-                                <p class="bodyMedium mb-0">{{ getUserRole() }}</p>
-                            </div>
-
-                            <div class="col">
-                                <p class="text-primary bodySmall mb-0">Registrado El</p>
-                                <p class="bodyMedium mb-0">{{ getUserCreatedAt() }}</p>
-                            </div>
+                    <div class="row g-3">
+                        <div class="col">
+                            <p class="text-primary bodySmall mb-0">Usuario</p>
+                            <p class="bodyMedium mb-0">{{ profile?.idUser?.username }}</p>
                         </div>
-                    </ng-template>
 
+                        <div class="col">
+                            <p class="text-primary bodySmall mb-0">Email</p>
+                            <p class="bodyMedium mb-0">{{ profile?.idUser?.email }}</p>
+                        </div>
+
+                        <div class="col">
+                            <p class="text-primary bodySmall mb-0">Rol</p>
+                            <p class="bodyMedium mb-0">{{ getUserRole() }}</p>
+                        </div>
+
+                        <div class="col">
+                            <p class="text-primary bodySmall mb-0">Registrado El</p>
+                            <p class="bodyMedium mb-0">{{ getUserCreatedAt() }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
