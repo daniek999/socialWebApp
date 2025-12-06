@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IFriendshipPopulated, IAcceptedRequest, IPendingRequest, IRelationshipStatus, ISentRequest } from '../../models/friendship';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 
 interface SendFriendRequestResponse {
     message: string;
@@ -32,7 +33,7 @@ interface GetSentRequestsResponse {
 })
 export class FriendshipService {
 
-    private readonly FRIENDSHIP_BASE_URL = 'http://localhost:4000/api/friendships';
+    private readonly FRIENDSHIP_BASE_URL = `${environment.apiUrl}/friendships`;
 
     constructor(
         private http: HttpClient,
