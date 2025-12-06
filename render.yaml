@@ -2,21 +2,27 @@ services:
   - type: web
     name: swa-backend
     runtime: node
-    branch: main
     region: ohio
     plan: free
+    branch: main
+
+    rootDir: backend
 
     buildCommand: "npm install"
-    startCommand: "node src/index.js"
+    startCommand: "npm start"
 
     envVars:
       - key: PORT
         value: 4000
 
-      # === MongoDB ===
       - key: MONGODB_URI
         sync: false
 
-      # === JWT ===
       - key: JWT_SECRET
+        sync: false
+
+      - key: EMAIL_USER
+        sync: false
+
+      - key: EMAIL_PASS
         sync: false
