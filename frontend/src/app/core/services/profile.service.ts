@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment.development';
     providedIn: 'root'
 })
 export class ProfileService {
-    private readonly PROFILE_BASE_URL = `${environment.apiUrl}/profiles`;
+    private readonly PROFILE_BASE_URL = `${environment.apiUrl}/api/profiles`;
 
     constructor(private http: HttpClient) { }
 

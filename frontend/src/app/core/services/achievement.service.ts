@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment.development';
 })
 export class AchievementService {
 
-    private readonly ACHIEVEMENT_BASE_URL = `${environment.apiUrl}/achievements`;
+    private readonly ACHIEVEMENT_BASE_URL = `${environment.apiUrl}/api/achievements`;
 
     constructor(private http: HttpClient) { };
 

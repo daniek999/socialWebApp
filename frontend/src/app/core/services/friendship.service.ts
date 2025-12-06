@@ -33,7 +33,7 @@ interface GetSentRequestsResponse {
 })
 export class FriendshipService {
 
-    private readonly FRIENDSHIP_BASE_URL = `${environment.apiUrl}/friendships`;
+    private readonly FRIENDSHIP_BASE_URL = `${environment.apiUrl}/api/friendships`;
 
     constructor(
         private http: HttpClient,

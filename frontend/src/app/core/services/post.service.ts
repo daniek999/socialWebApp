@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment.development';
 })
 export class PostService {
 
-    private readonly POST_BASE_URL = `${environment.apiUrl}/posts`;
+    private readonly POST_BASE_URL = `${environment.apiUrl}/api/posts`;
 
     constructor(
         private http: HttpClient

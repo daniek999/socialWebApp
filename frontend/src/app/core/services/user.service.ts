@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment.development';
 })
 export class UserService {
 
-    private readonly USER_BASE_URL = `${environment.apiUrl}/users`;
+    private readonly USER_BASE_URL = `${environment.apiUrl}/api/users`;
 
     constructor(
         private http: HttpClient
