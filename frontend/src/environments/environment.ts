@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: ''
+    API_URL: 'https://swa-backend-ybp9.onrender.com'
 };

@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { IActionResponse, IBannedUserListResponse, ISuspendedUserListResponse, IUser, IUserListResponse, IUserSingleResponse } from '../../models/user';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '@envs/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
-    private readonly USER_BASE_URL = `${environment.apiUrl}/api/users`;
+    private readonly USER_BASE_URL = `${environment.API_URL}/api/users`;
 
     constructor(
         private http: HttpClient

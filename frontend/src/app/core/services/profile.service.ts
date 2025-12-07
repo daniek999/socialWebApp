@@ -2,13 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { IProfileListResponse, IProfileSingleResponse } from '../../models/profile';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '@envs/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ProfileService {
-    private readonly PROFILE_BASE_URL = `${environment.apiUrl}/api/profiles`;
+    private readonly PROFILE_BASE_URL = `${environment.API_URL}/api/profiles`;
 
     constructor(private http: HttpClient) { }
 

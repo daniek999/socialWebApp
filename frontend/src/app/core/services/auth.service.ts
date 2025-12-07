@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '@envs/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    private readonly AUTH_BASE_URL = `${environment.apiUrl}/api/auth`;
+    private readonly AUTH_BASE_URL = `${environment.API_URL}/api/auth`;
 
     constructor(
         private http: HttpClient,

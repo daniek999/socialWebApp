@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { IAchievementListResponse, IAchievementSingleResponse } from '../../models/achievement';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '@envs/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AchievementService {
 
-    private readonly ACHIEVEMENT_BASE_URL = `${environment.apiUrl}/api/achievements`;
+    private readonly ACHIEVEMENT_BASE_URL = `${environment.API_URL}/api/achievements`;
 
     constructor(private http: HttpClient) { };
 
