@@ -2,15 +2,22 @@ import 'dotenv/config';
 import nodemailer from 'nodemailer';
 
 export const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS, },
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
 });
 
+
 export const sendVerificationMail = async (email, token) => {
-
     const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify/${token}`;
-
-    const verificationMail = {
+    await transporter.sendMail({
         from: `"SWA." <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Activa tu cuenta en SWA',
@@ -59,9 +66,7 @@ export const sendVerificationMail = async (email, token) => {
             </div>
         </div>
         `
-    };
-
-    await transporter.sendMail(verificationMail);
+    });
 };
 export const sendSuspensionEmail = async (email, username, reason, until, suspendedTime) => {
     const formattedUntil = new Date(until).toLocaleString('es-PE', {
@@ -73,7 +78,7 @@ export const sendSuspensionEmail = async (email, username, reason, until, suspen
         minute: '2-digit'
     });
 
-    const suspendedMailStructure = {
+    await transporter.sendMail({
         from: `"SWA." <${process.env.EMAIL_USER}>`,
         to: email,
         subject: `Tu cuenta ha sido suspendida`,
@@ -96,13 +101,11 @@ export const sendSuspensionEmail = async (email, username, reason, until, suspen
             <p style="text-align: center; color: #aaa; font-size: 12px;">Red Social © 2025</p>
         </div>
         `
-    };
-
-    await transporter.sendMail(suspendedMailStructure);
+    });
 };
 export const sendBanEmail = async (email, username, reason) => {
 
-    const suspendedMailStructure = {
+    await transporter.sendMail({
         from: `"SWA." <${process.env.EMAIL_USER}>`,
         to: email,
         subject: `Tu cuenta ha sido baneada`,
@@ -123,7 +126,5 @@ export const sendBanEmail = async (email, username, reason) => {
             <p style="text-align: center; color: #aaa; font-size: 12px;">Red Social © 2025</p>
         </div>
         `
-    };
-
-    await transporter.sendMail(suspendedMailStructure);
+    });
 };
