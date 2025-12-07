@@ -22,12 +22,10 @@ import { checkBan } from '../utils/checkBan.js';
 export const register = async (req, res) => {
     try {
         //#region - | PARAMS        |
-        // (1) - Recoge los valores enviados desde el formulario de registro.
         const { email, username, password, role } = req.body;
         //#endregion
 
         //#region - | VERIFICATIONS |
-        // (2) - Valida que los campos obligatorios estén completos.
         if (!email || !username || !password) {
             return res.status(400).json({
                 success: false,
@@ -35,7 +33,6 @@ export const register = async (req, res) => {
             });
         }
 
-        // (3) - Verifica si el correo ya está registrado.
         const emailExists = await User.findOne({ email });
         if (emailExists) {
             return res.status(400).json({
@@ -44,7 +41,6 @@ export const register = async (req, res) => {
             });
         }
 
-        // (4) - Verifica el tamaño mínimo de la clave.
         if (password.length < 12) {
             return res.status(400).json({
                 success: false,
@@ -54,11 +50,9 @@ export const register = async (req, res) => {
         //#endregion
 
         //#region - | PROCESS       |
-        // (5) - Genera un salt y encripta la contraseña.
         const salt = await genSalt(10);
         const hashedPass = await hash(password, salt);
 
-        // (6) - Crea el registro del usuario.
         const newUser = new User({
             username,
             email,
@@ -67,17 +61,16 @@ export const register = async (req, res) => {
         });
         await newUser.save();
 
-        // (7) - Crea un perfil inicial por defecto para el usuario.
         const newProfile = new Profile({
             idUser: newUser._id,
-            name: 'Tus Nombres',
-            surname: 'Tus Apellidos',
+            name: 'Jhon',
+            surname: 'Doe',
             birthday: Date.now(),
             interests: [],
-            profession: 'Tu Profesión',
+            profession: 'Profesional',
             situation: 'Estudiante',
-            description: 'Escribe una breve descripción profesional.',
-            about: 'Deja que te conozcan; escribe algo acerca de ti.',
+            description: 'Profesional | A | Tiempo | Completo ',
+            about: 'Hola, soy nuevo en la plataforma.',
             skills: [],
             photo: "",
             curriculumvitae: "",
@@ -85,17 +78,17 @@ export const register = async (req, res) => {
         });
         await newProfile.save();
 
-        // (8) - Genera un token temporal para verificación vía correo electrónico.
         const temporalMailToken = jwt.sign(
             { id: newUser._id },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-        await sendVerificationMail(email, temporalMailToken);
+
+        sendVerificationMail(email, temporalMailToken)
+            .catch(err => console.error('Error enviando email:', err));
         //#endregion
 
         //#region - | RESULT        |
-        // (9) - Informa al usuario que debe verificar su correo para completar el registro.
         return res.status(201).json({
             success: true,
             message: 'Ya falta poco, revisa tu correo para terminar tu registro.',
@@ -111,6 +104,7 @@ export const register = async (req, res) => {
         //#endregion
     };
 };
+
 export const login = async (req, res) => {
     try {
         //#region - | PARAMS        |
