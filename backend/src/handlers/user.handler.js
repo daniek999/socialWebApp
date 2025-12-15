@@ -385,7 +385,7 @@ export const banUser = async (req, res) => {
         Post.deleteMany({ idUser });
 
         // (7) - Eliminar TODAS las amistades donde participe el usuario
-        Friendship.deleteMany({
+        await Friendship.deleteMany({
             $or: [
                 { requester: idUser },
                 { recipient: idUser }
@@ -396,7 +396,7 @@ export const banUser = async (req, res) => {
         Profile.findOneAndUpdate(
             { idUser },
             { visible: false }
-        );
+        ).catch(err => console.log(err));
 
         // (9) - Marca el usuario como Baneado.
         user.status = 'Baneado';

@@ -134,7 +134,6 @@ export const getOtherProfiles = async (req, res) => {
         const profile = await Profile
             .findOne({ idUser })
             .populate("idUser", "username email role isVerified")
-            .select("-socialLinks");
         //#endregion
 
         //#region - | VERIFICATIONS |
@@ -257,13 +256,19 @@ export const updateProfile = async (req, res) => {
             // (11) - Subida y registro del Curriculum Vitae
             if (req.files.curriculumvitae?.[0]) {
 
+                const originalName = req.files.curriculumvitae[0].originalname;
+                const extension = originalName.split('.').pop();
+
                 const uploadResult = await cloudinary.uploader.upload(
                     req.files.curriculumvitae[0].path,
                     {
                         folder: "profile_cvs",
-                        resource_type: "raw"
+                        resource_type: "raw",
+                        public_id: `${Date.now()}_${idUser}.${extension}`,
+                        access_mode: "public"
                     }
                 );
+
 
                 updateData.curriculumvitae = uploadResult.secure_url;
 
